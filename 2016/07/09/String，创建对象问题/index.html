@@ -1,0 +1,769 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="java,string," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="原文：http://blog.csdn.net/sleeping_/article/details/6598274
+1String str=new String(&quot;aaa&quot;);
+这行代码究竟创建了几个String对象呢？答案是2个，而不是3个。由于new String(“aaa”)相当于”aaa”与一个就是创建出来的放在堆时原实例对象，而另一个就是放在常量池中的 “aaa” 对象，当然这里的str">
+<meta property="og:type" content="article">
+<meta property="og:title" content="String，创建对象问题">
+<meta property="og:url" content="http://dingran.tk/2016/07/09/String，创建对象问题/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="原文：http://blog.csdn.net/sleeping_/article/details/6598274
+1String str=new String(&quot;aaa&quot;);
+这行代码究竟创建了几个String对象呢？答案是2个，而不是3个。由于new String(“aaa”)相当于”aaa”与一个就是创建出来的放在堆时原实例对象，而另一个就是放在常量池中的 “aaa” 对象，当然这里的str">
+<meta property="og:updated_time" content="2016-07-09T15:38:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="String，创建对象问题">
+<meta name="twitter:description" content="原文：http://blog.csdn.net/sleeping_/article/details/6598274
+1String str=new String(&quot;aaa&quot;);
+这行代码究竟创建了几个String对象呢？答案是2个，而不是3个。由于new String(“aaa”)相当于”aaa”与一个就是创建出来的放在堆时原实例对象，而另一个就是放在常量池中的 “aaa” 对象，当然这里的str">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> String，创建对象问题 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              String，创建对象问题
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-09T23:32:06+08:00" content="2016-07-09">
+            2016-07-09
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/java/" itemprop="url" rel="index">
+                  <span itemprop="name">java</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/07/09/String，创建对象问题/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/09/String，创建对象问题/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/07/09/String，创建对象问题/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>原文：<a href="http://blog.csdn.net/sleeping_/article/details/6598274" target="_blank" rel="external">http://blog.csdn.net/sleeping_/article/details/6598274</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String str=<span class="keyword">new</span> String(<span class="string">"aaa"</span>);</div></pre></td></tr></table></figure>
+<p>这行代码究竟创建了几个String对象呢？答案是2个，而不是3个。由于new String(“aaa”)相当于”aaa”与一个就是创建出来的放在堆时原实例对象，而另一个就是放在常量池中的 “aaa” 对象，当然这里的str本身只是一个引用，放在栈里，用来指向堆中创建出来的对象。</p>
+<p>常量池(constant pool)指的是在编译期被确定，并被保存在已编译的.class文件中的一些数据。它包括了关于类、方法、接口等中的常量，也包括字符串常量。只</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">String str=<span class="string">"aaa"</span>;</div></pre></td></tr></table></figure>
+<p>创建1个对象。这里涉及到字符串常量池，在JVM中有一个字符串池，它用来保存很多可以被共享的String对象，这样如果我们在使用同样字面字符串时，它就使用字符串池中同字面的字符串。当然我们可以使用String对象的intern()方法来访问String对象在字符串池中所对应的常量对象。<br>上面这行代码被执行的时候，JVM先到字符串池中查找，看是否已经存在值为”aaa”的对象，如果存在，则不再创建新的对象，直接返回已存在对象的引用；如果不存在，则先创建这个对象，然后把它加入到字符串池中，再将它的引用返回。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String str1=<span class="string">"aaa"</span>;   </div><div class="line">String str2=<span class="string">"aaa"</span>;</div></pre></td></tr></table></figure>
+<p>也只创建1个对象。能过上面的解释这个就更清楚了，在执行第二行代码时，aaa字符串对象在池中已存在，所以直接返回池中已存在的那个字符串对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String str=<span class="string">"aaa"</span>+<span class="string">"bbb"</span>;</div></pre></td></tr></table></figure>
+<p>还是只创建1个对象。由于常量字符串是在编译的时候就也被确定的，又因”aaa”和”bbb”都是常量，因此变量str的值在编译时就可以确定。这行代码编译后的与String str=”aaabbb”;是一样的，这与我们平时好像不太一样啊？一般使用“+”连接两个字符串都会产生另一个新的字符对象。下面我们看一下例子就明白了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">String str1 = <span class="string">"aaa"</span>;  </div><div class="line">String str2 = <span class="string">"bbb"</span>;  </div><div class="line">String str3 = <span class="string">"aaabbb"</span>;  </div><div class="line">  </div><div class="line">String str4 = <span class="string">"aaa"</span> + <span class="string">"bbb"</span>;<span class="comment">//不会产生新的字符串对象  </span></div><div class="line">System.out.println(str3 == str4);<span class="comment">//true  </span></div><div class="line">  </div><div class="line">str4 = str1 + <span class="string">"bbb"</span>;<span class="comment">//会产生新的字符串对象  </span></div><div class="line">System.out.println(str3 == str4);<span class="comment">//false  </span></div><div class="line">  </div><div class="line">str4 = str1 + str2;<span class="comment">//会产生新的字符串对象  </span></div><div class="line">System.out.println(str3 == str4);<span class="comment">//false</span></div></pre></td></tr></table></figure>
+<p>从上面例子我们就可以得出：使用“+”连接的两个字符串本身就是字面常量字符串时，如果池中存在这样连接后的字符串，则是不会重新创建对象，而是直接引用池中的字符串对象；如果“+”连接的两字符串中只要有一个不是字面常量串（即定义过的），是会产生新的字符串对象。<br>凡事也有例外，这个也不例外：如果“+”连接的字符串中两个或一个不是“字面常量”，但如果定义成常量字符串时，情况又有变化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> String str1 = <span class="string">"aaa"</span>;  </div><div class="line"><span class="keyword">final</span> String str2 = <span class="string">"bbb"</span>;  </div><div class="line">String str3 = <span class="string">"aaabbb"</span>;  </div><div class="line">  </div><div class="line"><span class="comment">/* </span></div><div class="line"> * 因为str1与str2都定义成了常量，所以编译时就能确定，编译时就会将常量替换，等同于 </div><div class="line"> * str4 = "aaa"+"bbb"，因此不产生新对象 </div><div class="line"> */  </div><div class="line">String str4 = str1 + str2;  </div><div class="line">System.out.println(str3 == str4);<span class="comment">//true</span></div></pre></td></tr></table></figure>
+<p>但如果先定义final字符串，但未在定义处初始化，而初始化在块中，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">//此时str1与str2相当于变量，而不是常，因为块是在运行时才能确定，在编译时不能确定  </span></div><div class="line"><span class="keyword">final</span> <span class="keyword">static</span> String str1;    </div><div class="line">    <span class="keyword">final</span> <span class="keyword">static</span> String str2;    </div><div class="line">    <span class="keyword">static</span> &#123;    </div><div class="line">        str1 =<span class="string">"aaa"</span>;    </div><div class="line">        str2 =<span class="string">"bbb"</span>;    </div><div class="line">    &#125;  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;    </div><div class="line">        String str3 = str1 + str2;  </div><div class="line">        String str4 =<span class="string">"aaabbb"</span>;    </div><div class="line">        System.out.println(str3==str4);   <span class="comment">//输出为false  </span></div><div class="line">    &#125;    </div><div class="line">String str=<span class="string">" "</span>;与String str=<span class="keyword">new</span> String();  </div><div class="line">str=<span class="string">" "</span>会放入池中，但<span class="keyword">new</span> String()不会放入池中。</div></pre></td></tr></table></figure>
+<p><strong>String的intern()方法</strong> </p>
+<p>“当调用 intern 方法时，如果池已经包含一个等于此 String 对象的字符串（该对象由 equals(Object) 方法确定），则返回池中的字符串；否则，将此 String 对象添加到池中，并且返回此 String 对象的引用。它遵循对于任何两个字符串 s 和 t，当且仅当 s.equals(t) 为 true 时，s.intern() == t.intern() 才为 true”，这是jdk文档原文注解。</p>
+<p>现在我们回到最开头的那个例子，为什么String str=new String(“aaa”);会产生2个对象？一个是”aaa”又作为字符串构造函数的参数，但”aaa”自己就是一个字符串，在传进构造函数前就已创建了一个字符对象，实质上与就好比是第二个实例：String str=”aaa”; ，它创建的字符串对象会放入到池中，并且引用的也是池中的那个字符串对象；另一个就是通过new String()构造函数创建的。所以new String(“aaa”)会产生两个对象，也就是说通过此种方式创建字符串对象时，会先将字符串参数对象放入对象池，然后另外创建一个字符串对象。</p>
+<p>理解完new String(“aaa”)为什么会产生两个对象，我们再来看看new String(char value[])这样的方式创建时，又会不会把字符串对象放入到池中呢？答案是不会的。因为传递给构造函数的是一个字符数组，而不是像前面传递的是一个字面常量字符串参数那样，将字符串参数本身放入池中。那么我们现在如果证明new String(char value[])未将字符串对象放入池中，我们可以写一个简单的测试，运行时打开XP的任务管理器，查看操作系统的内存使用情况就可以初步确认：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">int</span> size = <span class="number">10000000</span>;  </div><div class="line"><span class="keyword">char</span> c[] = <span class="keyword">new</span> <span class="keyword">char</span>[size];  </div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;  </div><div class="line">    c[i] = <span class="string">'a'</span>;  </div><div class="line">&#125;  </div><div class="line"><span class="comment">//使用带字符数组参数构造函数创建字符串时，字符串对象不会放入字符串池  </span></div><div class="line">String str1 = <span class="keyword">new</span> String(c);  </div><div class="line">System.out.println(<span class="string">"String字符串对象创建完毕..."</span>);  </div><div class="line">Thread.sleep(<span class="number">5000</span>);  </div><div class="line">str1.intern();<span class="comment">//到里会看见内存增加  </span></div><div class="line">System.out.println(<span class="string">"第一次调用intern()完毕..."</span>);  </div><div class="line">Thread.sleep(<span class="number">5000</span>);  </div><div class="line">str1.intern();<span class="comment">//再过5秒将看不到内存增长，因为池中有了，不会再放入，所以内存无变化  </span></div><div class="line">System.out.println(<span class="string">"第二次调用intern()完毕..."</span>);  </div><div class="line">Thread.sleep(<span class="number">5000</span>);</div></pre></td></tr></table></figure>
+<p>所以创建字符串对象放入并放入池中有二种方式：第一种就是直接使用字面常量定义字符串时，如 String str=”aaa”; ，str会引用放入池中的对象；第二种就是使用带字符串参数的字符串构造函数，并且此时传入的参数值要是字符串常量形式，而不能是变量的形式，也就是说只能是 String str=new String(“aaa”);形式，而不能是先定义 String s = “aaa”，然后再使用 String str=new String(s);来创建对象，new String(s);此时只创建一个对象，但如果池中不存在时我们可以使用intern方法将它放入池中。当然上面放入池中的前提是池中还不存在这些字符串对象。<br>其实，当我们仔细研究时，发现放入池中只实质上只存在一种时机，那就是：直接使用字面常量字符串时。上面所说的两种时机实质上就是直接使用了字面常的字符串而将其放入池中的。</p>
+<p>上面多处提到了JVM中的堆栈，下面小结一下各自原作用：<br>栈用来保存基本类型与对象的引用的，基本型在创建前会查看Stack中是否已经有, 有则指向, 没有则创建。<br>String内部是以字符串数组来存储字符串的，因此可以认为与char[]等同, String a= “abc”,首先在Heap中创一个对象,再到Stack中找char[]是否存在,有则指向该地址, 无则在Stack中创建数组。<br>new出来的都是在Heap中，堆是用于存储对象的。</p>
+<p><strong><em>版权声明：本文为博主原创文章，未经博主允许不得转载。</em></strong></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag">#java</a>
+          
+            <a href="/tags/string/" rel="tag">#string</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/10/int a=10 分配在栈上，引用在哪？/" rel="prev">创建局部变量jvm怎么分配空间</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/06/如何知道mysql中sql语句索引是否生效/" rel="next">如何知道mysql中sql语句索引是否生效</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/07/09/String，创建对象问题/"
+     data-title="String，创建对象问题"
+     data-content=""
+     data-url="http://dingran.tk/2016/07/09/String，创建对象问题/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/07/09/String，创建对象问题/"
+                   data-title="String，创建对象问题" data-url="http://dingran.tk/2016/07/09/String，创建对象问题/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

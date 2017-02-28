@@ -1,0 +1,792 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="spring,事物," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="[问题]
+ spring的声明式事务，我想就不用多介绍了吧，一句话“自从用了Spring AOP啊，事务管理真轻松啊，真轻松；事务管理代码没有了，脑不酸了，手不痛了，一口气全配上了事务；轻量级，测试起来也简单，嘿！”。不管从哪个角度看，轻量级声明式事务都是一件解放生产力的大好事。所以，我们“一直用它”。
+不过，最近的一个项目里，却碰到了一个事务管理上的问题：有一个服务类，其一个声明了事务的方法，里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring事务失效">
+<meta property="og:url" content="http://dingran.tk/2016/06/29/Spring事务失效/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="[问题]
+ spring的声明式事务，我想就不用多介绍了吧，一句话“自从用了Spring AOP啊，事务管理真轻松啊，真轻松；事务管理代码没有了，脑不酸了，手不痛了，一口气全配上了事务；轻量级，测试起来也简单，嘿！”。不管从哪个角度看，轻量级声明式事务都是一件解放生产力的大好事。所以，我们“一直用它”。
+不过，最近的一个项目里，却碰到了一个事务管理上的问题：有一个服务类，其一个声明了事务的方法，里">
+<meta property="og:image" content="http://hi.csdn.net/attachment/201107/22/0_1311313171VB8g.gif">
+<meta property="og:image" content="http://hi.csdn.net/attachment/201107/22/0_13113132547bB7.gif">
+<meta property="og:image" content="http://hi.csdn.net/attachment/201107/22/0_1311313311JJzp.gif">
+<meta property="og:updated_time" content="2016-06-29T14:42:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring事务失效">
+<meta name="twitter:description" content="[问题]
+ spring的声明式事务，我想就不用多介绍了吧，一句话“自从用了Spring AOP啊，事务管理真轻松啊，真轻松；事务管理代码没有了，脑不酸了，手不痛了，一口气全配上了事务；轻量级，测试起来也简单，嘿！”。不管从哪个角度看，轻量级声明式事务都是一件解放生产力的大好事。所以，我们“一直用它”。
+不过，最近的一个项目里，却碰到了一个事务管理上的问题：有一个服务类，其一个声明了事务的方法，里">
+<meta name="twitter:image" content="http://hi.csdn.net/attachment/201107/22/0_1311313171VB8g.gif">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> Spring事务失效 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              Spring事务失效
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-06-29T22:35:06+08:00" content="2016-06-29">
+            2016-06-29
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/spring/" itemprop="url" rel="index">
+                  <span itemprop="name">spring</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/06/29/Spring事务失效/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/29/Spring事务失效/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/06/29/Spring事务失效/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>[问题]</p>
+<p> spring的声明式事务，我想就不用多介绍了吧，一句话“自从用了Spring AOP啊，事务管理真轻松啊，真轻松；事务管理代码没有了，脑不酸了，手不痛了，一口气全配上了事务；轻量级，测试起来也简单，嘿！”。不管从哪个角度看，轻量级声明式事务都是一件解放生产力的大好事。所以，我们“一直用它”。</p>
+<p>不过，最近的一个项目里，却碰到了一个事务管理上的问题：有一个服务类，其一个声明了事务的方法，里面做了三次插入SQL操作，但是在后面出错回滚时，却发现前面插入成功了，也是说，这个声明了事务的方法，实际上并没有真正启动事务！怎么回事呢？难道Spring的声明式事务失效了？</p>
+<p>[探幽]</p>
+<p>其实以前也会碰到有人说，Spring的事务配置不起作用，但是根据第一反应和以往经验，我总会告诉他，肯定是你的配置有问题啦；所以这一次，我想也不会例外，大概是把事务注解配在了接口上而不是实现方法上，或者，如果是用XML声明方式的话，很可能是切入点的表达式没有配对。</p>
+<p>不过，在检查了他们的配置后，却发现没有配置问题，该起事务的实现方法上，用了@Transactional事务注解声明，XML里也配了注解驱动<tx:annotation-driven ...="">，配置很正确啊，怎么会不起作用？</tx:annotation-driven></p>
+<pre><code>我很纳闷，于是往下问：
+问1：其他方法有这种情况么？
+答1：没有。
+问2：这个方法有什么特别的么（以下简称方法B）？
+答2：就是调后台插了三条记录啊，没啥特别的。
+问3：这个方法是从Web层直接调用的吧？
+答3：不是，是这个Service类（以下简称ServiceA）的另外一个方法调过来的（以下简称方法A）。
+问4：哦，那个调用它的方法配了事务么（问题可能在这了）？
+答4：没有。
+问5：那WEB层的Action（用的是Struts2），调用的是没有声明事务的方法A，方法A再调用声明了事务的方法B？
+答5：对的。
+问6：你直接在方法A上加上事务声明看看
+答6：好。。。
+</code></pre><p>看来可能找到问题所在了，于是把@Transactional也加在方法A上，启动项目测试，结果是：事务正常生效，方法A和方法B都在一个事务里了。</p>
+<p> 好了，现在总结一下现象：</p>
+<pre><code>1、ServiceA类为Web层的Action服务
+2、Action调用了ServiceA的方法A，而方法A没有声明事务（原因是方法A本身比较耗时而又不需要事务）
+3、ServiceA的方法A调用了自己的方法B，而方法B声明了事务，但是方法B的事务声明在这种情况失效了。
+4、如果在方法A上也声明事务，则在Action调用方法A时，事务生效，而方法B则自动参与了这个事务。 
+</code></pre><p> 我让他先把A也加上事务声明，决定回来自己再测一下。</p>
+<p>这个问题，表面上是事务声明失效的问题，实质上很可能是Spring的AOP机制实现角度的问题。我想到很久以前研究Spring的AOP实现时发现的一个现象：对于以Cglib方式增强的AOP目标类，会创建两个对象，一个事Bean实例本身，一个是Cglib增强代理对象，而不仅仅是只有后者。我曾经疑惑过这一点，但当时没有再仔细探究下去。</p>
+<p>我们知道，Spring的AOP实现方式有两种：1、Java代理方式；2、Cglib动态增强方式，这两种方式在Spring中是可以无缝自由切换的。Java代理方式的优点是不依赖第三方jar包，缺点是不能代理类，只能代理接口。</p>
+<p>Spring通过AopProxy接口，抽象了这两种实现，实现了一致的AOP方式：</p>
+<p><img src="http://hi.csdn.net/attachment/201107/22/0_1311313171VB8g.gif" alt=""></p>
+<p>现在看来，这种抽象同样带了一个缺陷，那就是抹杀了Cglib能够直接创建普通类的增强子类的能力，Spring相当于把Cglib动态生成的子类，当普通的代理类了，这也是为什么会创建两个对象的原因。下图显示了Spring的AOP代理类的实际调用过程：</p>
+<p><img src="http://hi.csdn.net/attachment/201107/22/0_13113132547bB7.gif" alt=""></p>
+<p>因此，从上面的分析可以看出，methodB没有被AopProxy通知到，导致最终结果是：被Spring的AOP增强的类，在同一个类的内部方法调用时，其被调用方法上的增强通知将不起作用。</p>
+<p>而这种结果，会造成什么影响呢：</p>
+<pre><code>1：内部调用时，被调用方法的事务声明将不起作用
+2：换句话说，你在某个方法上声明它需要事务的时候，如果这个类还有其他开发者，你将不能保证这个方法真的会在事务环境中
+3：再换句话说，Spring的事务传播策略在内部方法调用时将不起作用。不管你希望某个方法需要单独事务，是RequiresNew，还是要嵌套事务，要Nested，等等，统统不起作用。
+4：不仅仅是事务通知，所有你自己利用Spring实现的AOP通知，都会受到同样限制。。。。
+</code></pre><p>[解难]</p>
+<p>问题的原因已经找到，其实，我理想中的AOP实现，应该是下面这样：</p>
+<p><img src="http://hi.csdn.net/attachment/201107/22/0_1311313311JJzp.gif" alt=""></p>
+<p>只要一个Cglib增强对象就好，对于Java代理方式，我的选择是毫不犹豫的抛弃。<br>至于前面的事务问题，只要避开Spring目前的AOP实现上的限制，要么都声明要事务，要么分开成两个类，要么直接在方法里使用编程式事务，那么一切OK。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag">#spring</a>
+          
+            <a href="/tags/事物/" rel="tag">#事物</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/30/基于ZooKeeper的Dubbo注册中心/" rel="prev">基于ZooKeeper的Dubbo注册中心</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/29/Ibatis中sqlmap参数map中还需要套list的情况如何写？/" rel="next">Ibatis中sqlmap参数map中还需要套list的情况如何写？</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/29/Spring事务失效/"
+     data-title="Spring事务失效"
+     data-content=""
+     data-url="http://dingran.tk/2016/06/29/Spring事务失效/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/06/29/Spring事务失效/"
+                   data-title="Spring事务失效" data-url="http://dingran.tk/2016/06/29/Spring事务失效/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

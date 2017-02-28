@@ -1,0 +1,1095 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="ActiveMQ," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="ActiveMQ持久化
+消息持久性对于可靠消息传递来说应该是一种比较好的方法，有了消息持久化，即使发送者和接受者不是同时在线或者消息中心在发送者发送消息后宕机了，在消息中心重新启动后仍然可以将消息发送出去，如果把这种持久化和ReliableMessaging结合起来应该是很好的保证了消息的可靠传送。
+消息持久性的原理很简单，就是在发送者将消息发送出去后，消息中心首先将消息存储到本地数据文件、内存数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ActiveMQ持久化方式">
+<meta property="og:url" content="http://dingran.tk/2016/07/11/ActiveMQ持久化方式/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="ActiveMQ持久化
+消息持久性对于可靠消息传递来说应该是一种比较好的方法，有了消息持久化，即使发送者和接受者不是同时在线或者消息中心在发送者发送消息后宕机了，在消息中心重新启动后仍然可以将消息发送出去，如果把这种持久化和ReliableMessaging结合起来应该是很好的保证了消息的可靠传送。
+消息持久性的原理很简单，就是在发送者将消息发送出去后，消息中心首先将消息存储到本地数据文件、内存数">
+<meta property="og:updated_time" content="2016-07-11T13:35:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ActiveMQ持久化方式">
+<meta name="twitter:description" content="ActiveMQ持久化
+消息持久性对于可靠消息传递来说应该是一种比较好的方法，有了消息持久化，即使发送者和接受者不是同时在线或者消息中心在发送者发送消息后宕机了，在消息中心重新启动后仍然可以将消息发送出去，如果把这种持久化和ReliableMessaging结合起来应该是很好的保证了消息的可靠传送。
+消息持久性的原理很简单，就是在发送者将消息发送出去后，消息中心首先将消息存储到本地数据文件、内存数">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> ActiveMQ持久化方式 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              ActiveMQ持久化方式
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-11T20:15:06+08:00" content="2016-07-11">
+            2016-07-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/07/11/ActiveMQ持久化方式/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/11/ActiveMQ持久化方式/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/07/11/ActiveMQ持久化方式/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><strong>ActiveMQ持久化</strong></p>
+<p>消息持久性对于可靠消息传递来说应该是一种比较好的方法，有了消息持久化，即使发送者和接受者不是同时在线或者消息中心在发送者发送消息后宕机了，在消息中心重新启动后仍然可以将消息发送出去，如果把这种持久化和ReliableMessaging结合起来应该是很好的保证了消息的可靠传送。</p>
+<p>消息持久性的原理很简单，就是在发送者将消息发送出去后，消息中心首先将消息存储到本地数据文件、内存数据库或者远程数据库等，然后试图将消息发送给接收者，发送成功则将消息从存储中删除，失败则继续尝试。消息中心启动以后首先要检查制定的存储位置，如果有未发送成功的消息，则需要把消息发送出去。</p>
+<p>ActiveMQ持久化方式：AMQ、KahaDB、JDBC、LevelDB。</p>
+<p>1、AMQ</p>
+<p>AMQ是一种文件存储形式，它具有写入速度快和容易恢复的特点。消息存储在一个个文件中，文件的默认大小为32M，如果一条消息的大小超过了32M，那么这个值必须设置大一点。当一个存储文件中的消息已经全部被消费，那么这个文件将被标识为可删除，在下一个清除阶段，这个文件被删除。 AMQ适用于ActiveMQ5.3之前的版本。默认配置如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">persistenceAdapter</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">amqPersistenceAdapterdirectory="activemq-data"maxFileLength="32mb"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">persistenceAdapter</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>属性如下：</p>
+<table>
+<thead>
+<tr>
+<th>属性名称</th>
+<th>默认值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>directory</td>
+<td>activemq-data</td>
+<td>消息文件和日志的存储目录</td>
+</tr>
+<tr>
+<td>useNIO</td>
+<td>true</td>
+<td>使用NIO协议存储消息</td>
+</tr>
+<tr>
+<td>syncOnWrite</td>
+<td>false</td>
+<td>同步写到磁盘，这个选项对性能影响非常大</td>
+</tr>
+<tr>
+<td>maxFileLength</td>
+<td>32Mb</td>
+<td>一个消息文件的大小</td>
+</tr>
+<tr>
+<td>persistentIndex</td>
+<td>true</td>
+<td>消息索引的持久化,如果为false那么索引保存在内存中</td>
+</tr>
+<tr>
+<td>maxCheckpointMessageAddSize</td>
+<td>4kb</td>
+<td>一个事务允许的最大消息量</td>
+</tr>
+<tr>
+<td>cleanupInterval</td>
+<td>30000</td>
+<td>清除操作周期,单位ms </td>
+</tr>
+<tr>
+<td>indexBinSize</td>
+<td>1024</td>
+<td>索引文件缓存页面数，缺省为1024，当amq扩充或者缩减存储时，会锁定整个broker，导致一定时间的阻塞，所以这个值应该调整到比较大，但是代码中实现会动态伸缩，调整效果并不理想。</td>
+</tr>
+<tr>
+<td>indexKeySize</td>
+<td>96</td>
+<td>索引key的大小，key是消息ID</td>
+</tr>
+<tr>
+<td>indexPageSize</td>
+<td>16kb</td>
+<td>索引的页大小</td>
+</tr>
+<tr>
+<td>directoryArchive</td>
+<td>archive</td>
+<td>存储被归档的消息文件目录</td>
+</tr>
+<tr>
+<td>archiveDataLogs</td>
+<td>false</td>
+<td>当为true时，归档的消息文件被移到directoryArchive,而不是直接删除　　　　　　　　　　　　</td>
+</tr>
+</tbody>
+</table>
+<p>2、KahaDB</p>
+<p>KahaDB是基于文件的本地数据库储存形式，虽然没有AMQ的速度快，但是它具有强扩展性，恢复的时间比AMQ短，从5.4版本之后KahaDB做为默认的持久化方式。默认配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">   &lt;kahaDB directory=&quot;activemq-data&quot;journalMaxFileLength=&quot;32mb&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>KahaDB的属性如下：</p>
+<table>
+<thead>
+<tr>
+<th>属性名称</th>
+<th>默认值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>directory</td>
+<td>activemq-data</td>
+<td>消息文件和日志的存储目录</td>
+</tr>
+<tr>
+<td>indexWriteBatchSize</td>
+<td>1000</td>
+<td>一批索引的大小，当要更新的索引量到达这个值时，更新到消息文件中</td>
+</tr>
+<tr>
+<td>indexCacheSize</td>
+<td>10000</td>
+<td>内存中，索引的页大小</td>
+</tr>
+<tr>
+<td>enableIndexWriteAsync</td>
+<td>false</td>
+<td>索引是否异步写到消息文件中</td>
+</tr>
+<tr>
+<td>journalMaxFileLength</td>
+<td>32mb</td>
+<td>一个消息文件的大小</td>
+</tr>
+<tr>
+<td>enableJournalDiskSyncs</td>
+<td>true</td>
+<td>是否讲非事务的消息同步写入到磁盘</td>
+</tr>
+<tr>
+<td>cleanupInterval</td>
+<td>30000</td>
+<td>清除操作周期，单位ms</td>
+</tr>
+<tr>
+<td>checkpointInterval</td>
+<td>5000</td>
+<td>索引写入到消息文件的周期，单位ms</td>
+</tr>
+<tr>
+<td>ignoreMissingJournalfiles</td>
+<td>false</td>
+<td>忽略丢失的消息文件，false，当丢失了消息文件，启动异常</td>
+</tr>
+<tr>
+<td>checkForCorruptJournalFiles</td>
+<td>false</td>
+<td>检查消息文件是否损坏，true，检查发现损坏会尝试修复</td>
+</tr>
+<tr>
+<td>checksumJournalFiles</td>
+<td>false</td>
+<td>产生一个checksum，以便能够检测journal文件是否损坏。</td>
+</tr>
+<tr>
+<td>5.4版本之后有效的属性:</td>
+<td></td>
+</tr>
+<tr>
+<td>archiveDataLogs</td>
+<td>false</td>
+<td>当为true时，归档的消息文件被移到directoryArchive,而不是直接删除</td>
+</tr>
+<tr>
+<td>directoryArchive</td>
+<td>null</td>
+<td>存储被归档的消息文件目录</td>
+</tr>
+<tr>
+<td>databaseLockedWaitDelay</td>
+<td>10000</td>
+<td>在使用负载时，等待获得文件锁的延迟时间，单位ms</td>
+</tr>
+<tr>
+<td>maxAsyncJobs</td>
+<td>10000</td>
+<td>同个生产者产生等待写入的异步消息最大量</td>
+</tr>
+<tr>
+<td>concurrentStoreAndDispatchTopics</td>
+<td>false</td>
+<td>当写入消息的时候，是否转发主题消息</td>
+</tr>
+<tr>
+<td>concurrentStoreAndDispatchQueues</td>
+<td>true</td>
+<td>当写入消息的时候，是否转发队列消息</td>
+</tr>
+<tr>
+<td>5.6版本之后有效的属性:</td>
+<td></td>
+</tr>
+<tr>
+<td>archiveCorruptedIndex</td>
+<td>false</td>
+<td>是否归档错误的索引</td>
+</tr>
+</tbody>
+</table>
+<p>每个KahaDB的实例都可以配置单独的适配器，如果没有目标队列提交给filteredKahaDB，那么意味着对所有的队列有效。如果一个队列没有对应的适配器，那么将会抛出一个异常。配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">  &lt;mKahaDBdirectory=&quot;$&#123;activemq.base&#125;/data/kahadb&quot;&gt;</div><div class="line">    &lt;filteredPersistenceAdapters&gt;</div><div class="line">      &lt;!-- match all queues --&gt;</div><div class="line">      &lt;filteredKahaDBqueue=&quot;&gt;&quot;&gt;</div><div class="line">        &lt;persistenceAdapter&gt;</div><div class="line">          &lt;kahaDBjournalMaxFileLength=&quot;32mb&quot;/&gt;</div><div class="line">        &lt;/persistenceAdapter&gt;</div><div class="line">      &lt;/filteredKahaDB&gt;</div><div class="line">     </div><div class="line">      &lt;!-- match all destinations --&gt;</div><div class="line">      &lt;filteredKahaDB&gt;</div><div class="line">        &lt;persistenceAdapter&gt;</div><div class="line">          &lt;kahaDBenableJournalDiskSyncs=&quot;false&quot;/&gt;</div><div class="line">        &lt;/persistenceAdapter&gt;</div><div class="line">      &lt;/filteredKahaDB&gt;</div><div class="line">    &lt;/filteredPersistenceAdapters&gt;</div><div class="line">  &lt;/mKahaDB&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>如果filteredKahaDB的perDestination属性设置为true，那么匹配的目标队列将会得到自己对应的KahaDB实例。配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">  &lt;mKahaDBdirectory=&quot;$&#123;activemq.base&#125;/data/kahadb&quot;&gt;</div><div class="line">    &lt;filteredPersistenceAdapters&gt;</div><div class="line">      &lt;!-- kahaDB per destinations --&gt;</div><div class="line">      &lt;filteredKahaDB perDestination=&quot;true&quot;&gt;</div><div class="line">        &lt;persistenceAdapter&gt;</div><div class="line">          &lt;kahaDBjournalMaxFileLength=&quot;32mb&quot; /&gt;</div><div class="line">        &lt;/persistenceAdapter&gt;</div><div class="line">      &lt;/filteredKahaDB&gt;</div><div class="line">    &lt;/filteredPersistenceAdapters&gt;</div><div class="line">  &lt;/mKahaDB&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>3、JDBC</p>
+<p>可以将消息存储到数据库中，例如：Mysql、SQL Server、Oracle、DB2。</p>
+<p>配置JDBC适配器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">    &lt;jdbcPersistenceAdapterdataSource=&quot;#mysql-ds&quot; createTablesOnStartup=&quot;false&quot; /&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>dataSource指定持久化数据库的bean，createTablesOnStartup是否在启动的时候创建数据表，默认值是true，这样每次启动都会去创建数据表了，一般是第一次启动的时候设置为true，之后改成false。</p>
+<p>Mysql持久化bean：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;mysql-ds&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot; destroy-method=&quot;close&quot;&gt;</div><div class="line">    &lt;property name=&quot;driverClassName&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;</div><div class="line">    &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost/activemq?relaxAutoCommit=true&quot;/&gt;</div><div class="line">    &lt;property name=&quot;username&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">    &lt;property name=&quot;password&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">    &lt;property name=&quot;poolPreparedStatements&quot; value=&quot;true&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line">SQL Server持久化bean：</div><div class="line">&lt;bean id=&quot;mssql-ds&quot; class=&quot;net.sourceforge.jtds.jdbcx.JtdsDataSource&quot; destroy-method=&quot;close&quot;&gt;</div><div class="line">   &lt;property name=&quot;serverName&quot; value=&quot;SERVERNAME&quot;/&gt;</div><div class="line">   &lt;property name=&quot;portNumber&quot; value=&quot;PORTNUMBER&quot;/&gt;</div><div class="line">   &lt;property name=&quot;databaseName&quot; value=&quot;DATABASENAME&quot;/&gt;</div><div class="line">   &lt;property name=&quot;user&quot; value=&quot;USER&quot;/&gt;</div><div class="line">   &lt;property name=&quot;password&quot; value=&quot;PASSWORD&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>Oracle持久化bean：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;oracle-ds&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot; destroy-method=&quot;close&quot;&gt;</div><div class="line">    &lt;property name=&quot;driverClassName&quot; value=&quot;oracle.jdbc.driver.OracleDriver&quot;/&gt;</div><div class="line">    &lt;property name=&quot;url&quot; value=&quot;jdbc:oracle:thin:@10.53.132.47:1521:activemq&quot;/&gt;</div><div class="line">    &lt;property name=&quot;username&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">    &lt;property name=&quot;password&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">    &lt;property name=&quot;maxActive&quot; value=&quot;200&quot;/&gt;</div><div class="line">    &lt;property name=&quot;poolPreparedStatements&quot; value=&quot;true&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>DB2持久化bean：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=&quot;db2-ds&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;  destroy-method=&quot;close&quot;&gt;</div><div class="line">      &lt;property name=&quot;driverClassName&quot; value=&quot;com.ibm.db2.jcc.DB2Driver&quot;/&gt;</div><div class="line">      &lt;property name=&quot;url&quot; value=&quot;jdbc:db2://hndb02.bf.ctc.com:50002/activemq&quot;/&gt;</div><div class="line">      &lt;property name=&quot;username&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">      &lt;property name=&quot;password&quot; value=&quot;activemq&quot;/&gt;</div><div class="line">      &lt;property name=&quot;maxActive&quot; value=&quot;200&quot;/&gt;</div><div class="line">      &lt;property name=&quot;poolPreparedStatements&quot; value=&quot;true&quot;/&gt;</div><div class="line">  &lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>4、LevelDB</p>
+<p>这种文件系统是从ActiveMQ5.8之后引进的，它和KahaDB非常相似，也是基于文件的本地数据库储存形式，但是它提供比KahaDB更快的持久性。与KahaDB不同的是，它不是使用传统的B-树来实现对日志数据的提前写，而是使用基于索引的LevelDB。</p>
+<p>默认配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">      &lt;levelDBdirectory=&quot;activemq-data&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>属性如下：</p>
+<table>
+<thead>
+<tr>
+<th>属性名称</th>
+<th>默认值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>directory</td>
+<td>“LevelDB”</td>
+<td>数据文件的存储目录</td>
+</tr>
+<tr>
+<td>readThreads</td>
+<td>10</td>
+<td>系统允许的并发读线程数量</td>
+</tr>
+<tr>
+<td>sync</td>
+<td>true</td>
+<td>同步写到磁盘</td>
+</tr>
+<tr>
+<td>logSize</td>
+<td>104857600 (100 MB)</td>
+<td>日志文件大小的最大值</td>
+</tr>
+<tr>
+<td>logWriteBufferSize</td>
+<td>4194304 (4 MB)</td>
+<td>日志数据写入文件系统的最大缓存值</td>
+</tr>
+<tr>
+<td>verifyChecksums</td>
+<td>false</td>
+<td>是否对从文件系统中读取的数据进行校验</td>
+</tr>
+<tr>
+<td>paranoidChecks</td>
+<td>false</td>
+<td>尽快对系统内部发生的存储错误进行标记</td>
+</tr>
+<tr>
+<td>indexFactory</td>
+<td>org.fusesource.leveldbjni.JniDBFactory, org.iq80.leveldb.impl.Iq80DBFactory</td>
+<td>在创建LevelDB索引时使用</td>
+</tr>
+<tr>
+<td>indexMaxOpenFiles</td>
+<td>1000</td>
+<td>可供索引使用的打开文件的数量</td>
+</tr>
+<tr>
+<td>indexBlockRestartInterval</td>
+<td>16</td>
+<td>Number keys between restart points for delta encoding of keys.</td>
+</tr>
+<tr>
+<td>indexWriteBufferSize</td>
+<td>6291456 (6 MB)</td>
+<td>内存中索引数据的最大值</td>
+</tr>
+<tr>
+<td>indexBlockSize</td>
+<td>4096 (4 K)</td>
+<td>每个数据块的索引数据大小</td>
+</tr>
+<tr>
+<td>indexCacheSize</td>
+<td>268435456 (256 MB)</td>
+<td>使用缓存索引块允许的最大内存</td>
+</tr>
+<tr>
+<td>indexCompression</td>
+<td>snappy</td>
+<td>适用于索引块的压缩类型</td>
+</tr>
+<tr>
+<td>logCompression</td>
+<td>none</td>
+<td>适用于日志记录的压缩类型</td>
+</tr>
+</tbody>
+</table>
+<p>5、  下面详细介绍一下如何将消息持久化到Mysql数据库中</p>
+<p>Ø        需要将mysql的驱动包放置到ActiveMQ的lib目录下</p>
+<p>Ø        修改activeMQ的配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">&lt;jdbcPersistenceAdapter dataDirectory=&quot;$&#123;activemq.base&#125;/data&quot; dataSource=&quot;#mysql-ds&quot;createTablesOnStartup=&quot;false&quot;/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>在配置文件中的broker节点外增加:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;beanid=&quot;mysql-ds&quot;class=&quot;org.apache.commons.dbcp.BasicDataSource&quot; destroy-method=&quot;close&quot;&gt;</div><div class="line">      &lt;propertyname=&quot;driverClassName&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;</div><div class="line">      &lt;property name=&quot;url&quot;value=&quot;jdbc:mysql://localhost:3306/activemq?relaxAutoCommit=true&quot;/&gt;</div><div class="line">      &lt;property name=&quot;username&quot;value=&quot;root&quot;/&gt;</div><div class="line">      &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;</div><div class="line">      &lt;property name=&quot;maxActive&quot;value=&quot;200&quot;/&gt;</div><div class="line">      &lt;propertyname=&quot;poolPreparedStatements&quot; value=&quot;true&quot;/&gt;</div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>从配置中可以看出数据库的名称是activemq，需要手动在MySql中建立这个数据库。</p>
+<p>然后重新启动activeMQ，会发现activemq多了三张表：</p>
+<p>1：activemq_acks</p>
+<p>2：activemq_lock</p>
+<p>3：activemq_msgs</p>
+<p>Ø         点到点类型</p>
+<p>Sender类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.jms.Connection;</div><div class="line"><span class="keyword">import</span> javax.jms.ConnectionFactory;</div><div class="line"><span class="keyword">import</span> javax.jms.DeliveryMode;</div><div class="line"><span class="keyword">import</span> javax.jms.Destination;</div><div class="line"><span class="keyword">import</span> javax.jms.JMSException;</div><div class="line"><span class="keyword">import</span> javax.jms.MessageProducer;</div><div class="line"><span class="keyword">import</span> javax.jms.Session;</div><div class="line"><span class="keyword">import</span> javax.jms.TextMessage;</div><div class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnection;</div><div class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnectionFactory;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sender</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SEND_NUMBER = <span class="number">2000</span>;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">       <span class="comment">// ConnectionFactory ：连接工厂，JMS用它创建连接</span></div><div class="line">       ConnectionFactory connectionFactory;</div><div class="line">       <span class="comment">// Connection ：JMS客户端到JMS Provider的连接</span></div><div class="line">       Connection connection = <span class="keyword">null</span>;</div><div class="line">        <span class="comment">// Session：一个发送或接收消息的线程</span></div><div class="line">       Session session;</div><div class="line">       <span class="comment">// Destination ：消息的目的地;消息发送给谁.</span></div><div class="line">       Destination destination;</div><div class="line">       <span class="comment">// MessageProducer：消息发送者</span></div><div class="line">       MessageProducer producer;</div><div class="line">        <span class="comment">// TextMessage message;</span></div><div class="line">        <span class="comment">// 构造ConnectionFactory实例对象，此处采用ActiveMq的实现</span></div><div class="line">       connectionFactory = <span class="keyword">new</span> ActiveMQConnectionFactory(</div><div class="line">              ActiveMQConnection.DEFAULT_USER,</div><div class="line">              ActiveMQConnection.DEFAULT_PASSWORD,</div><div class="line">              <span class="string">"tcp://localhost:61616"</span>);</div><div class="line">       <span class="keyword">try</span>&#123;</div><div class="line">           <span class="comment">// 构造从工厂得到连接对象</span></div><div class="line">           connection = connectionFactory.createConnection();</div><div class="line">           <span class="comment">//启动</span></div><div class="line">           connection.start();</div><div class="line">           <span class="comment">//获取操作连接</span></div><div class="line">           session = connection.createSession(<span class="keyword">false</span>, Session.AUTO_ACKNOWLEDGE);</div><div class="line">           <span class="comment">//获取session，FirstQueue是一个服务器的queue                destination = session.createQueue("FirstQueue");</span></div><div class="line">           <span class="comment">// 得到消息生成者【发送者】</span></div><div class="line">           producer = session.createProducer(destination);</div><div class="line">           <span class="comment">//设置不持久化</span></div><div class="line">           producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);</div><div class="line">           <span class="comment">//构造消息</span></div><div class="line">           sendMessage(session, producer);</div><div class="line">           <span class="comment">//session.commit();</span></div><div class="line">           connection.close();</div><div class="line">       &#125;</div><div class="line">       <span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">           e.printStackTrace();</div><div class="line">       &#125;<span class="keyword">finally</span>&#123;</div><div class="line">           <span class="keyword">if</span>(<span class="keyword">null</span> != connection)&#123;</div><div class="line">              <span class="keyword">try</span> &#123;</div><div class="line">                  connection.close();</div><div class="line">              &#125; <span class="keyword">catch</span> (JMSException e) &#123;</div><div class="line">                  <span class="comment">// TODO Auto-generatedcatch block</span></div><div class="line">                  e.printStackTrace();</div><div class="line">              &#125;</div><div class="line">           &#125;    </div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(Session session, MessageProducer producer)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=SEND_NUMBER; i++)&#123;</div><div class="line">           TextMessage message = session.createTextMessage(<span class="string">"ActiveMQ发送消息"</span>+i);</div><div class="line">           System.out.println(<span class="string">"发送消息：ActiveMQ发送的消息"</span>+i);</div><div class="line">           producer.send(message);</div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Receiver类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.jms.Connection;</div><div class="line"><span class="keyword">import</span> javax.jms.ConnectionFactory;</div><div class="line"><span class="keyword">import</span> javax.jms.Destination;</div><div class="line"><span class="keyword">import</span> javax.jms.MessageConsumer;</div><div class="line"><span class="keyword">import</span> javax.jms.Session;</div><div class="line"><span class="keyword">import</span> javax.jms.TextMessage;</div><div class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnection;</div><div class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnectionFactory;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Receiver</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">       <span class="comment">// ConnectionFactory ：连接工厂，JMS用它创建连接</span></div><div class="line">        ConnectionFactory connectionFactory;</div><div class="line">        <span class="comment">// Connection ：JMS客户端到JMS Provider的连接</span></div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        <span class="comment">// Session：一个发送或接收消息的线程</span></div><div class="line">        Session session;</div><div class="line">        <span class="comment">// Destination ：消息的目的地;消息发送给谁.</span></div><div class="line">        Destination destination;</div><div class="line">        <span class="comment">// 消费者，消息接收者</span></div><div class="line">        MessageConsumer consumer;</div><div class="line">        connectionFactory = newActiveMQConnectionFactory(</div><div class="line">                ActiveMQConnection.DEFAULT_USER,</div><div class="line">                ActiveMQConnection.DEFAULT_PASSWORD,</div><div class="line">                <span class="string">"tcp://localhost:61616"</span>);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//得到连接对象</span></div><div class="line">            connection =connectionFactory.createConnection();</div><div class="line">            <span class="comment">// 启动</span></div><div class="line">            connection.start();</div><div class="line">            <span class="comment">// 获取操作连接</span></div><div class="line">            session = connection.createSession(<span class="keyword">false</span>,</div><div class="line">                    Session.AUTO_ACKNOWLEDGE);</div><div class="line">            <span class="comment">// 创建Queue</span></div><div class="line">           destination = session.createQueue(<span class="string">"FirstQueue"</span>);</div><div class="line">            consumer =session.createConsumer(destination);        </div><div class="line">            <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</div><div class="line">              <span class="comment">//设置接收者接收消息的时间，为了便于测试，这里定为100s</span></div><div class="line">              TextMessagemessage = (TextMessage)consumer.receive(<span class="number">100000</span>);</div><div class="line">              <span class="keyword">if</span>(<span class="keyword">null</span> != message)&#123;</div><div class="line">                 System.out.println(<span class="string">"收到消息"</span> +message.getText());</div><div class="line">              &#125;<span class="keyword">else</span> <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">        e.printStackTrace();</div><div class="line">        &#125;<span class="keyword">finally</span> &#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> != connection)</div><div class="line">                    connection.close();</div><div class="line">            &#125; <span class="keyword">catch</span> (Throwable ignore) &#123;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>测试：</p>
+<p>测试一：</p>
+<p>A、 先运行Sender类，待运行完毕后，运行Receiver类</p>
+<p>B、 在此过程中activemq数据库的activemq_msgs表中没有数据</p>
+<p>C、 再次运行Receiver，消费不到任何信息</p>
+<p>测试二：</p>
+<p>A、  先运行Sender类</p>
+<p>B、 重启电脑</p>
+<p>C、 运行Receiver类，无任何信息被消费</p>
+<p>测试三：</p>
+<p>A、   把Sender类中的producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);改为producer.setDeliveryMode(DeliveryMode.PERSISTENT);</p>
+<p>B、   先运行Sender类，待运行完毕后，运行Receiver类</p>
+<p>C、   在此过程中activemq数据库的activemq_msgs表中有数据生成，运行完Receiver类后，数据清除</p>
+<p>测试四：</p>
+<p>A、    把Sender类中的producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);改为producer.setDeliveryMode(DeliveryMode.PERSISTENT);</p>
+<p>B、    运行Sender类</p>
+<p>C、    重启电脑</p>
+<p>D、    运行Receiver类，有消息被消费</p>
+<p>结论：   </p>
+<p>通过以上测试，可以发现，在P2P类型中当DeliveryMode设置为NON_PERSISTENCE时，消息被保存在内存中，而当DeliveryMode设置为PERSISTENCE时，消息保存在broker的相应的文件或者数据库中。而且P2P中消息一旦被Consumer消费就从broker中删除。</p>
+<p>Ø 发布/订阅类型</p>
+<p>Sender类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.jms.Connection;</div><div class="line"><span class="keyword">import</span> javax.jms.ConnectionFactory;</div><div class="line"><span class="keyword">import</span> javax.jms.DeliveryMode;</div><div class="line"><span class="keyword">import</span> javax.jms.Destination;</div><div class="line"><span class="keyword">import</span> javax.jms.JMSException;</div><div class="line"><span class="keyword">import</span> javax.jms.MessageProducer;</div><div class="line"><span class="keyword">import</span> javax.jms.Session;</div><div class="line"><span class="keyword">import</span> javax.jms.TextMessage;</div><div class="line"><span class="keyword">import</span> javax.jms.Topic;</div><div class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnection;</div><div class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnectionFactory;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sender</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SEND_NUMBER = <span class="number">100</span>;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">       <span class="comment">// ConnectionFactory ：连接工厂，JMS用它创建连接</span></div><div class="line">       ConnectionFactory connectionFactory;</div><div class="line">       <span class="comment">// Connection ：JMS客户端到JMS Provider的连接</span></div><div class="line">       Connection connection = <span class="keyword">null</span>;</div><div class="line">        <span class="comment">// Session：一个发送或接收消息的线程</span></div><div class="line">       Session session;</div><div class="line">       <span class="comment">// MessageProducer：消息发送者</span></div><div class="line">       MessageProducer producer;</div><div class="line">        <span class="comment">// TextMessage message;</span></div><div class="line">        <span class="comment">// 构造ConnectionFactory实例对象，此处采用ActiveMq的实现</span></div><div class="line">       connectionFactory = <span class="keyword">new</span> ActiveMQConnectionFactory(</div><div class="line">              ActiveMQConnection.DEFAULT_USER,</div><div class="line">               ActiveMQConnection.DEFAULT_PASSWORD,</div><div class="line">              <span class="string">"tcp://localhost:61616"</span>);</div><div class="line">       <span class="keyword">try</span>&#123;</div><div class="line">           <span class="comment">//得到连接对象</span></div><div class="line">           connection = connectionFactory.createConnection();</div><div class="line">           <span class="comment">//启动</span></div><div class="line">           connection.start();</div><div class="line">           <span class="comment">//获取操作连接</span></div><div class="line">           session = connection.createSession(<span class="keyword">false</span>, Session.AUTO_ACKNOWLEDGE);        </div><div class="line">           Topic topic = session.createTopic(<span class="string">"MQ_test"</span>);       </div><div class="line">           <span class="comment">// 得到消息生成者【发送者】</span></div><div class="line">           producer = session.createProducer(topic);</div><div class="line">           <span class="comment">//设置持久化</span></div><div class="line">           producer.setDeliveryMode(DeliveryMode.PERSISTENT);</div><div class="line">           <span class="comment">//构造消息</span></div><div class="line">           sendMessage(session, producer);</div><div class="line">           <span class="comment">//session.commit();</span></div><div class="line">           connection.close();</div><div class="line">       &#125;</div><div class="line">       <span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">           e.printStackTrace();</div><div class="line">       &#125;<span class="keyword">finally</span>&#123;</div><div class="line">           <span class="keyword">if</span>(<span class="keyword">null</span> != connection)&#123;</div><div class="line">              <span class="keyword">try</span> &#123;</div><div class="line">                  connection.close();</div><div class="line">              &#125; <span class="keyword">catch</span> (JMSException e) &#123;</div><div class="line">                  <span class="comment">// TODO Auto-generatedcatch block</span></div><div class="line">                  e.printStackTrace();</div><div class="line">              &#125;</div><div class="line">           &#125;    </div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(Session session, MessageProducer producer)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=SEND_NUMBER; i++)&#123;</div><div class="line">           TextMessage message = session.createTextMessage(<span class="string">"ActiveMQ发送消息"</span>+i);</div><div class="line">           System.out.println(<span class="string">"发送消息：ActiveMQ发送的消息"</span>+i);</div><div class="line">           producer.send(message);</div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Receiver类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">import javax.jms.Connection;</div><div class="line">import javax.jms.ConnectionFactory;</div><div class="line">import javax.jms.Destination;</div><div class="line">import javax.jms.MessageConsumer;</div><div class="line">import javax.jms.Session;</div><div class="line">import javax.jms.TextMessage;</div><div class="line">import javax.jms.Topic;</div><div class="line"> </div><div class="line">import org.apache.activemq.ActiveMQConnection;</div><div class="line">import org.apache.activemq.ActiveMQConnectionFactory;</div><div class="line">public class Receiver &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">       // ConnectionFactory ：连接工厂，JMS用它创建连接</div><div class="line">        ConnectionFactory connectionFactory;</div><div class="line">        // Connection ：JMS客户端到JMS Provider的连接</div><div class="line">        Connection connection = null;</div><div class="line">        // Session：一个发送或接收消息的线程</div><div class="line">        Session session; </div><div class="line">        // 消费者，消息接收者</div><div class="line">        MessageConsumer consumer;</div><div class="line">        connectionFactory = newActiveMQConnectionFactory(</div><div class="line">               ActiveMQConnection.DEFAULT_USER,</div><div class="line">                ActiveMQConnection.DEFAULT_PASSWORD,</div><div class="line">                &quot;tcp://localhost:61616&quot;);</div><div class="line">        try &#123;</div><div class="line">            // 构造从工厂得到连接对象</div><div class="line">            connection =connectionFactory.createConnection();</div><div class="line">            </div><div class="line">            connection.setClientID(&quot;clientID001&quot;);</div><div class="line">            // 启动</div><div class="line">            connection.start();</div><div class="line">            // 获取操作连接</div><div class="line">            session = connection.createSession(false,</div><div class="line">                    Session.AUTO_ACKNOWLEDGE);</div><div class="line">            // 获取session</div><div class="line">           Topic topic = session.createTopic(&quot;MQ_test&quot;);       </div><div class="line">           // 得到消息生成者【发送者】</div><div class="line">           consumer = session.createDurableSubscriber(topic, &quot;MQ_sub&quot;);</div><div class="line">           </div><div class="line">            while(true)&#123;</div><div class="line">              //设置接收者接收消息的时间，为了便于测试，这里谁定为100s</div><div class="line">              TextMessagemessage = (TextMessage)consumer.receive(100000);</div><div class="line">              if(null != message)&#123;</div><div class="line">                 System.out.println(&quot;收到消息&quot; +message.getText());</div><div class="line">              &#125;else break;</div><div class="line">            &#125;</div><div class="line">        &#125;catch(Exception e)&#123;</div><div class="line">        e.printStackTrace();</div><div class="line">        &#125;finally &#123;</div><div class="line">            try &#123;</div><div class="line">                if (null != connection)</div><div class="line">                    connection.close();</div><div class="line">            &#125; catch (Throwable ignore) &#123;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>测试：</p>
+<p>测试一：</p>
+<p>A、先启动Sender类</p>
+<p>B、再启动Receiver类</p>
+<p>C、结果无任何记录被订阅</p>
+<p>测试二：</p>
+<p>A、先启动Receiver类，让Receiver在相关主题上进行订阅</p>
+<p>B、停止Receiver类，再启动Sender类</p>
+<p>C、待Sender类运行完成后，再启动Receiver类</p>
+<p>D、结果发现相应主题的信息被订阅</p>
+<p>Ø         </p>
+<p>作者：xyw_Eliot 发表于2013-6-19 14:01:39 <a href="http://itindex.net/detail/44553-activemq" target="_blank" rel="external">原文链接</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ActiveMQ/" rel="tag">#ActiveMQ</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/13/奇怪的Java题：为什么1000 == 1000返回为False，而100 == 100会返回为True/" rel="prev">奇怪的Java题：为什么1000 == 1000返回为False，而100 == 100会返回为True</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/10/Memcached 集群架构方面的问题/" rel="next">Memcached 集群架构方面的问题</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/07/11/ActiveMQ持久化方式/"
+     data-title="ActiveMQ持久化方式"
+     data-content=""
+     data-url="http://dingran.tk/2016/07/11/ActiveMQ持久化方式/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/07/11/ActiveMQ持久化方式/"
+                   data-title="ActiveMQ持久化方式" data-url="http://dingran.tk/2016/07/11/ActiveMQ持久化方式/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

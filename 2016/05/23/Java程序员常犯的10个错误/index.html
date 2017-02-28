@@ -1,0 +1,799 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="java," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="本文总结了Java程序员常犯的10个错误。
+1. 把Array转化成ArrayList把Array转化成ArrayList，程序员经常用以下方法：
+1List&amp;lt;String&amp;gt; list = Arrays.asList(arr);
+Arrays.asList() 实际上返回一个ArrayList，但是这个ArrayList是Arrays的一个内部私有类，而不是java.util.Arra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java程序员常犯的10个错误">
+<meta property="og:url" content="http://dingran.tk/2016/05/23/Java程序员常犯的10个错误/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="本文总结了Java程序员常犯的10个错误。
+1. 把Array转化成ArrayList把Array转化成ArrayList，程序员经常用以下方法：
+1List&amp;lt;String&amp;gt; list = Arrays.asList(arr);
+Arrays.asList() 实际上返回一个ArrayList，但是这个ArrayList是Arrays的一个内部私有类，而不是java.util.Arra">
+<meta property="og:updated_time" content="2016-05-23T15:33:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java程序员常犯的10个错误">
+<meta name="twitter:description" content="本文总结了Java程序员常犯的10个错误。
+1. 把Array转化成ArrayList把Array转化成ArrayList，程序员经常用以下方法：
+1List&amp;lt;String&amp;gt; list = Arrays.asList(arr);
+Arrays.asList() 实际上返回一个ArrayList，但是这个ArrayList是Arrays的一个内部私有类，而不是java.util.Arra">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> Java程序员常犯的10个错误 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              Java程序员常犯的10个错误
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-05-23T22:37:04+08:00" content="2016-05-23">
+            2016-05-23
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/java/" itemprop="url" rel="index">
+                  <span itemprop="name">java</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/05/23/Java程序员常犯的10个错误/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/23/Java程序员常犯的10个错误/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/05/23/Java程序员常犯的10个错误/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>本文总结了Java程序员常犯的10个错误。</p>
+<h1 id="1-把Array转化成ArrayList"><a href="#1-把Array转化成ArrayList" class="headerlink" title="1. 把Array转化成ArrayList"></a>1. 把Array转化成ArrayList</h1><p>把Array转化成ArrayList，程序员经常用以下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">List&lt;String&gt; list = Arrays.asList(arr);</div></pre></td></tr></table></figure>
+<p>Arrays.asList() 实际上返回一个ArrayList，但是这个ArrayList是Arrays的一个内部私有类，而不是java.util.ArrayList类。这个私有类java.util.Arrays.ArrayList有set(), get(), contains()方法，但是不能够添加新的元素。它的大小是固定的。如果你想要一个java.util.ArrayList，正确的方法是:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;String&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(arr));</div></pre></td></tr></table></figure>
+<p>java.util.ArrayList的构造函数可以接受一个集合类型。java.util.Arrays.ArrayList也继承了集合类型，所以可以作用参数使用。</p>
+<h1 id="2-检查数组是否包含一个值"><a href="#2-检查数组是否包含一个值" class="headerlink" title="2. 检查数组是否包含一个值"></a>2. 检查数组是否包含一个值</h1><p>开发人员经常做的是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Set&lt;String&gt; set = <span class="keyword">new</span> HashSet&lt;String&gt;(Arrays.asList(arr));</div><div class="line"><span class="keyword">return</span> set.contains(targetValue);</div></pre></td></tr></table></figure>
+<p>这个代码是工作的，但没有没有效率。把列表转换成set没有必要，需要额外的时间。正确的方法是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Arrays.asList(arr).contains(targetValue);</div></pre></td></tr></table></figure>
+<p>或者，一个简单的loop：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(String s: arr)&#123;</div><div class="line">	<span class="keyword">if</span>(s.equals(targetValue))</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">return</span> <span class="keyword">false</span>;</div></pre></td></tr></table></figure>
+<p>第一种比第二种更具有可读性。</p>
+<h1 id="3-在循环中删除一个列表元素"><a href="#3-在循环中删除一个列表元素" class="headerlink" title="3. 在循环中删除一个列表元素"></a>3. 在循环中删除一个列表元素</h1><p>考虑下面的代码，迭代过程中删除元素：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>, <span class="string">"d"</span>));</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; list.size(); i++) &#123;</div><div class="line">	list.remove(i);</div><div class="line">&#125;</div><div class="line">System.out.println(list);</div></pre></td></tr></table></figure>
+<p>这段代码的输出是：</p>
+<blockquote>
+<p>[b, d]</p>
+</blockquote>
+<p>这个方法有一个严重的问题。当元素被移除，该列表的大小缩减，元素索引也随之发生了变化。所以，如果你想通过使用索引来删除一个循环内的多个元素，就会导致错误的结果。</p>
+<p>你可能猜到可以使用iterator来删除循环中的元素。在Java中的foreach循环的工作原理就像一个iterator。 但是在这里也会发生错误。请看下面的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>, <span class="string">"d"</span>));</div><div class="line"> </div><div class="line"><span class="keyword">for</span> (String s : list) &#123;</div><div class="line">	<span class="keyword">if</span> (s.equals(<span class="string">"a"</span>))</div><div class="line">		list.remove(s);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的foreach loop代码会抛出一个异常ConcurrentModificationException. 但是下面这段代码不会。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">ArrayList&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>, <span class="string">"d"</span>));</div><div class="line">Iterator&lt;String&gt; iter = list.iterator();</div><div class="line"><span class="keyword">while</span> (iter.hasNext()) &#123;</div><div class="line">	String s = iter.next();</div><div class="line"> </div><div class="line">	<span class="keyword">if</span> (s.equals(<span class="string">"a"</span>)) &#123;</div><div class="line">		iter.remove();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过分析ArrayList.iterator()的原代码，我们可以发现next()方法必须要在remove()方法前被调用。在foreach loop中，编译器产生的代码会先调用next()方法，从而产生异常ConcurrentModificationException。请查看ArrayList.iterator()的原代码。</p>
+<h1 id="4-Hashtable-与-HashMap"><a href="#4-Hashtable-与-HashMap" class="headerlink" title="4. Hashtable 与 HashMap"></a>4. Hashtable 与 HashMap</h1><p>按照算法惯例，Hashtable是数据结构的名称。但在Java中，数据结构的名称是HashMap。Hashtable是同步的版本。所以很多时候你并不需要Hashtable，而是HashMap。 这两篇文章详细介绍了各种Map的区别和常见的问题： HashMap vs. TreeMap vs. Hashtable vs. LinkedHashMap, Map常见10大问题,</p>
+<h1 id="5-使用原始类型Collection"><a href="#5-使用原始类型Collection" class="headerlink" title="5.使用原始类型Collection"></a>5.使用原始类型Collection</h1><p>在Java中，原始类型和无界通配符类型很容易混在一起。以Set为例，Set是原始类型，而Set&lt;?&gt;是无界通配符类型。</p>
+<p>考虑下面的代码，它使用原始类型的List作为参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(List list, Object o)</span></span>&#123;</div><div class="line">	list.add(o);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">	List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">	add(list, <span class="number">10</span>);</div><div class="line">	String s = list.get(<span class="number">0</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此代码将抛出一个异常：</p>
+<blockquote>
+<p>Exception in thread “main” java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String<br>    at …</p>
+</blockquote>
+<p>使用原始类型的Collection是危险的，因为原始类型的Collection跳过类型检查。另外值得一提的是Set, Set&lt;?&gt;, Set<object>之间存在着巨大的差异。 了解更多，请查看原始类型 vs. 无界通配符类型 和 类型擦除。</object></p>
+<h1 id="6-访问级别"><a href="#6-访问级别" class="headerlink" title="6. 访问级别"></a>6. 访问级别</h1><p>很多时候，开发者使用public修饰字段。这样做的好处是很容易通过直接引用来获取字段的值，但是这是一个非常糟糕的设计。经验法则是“给成员的访问级别尽可能低”。可以查看Java4种不同的访问级别public, default, protected, and private。</p>
+<h1 id="7-ArrayList-与-LinkedList"><a href="#7-ArrayList-与-LinkedList" class="headerlink" title="7. ArrayList 与 LinkedList"></a>7. ArrayList 与 LinkedList</h1><p>当开发人员不知道ArrayList和LinkedList的区别的时候，他们经常使用的是ArrayList，可能因为它看起来面熟。但是ArrayList和LinkedList之间有巨大的性能差异。 简单来说如果有大量的添加/删除操作，而没有很多随机存取操作，LinkedList的应该是首选。可以查看ArrayList与LinkedList了解它们之间更多的区别。</p>
+<h1 id="8-可变性与不变性"><a href="#8-可变性与不变性" class="headerlink" title="8.可变性与不变性"></a>8.可变性与不变性</h1><p>不可变对象有很多优点，如简单性，安全性等。但是它需要为每个不同的值创造一个单独的对象，对象太多可能会导致垃圾回收的成本高。所以可变和不可变之间进行选择时应该有一个平衡。</p>
+<p>一般情况下，使用可变对象，以避免产生过多的中间对象。一个经典的例子是串联了大量的字符串。如果使用的是不可变的字符串String，会产生很多可以垃圾回收的对象。这样既浪费时间也浪费CPU的运算能力，使用可变对象是正确的解决方案（如StringBuilder）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">String result=<span class="string">""</span>;</div><div class="line"><span class="keyword">for</span>(String s: arr)&#123;</div><div class="line">	result = result + s;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>另外一些情况，可变对象刚更加合适可取。例如排序(Collections.sort())。如果Collection是不可变的，排序方法每次将会返回一个新的Collection，这样会极其浪费资源。 可以看看为什么在Java中String被设计成不可变？</p>
+<h1 id="9-父类和子类的构造函数"><a href="#9-父类和子类的构造函数" class="headerlink" title="9. 父类和子类的构造函数"></a>9. 父类和子类的构造函数</h1><p>以上这段代码出现编译错误，因为默认的父类构造函数未定义。在Java中，如果一个类没有定义构造函数，编译器会默认插入一个默认的无参数构造函数。如果程序员定义构造函数，编译器将不插入默认的无参数构造函数。上面的代码由于自定义了有参数的构造函数，编译器不再插入无参数的构造函数。子类的构造函数，无论是有参数或无参数，都将调用父类无参构造函数。当子类需要父类的无参数构造函数的时候，就发生了错误。</p>
+<p>解决这个问题，可以1）增加一个父类构造函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Super</span><span class="params">()</span></span>&#123;</div><div class="line">    System.out.println(<span class="string">"Super"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>，或2）删除自定义的父类构造函数，或3）添加super(value)到子类构造函数。更多请查看父类和子类的构造函数。</p>
+<h1 id="10-“”-与-Constructor"><a href="#10-“”-与-Constructor" class="headerlink" title="10. “” 与 Constructor?"></a>10. “” 与 Constructor?</h1><p>字符串可以通过两种方式创建：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//1. use double quotes</span></div><div class="line">String x = <span class="string">"abc"</span>;</div><div class="line"><span class="comment">//2. use constructor</span></div><div class="line">String y = <span class="keyword">new</span> String(<span class="string">"abc"</span>);</div></pre></td></tr></table></figure>
+<p>这两者有什么区别呢？ 下面的例子可以提供一个快速的答案：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">String a = <span class="string">"abcd"</span>;</div><div class="line">String b = <span class="string">"abcd"</span>;</div><div class="line">System.out.println(a == b);  <span class="comment">// True</span></div><div class="line">System.out.println(a.equals(b)); <span class="comment">// True</span></div><div class="line"> </div><div class="line">String c = <span class="keyword">new</span> String(<span class="string">"abcd"</span>);</div><div class="line">String d = <span class="keyword">new</span> String(<span class="string">"abcd"</span>);</div><div class="line">System.out.println(c == d);  <span class="comment">// False</span></div><div class="line">System.out.println(c.equals(d)); <span class="comment">// True</span></div></pre></td></tr></table></figure>
+<p>关于它们是如何分配内存的更多信息，请查看创建Java字符串使用“”或构造函数？</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>以上是我根据GitHub上的开源项目，Stack Overflow上的问题，和谷歌热门搜索词所做的总结。虽然它们不是准确的top 10，但很常见的。如果你有不同的观点或者指出更常见的错误，请留言。我也会更新这个列表。非常感谢。</p>
+<p>英文原文： <a href="http://www.programcreek.com/2014/05/top-10-mistakes-java-developers-make/" target="_blank" rel="external">Top 10 Mistakes Java Developers Make</a></p>
+<p>转载原文：<a href="http://www.programcreek.com/2014/01/java%E7%A8%8B%E5%BA%8F%E5%91%98%E5%B8%B8%E7%8A%AF%E7%9A%8410%E4%B8%AA%E9%94%99%E8%AF%AF/" target="_blank" rel="external">http://www.programcreek.com/2014/01/java%E7%A8%8B%E5%BA%8F%E5%91%98%E5%B8%B8%E7%8A%AF%E7%9A%8410%E4%B8%AA%E9%94%99%E8%AF%AF/</a></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag">#java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/25/java中使用Protobuf/" rel="prev">java中使用Protobuf</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/22/深入分析 iBATIS 框架之系统架构与映射原理/" rel="next">深入分析 iBATIS 框架之系统架构与映射原理</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/23/Java程序员常犯的10个错误/"
+     data-title="Java程序员常犯的10个错误"
+     data-content=""
+     data-url="http://dingran.tk/2016/05/23/Java程序员常犯的10个错误/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/05/23/Java程序员常犯的10个错误/"
+                   data-title="Java程序员常犯的10个错误" data-url="http://dingran.tk/2016/05/23/Java程序员常犯的10个错误/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-把Array转化成ArrayList"><span class="nav-number">1.</span> <span class="nav-text">1. 把Array转化成ArrayList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-检查数组是否包含一个值"><span class="nav-number">2.</span> <span class="nav-text">2. 检查数组是否包含一个值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-在循环中删除一个列表元素"><span class="nav-number">3.</span> <span class="nav-text">3. 在循环中删除一个列表元素</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Hashtable-与-HashMap"><span class="nav-number">4.</span> <span class="nav-text">4. Hashtable 与 HashMap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-使用原始类型Collection"><span class="nav-number">5.</span> <span class="nav-text">5.使用原始类型Collection</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-访问级别"><span class="nav-number">6.</span> <span class="nav-text">6. 访问级别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-ArrayList-与-LinkedList"><span class="nav-number">7.</span> <span class="nav-text">7. ArrayList 与 LinkedList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-可变性与不变性"><span class="nav-number">8.</span> <span class="nav-text">8.可变性与不变性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9-父类和子类的构造函数"><span class="nav-number">9.</span> <span class="nav-text">9. 父类和子类的构造函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-“”-与-Constructor"><span class="nav-number">10.</span> <span class="nav-text">10. “” 与 Constructor?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">11.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

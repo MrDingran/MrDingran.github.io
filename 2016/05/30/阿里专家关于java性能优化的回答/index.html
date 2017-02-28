@@ -1,0 +1,780 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="java,优化," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="原文：http://www.neitui.me/?name=event&amp;amp;handle=dk&amp;amp;id=26在内推网看到阿里专家游骥的关于提升java性能的回答与见解，整理如下：
+
+问：一个较大型java服务端系统，交易用时较长，但系统cpu、内存等资源使用并不高，怎样能知道系统用时的主要瓶颈在哪？
+答：cpu、内容都不高的话，往往可能是调用的下游系统响应比较慢，或者自身应用当中有临界资">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里专家关于java性能优化的回答">
+<meta property="og:url" content="http://dingran.tk/2016/05/30/阿里专家关于java性能优化的回答/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="原文：http://www.neitui.me/?name=event&amp;amp;handle=dk&amp;amp;id=26在内推网看到阿里专家游骥的关于提升java性能的回答与见解，整理如下：
+
+问：一个较大型java服务端系统，交易用时较长，但系统cpu、内存等资源使用并不高，怎样能知道系统用时的主要瓶颈在哪？
+答：cpu、内容都不高的话，往往可能是调用的下游系统响应比较慢，或者自身应用当中有临界资">
+<meta property="og:updated_time" content="2016-05-30T15:10:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="阿里专家关于java性能优化的回答">
+<meta name="twitter:description" content="原文：http://www.neitui.me/?name=event&amp;amp;handle=dk&amp;amp;id=26在内推网看到阿里专家游骥的关于提升java性能的回答与见解，整理如下：
+
+问：一个较大型java服务端系统，交易用时较长，但系统cpu、内存等资源使用并不高，怎样能知道系统用时的主要瓶颈在哪？
+答：cpu、内容都不高的话，往往可能是调用的下游系统响应比较慢，或者自身应用当中有临界资">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> 阿里专家关于java性能优化的回答 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              阿里专家关于java性能优化的回答
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-05-30T23:07:04+08:00" content="2016-05-30">
+            2016-05-30
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/java/" itemprop="url" rel="index">
+                  <span itemprop="name">java</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/05/30/阿里专家关于java性能优化的回答/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/30/阿里专家关于java性能优化的回答/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/05/30/阿里专家关于java性能优化的回答/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>原文：<a href="http://www.neitui.me/?name=event&amp;handle=dk&amp;id=26" target="_blank" rel="external">http://www.neitui.me/?name=event&amp;handle=dk&amp;id=26</a><br>在内推网看到阿里专家游骥的关于提升java性能的回答与见解，整理如下：</p>
+<hr>
+<p>问：一个较大型java服务端系统，交易用时较长，但系统cpu、内存等资源使用并不高，怎样能知道系统用时的主要瓶颈在哪？</p>
+<p>答：cpu、内容都不高的话，往往可能是调用的下游系统响应比较慢，或者自身应用当中有临界资源(比如锁），或者系统里有大量的线程处于sleep或者wait状态，或者网络和磁盘的访问是瓶颈。排查的话，最后能够进行一次单台机器的压测，先压到系统的极限能力，先观察网络和磁盘是否都正常，然后jstack看下线程都在干啥（是否有大量的线程wait或者sleep在同一个位置，有的话这里就是瓶颈），同时关注所有下游依赖的调用耗时（是否下游依赖非常慢）。诊断到具体的原因后再对症下药，药到病除。</p>
+<hr>
+<p>问：java开发中如何使用Redis提高性能？</p>
+<p>答：Redis提升性能通常可以代表一类提升性能的方式：缓存。缓存在性能提升上是一个很好的武器，无论是前端页面还是后端数据等场景都可以通过采用缓存的方式来大大提升性能，缓存在性能提升的效果上往往是立竿见影的。对于如何使用缓存，什么样的数据适合缓存需要有一个判断，往往缓存的数据需要满足多读少写的特性，也就是不会经常更新（或者能接受过期数据），如果更新得非常频繁，缓存的价值就会大打折扣了。此外，缓存稍微会带来一些额外的复杂性以及在排查问题上带来一些干扰因素也是需要考虑的。</p>
+<hr>
+<p>问：客户端到Nginx和Nginx代理到后端java应用什么场景更加适合开启长连接，对于提供的接口如何在更好的实现API的降级和流控呢？思路是？</p>
+<p>答：从客户端到nginx什么时候用长连接：这个得看客户端是否会在短时间内发起多次请求，拿淘宝交易来说，用户要买一个东西需要先浏览商品，浏览商品一般会货比三家，短时间内会发起多次商品浏览的请求，所以商品详情这个系统的客户端到nginx可以采用长连接或者keepalive；浏览完商品后，用户要购买，用户浏览了20个商品可能最终只购买一个，所以购买这个系统就没有太多必要采用长连接了。长连接的好处是能对多频次的请求提升性能，节约资源；但是长连接的状态系统也是需要花费资源去维护的，所以这里会有个平衡。<br>从nginx到java后端：这个层面最好都还是采用长连接比较好，upstream的长连接还是能带来比较大的性能提升,Nginx从 1.1.4 开始，实现了对后端机器http, fastcgi, memcache等协议的长连接支持，这一特性也大大降级了系统的负载。<br>api的降级和流控：降级和流控可以做到web服务器层（比如nginx），也可以做到应用层（比如java程序中），降级和限流最核心的概念包含：资源（你要保护什么？）、状态统计（对资源使用情况的监控）、规则与策略（到达某个场景时做什么操作）。在阿里，应用端我们有专门的框架sentinel，web服务器端我们有自己开发的nginx模块。流控和降级对保障系统的稳定性尤为重要。</p>
+<hr>
+<p>问：如何有效的跟踪JVM中线程总数及各线程所占资源?</p>
+<p>答：获取jvm线程数的方法比较多。1、jvm自带的工具jconsole和virtualvm等都能看到； 2、jstack pid能看到每一个线程的状态，自然也是能统计线程数的；3、还有一个我常用的，在linux下我会用ps -Lf pid|wc 去看下进程下的线程数。<br>线程所占的资源这个不太好衡量了，cpu、内存等资源都是共享的，可以通过看jstack看线程的运行状态来看它是否占据着cpu，堆内存的话是共享的，跟线程本身关系不大，此外可以通过-Xss来线程栈的大小限制。</p>
+<hr>
+<p>问：什么时候用接口，什么时候用抽象？</p>
+<p>答：接口与抽象类的选择有时候会不太好选择，但是这个的选择大部分时候都并没有那么重要，可以给一些建议：</p>
+<ol>
+<li>抽象类跟普通的类比就是可以实现一些方法逻辑，而有个别方法可以不实现，让子类实现。</li>
+<li>接口只能定义方法，不能有任何实现，所以如果要有逻辑实现，而部分方法需要子类实现可以用抽象类。</li>
+<li>java不支持多继承，但可以实现多个接口，所以在继承环境中，如果考虑到多继承需要用接口。</li>
+</ol>
+<hr>
+<p>问：java的垃圾回收机制，采用的是roottrance来判断对象是否是垃圾的，这个对象的多层引用是怎么判断的呢？能否说一下回收原理和垃圾对象的判断?</p>
+<p>答：gc的root主要包含：<br>Java虚拟机栈中变量所引用的对象（大部分）<br>方法区中静态属性引用的对象<br>方法区中常量引用的对象<br>JNI Native方法引用的对象<br>如果是多层引用的话会一级一级往下找，从root对象往下找，能到达的都是属于不能被gc的对象，这个找的过程就好比一个染色，如果下一个对象已经被染色了，则不再往下递归。</p>
+<hr>
+<p>问：请分享一下你成长为资深专家的历程与成功的秘诀</p>
+<p>答：“不积跬步无以至千里，不积小流无以成江海”平时多积累，多总结，多思考。技术领域的深度和广度远远大于我们的认知，一点一点进步。</p>
+<hr>
+<p>问：对于KV存储，如当有百万级+的数据，为提高性能，采用主动刷新到缓存（永久生效）。当数据量翻倍后占用存储空间也更大。如何设计读数据接口稳定性(如缓存机故障数据丢失）？如何存储热点数据？</p>
+<p>答：1、缓存机故障数据丢失<br>从实践上来说，缓存系统需要是一个集群而不是单机。如果要做到预防局部故障导致缓存数据丢失，需要从实际的场景中来探讨方案：<br>假设你的系统几乎不能容忍缓存数据的丢失，那缓存的数据是需要存多份的。如果完全不能容忍缓存数据丢失，是需要做同步多写的，这样代价比较大。通常的场景一般我们能接受少量的丢失，这样的话可以做异步的master数据同步slave结构，<br>为了提升缓存系统的性能和资源利用率，一般需要将缓存分区，每一个区可以有1个maser节点和2个slave节点，不同区的master和slave节点均匀散布在缓存集群的机器上面，如果一台机器挂了，这台机器的master则切到它的一个slave上面。对于缓存的读写操作，可以完全在master上进行（架构简单，master和salve混布后，资源利用率也挺高的）；或者写master，读slave都可以（架构稍复杂）。<br>2、存储热点<br>对于热点数据建议在应用的机器本身再加一级缓存，这个缓存可以直接在程序里面（耗费内存空间不大的话）LRU算法更新，也可以放堆外内存（避免gc）</p>
+<p>后续添加ing…</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag">#java</a>
+          
+            <a href="/tags/优化/" rel="tag">#优化</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/01/Mysql事件学习/" rel="prev">Mysql事件学习</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/28/Netty与Reactor模式/" rel="next">Netty与Reactor模式</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/30/阿里专家关于java性能优化的回答/"
+     data-title="阿里专家关于java性能优化的回答"
+     data-content=""
+     data-url="http://dingran.tk/2016/05/30/阿里专家关于java性能优化的回答/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/05/30/阿里专家关于java性能优化的回答/"
+                   data-title="阿里专家关于java性能优化的回答" data-url="http://dingran.tk/2016/05/30/阿里专家关于java性能优化的回答/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

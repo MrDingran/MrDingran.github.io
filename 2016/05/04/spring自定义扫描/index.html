@@ -1,0 +1,777 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="spring," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。
+思考思路
+
+首先要在spring启动的时候加载
+而且自定义标签要在controller的下面的方法上面，也就是说自定义标签在方法上
+要自定义package路径的问题，仿照component-scan的样子
+有个类，要进行判断所加载的package的所有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring自定义扫描">
+<meta property="og:url" content="http://dingran.tk/2016/05/04/spring自定义扫描/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。
+思考思路
+
+首先要在spring启动的时候加载
+而且自定义标签要在controller的下面的方法上面，也就是说自定义标签在方法上
+要自定义package路径的问题，仿照component-scan的样子
+有个类，要进行判断所加载的package的所有">
+<meta property="og:updated_time" content="2016-05-04T13:34:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring自定义扫描">
+<meta name="twitter:description" content="之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。
+思考思路
+
+首先要在spring启动的时候加载
+而且自定义标签要在controller的下面的方法上面，也就是说自定义标签在方法上
+要自定义package路径的问题，仿照component-scan的样子
+有个类，要进行判断所加载的package的所有">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> Spring自定义扫描 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              Spring自定义扫描
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-05-04T22:30:04+08:00" content="2016-05-04">
+            2016-05-04
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/05/04/spring自定义扫描/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/04/spring自定义扫描/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/05/04/spring自定义扫描/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。"><a href="#之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。" class="headerlink" title="之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。"></a>之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。</h2><blockquote>
+<p>思考思路</p>
+<ul>
+<li>首先要在spring启动的时候加载</li>
+<li>而且自定义标签要在controller的下面的方法上面，也就是说自定义标签在方法上</li>
+<li>要自定义package路径的问题，仿照component-scan的样子</li>
+<li>有个类，要进行判断所加载的package的所有的类那些是符合的</li>
+</ul>
+</blockquote>
+<p>查找资料，终于找到了一些有用的东西<br>1.首先定义package路径，以及加载package的相关信息，代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"oAuthInitializer"</span> <span class="attr">class</span>=<span class="string">"com.cib.weixin.web.oauth.WeixinOAuthInitializer"</span>&gt;</span>  </div><div class="line">	<span class="comment">&lt;!-- 设置扫描package的目录 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">"com.cib.weixin.web.controller"</span> /&gt;</span>  </div><div class="line">    <span class="comment">&lt;!-- 设置扫描package的目录的annotation --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span>&gt;</span>  </div><div class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span>  </div><div class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>org.springframework.stereotype.Controller<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </div><div class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.gavin.oauth.OAuth<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </div><div class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span>  </div><div class="line">    <span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </div><div class="line"><span class="comment">&lt;!-- 反射扫描annotation方法 --&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.beans.factory.config.MethodInvokingFactoryBean"</span>&gt;</span>  </div><div class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"targetObject"</span>&gt;</span>  </div><div class="line">          <span class="tag">&lt;<span class="name">ref</span> <span class="attr">local</span>=<span class="string">"weixinOAuthInitializer"</span> /&gt;</span>  </div><div class="line">      <span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </div><div class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"targetMethod"</span>&gt;</span>  </div><div class="line">          <span class="tag">&lt;<span class="name">value</span>&gt;</span>scan<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </div><div class="line">      <span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </div><div class="line">  <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>注释一下：</p>
+<ul>
+<li>采用构造器注入的方式，将两个自定义标签的定义方式注入进去</li>
+<li>然后采用反射的方法将定义参数的bean传进去<h2 id="处理类"><a href="#处理类" class="headerlink" title="处理类"></a>处理类</h2></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OAuthInitializer</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(OAuthInitializer.class);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String RESOURCE_PATTERN = <span class="string">"/**/*.class"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ResourcePatternResolver resourcePatternResolver = <span class="keyword">new</span> PathMatchingResourcePatternResolver();</div><div class="line"></div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; packagesList = <span class="keyword">new</span> LinkedList&lt;String&gt;();</div><div class="line"></div><div class="line">    <span class="keyword">private</span> List&lt;TypeFilter&gt; typeFilters = <span class="keyword">new</span> LinkedList&lt;TypeFilter&gt;();</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Set&lt;Class&lt;?&gt;&gt; classSet = <span class="keyword">new</span> HashSet&lt;Class&lt;?&gt;&gt;();</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 注入service</div><div class="line">     */</div><div class="line">    <span class="meta">@javax</span>.annotation.Resource(name = <span class="string">"configService"</span>)</div><div class="line">    <span class="keyword">private</span> ConfigService configService;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 构造函数</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> packagesToScan</div><div class="line">     *            指定哪些包需要被扫描,支持多个包"package.a,package.b"并对每个包都会递归搜索</div><div class="line">     * <span class="doctag">@param</span> annotationFilter</div><div class="line">     *            指定扫描包中含有特定注解标记的bean,支持多个注解</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeixinOAuthInitializer</span><span class="params">(String[] packagesToScan, Class&lt;? extends Annotation&gt;... annotationFilter)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (packagesToScan != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">for</span> (String packagePath : packagesToScan) &#123;</div><div class="line">                <span class="keyword">this</span>.packagesList.add(packagePath);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (annotationFilter != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">for</span> (Class&lt;? extends Annotation&gt; annotation : annotationFilter) &#123;</div><div class="line">                typeFilters.add(<span class="keyword">new</span> AnnotationTypeFilter(annotation, <span class="keyword">false</span>));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将符合条件的Bean以Class集合的形式返回</div><div class="line">     * </div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     * <span class="doctag">@throws</span> IOException</div><div class="line">     * <span class="doctag">@throws</span> ClassNotFoundException</div><div class="line">     * <span class="doctag">@throws</span> ServiceException</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> Set&lt;Class&lt;?&gt;&gt; scan() <span class="keyword">throws</span> IOException, ClassNotFoundException, ServiceException &#123;</div><div class="line"></div><div class="line">        <span class="keyword">this</span>.classSet.clear();</div><div class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.packagesList.isEmpty()) &#123;</div><div class="line">            <span class="keyword">for</span> (String pkg : <span class="keyword">this</span>.packagesList) &#123;</div><div class="line">                String pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX</div><div class="line">                        + ClassUtils.convertClassNameToResourcePath(pkg) + RESOURCE_PATTERN;</div><div class="line"></div><div class="line">                Resource[] resources = <span class="keyword">this</span>.resourcePatternResolver.getResources(pattern);</div><div class="line">                MetadataReaderFactory readerFactory = <span class="keyword">new</span> CachingMetadataReaderFactory(<span class="keyword">this</span>.resourcePatternResolver);</div><div class="line"></div><div class="line">                <span class="keyword">for</span> (Resource resource : resources) &#123;</div><div class="line">                    <span class="keyword">if</span> (resource.isReadable()) &#123;</div><div class="line">                        MetadataReader reader = readerFactory.getMetadataReader(resource);</div><div class="line">                        String className = reader.getClassMetadata().getClassName();</div><div class="line">                        <span class="comment">// 将符合class里面带有Controller与所定义的OAuth的annotation的class筛选出来</span></div><div class="line">                        <span class="keyword">if</span> (matchesEntityTypeFilter(reader, readerFactory)) &#123;</div><div class="line">                            <span class="keyword">this</span>.classSet.add(Class.forName(className));</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 如果获得到的class集合</span></div><div class="line">        <span class="keyword">if</span> (classSet != <span class="keyword">null</span> &amp;&amp; classSet.size() &gt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="comment">// 获得@OAuthRule的annotation 将值放入到NEED_OAUTH_URLS当中</span></div><div class="line">            getOAuthRule(classSet);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 输出日志</span></div><div class="line">        <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</div><div class="line">            <span class="keyword">for</span> (Class&lt;?&gt; clazz : <span class="keyword">this</span>.classSet) &#123;</div><div class="line">                logger.info(String.format(<span class="string">"Found class:%s"</span>, clazz.getName()));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.classSet;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将符合class里面带有Controller与所定义的OAuth的annotation的class筛选出来</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> reader</div><div class="line">     * <span class="doctag">@param</span> readerFactory</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     * <span class="doctag">@throws</span> IOException</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">matchesEntityTypeFilter</span><span class="params">(MetadataReader reader, MetadataReaderFactory readerFactory)</span></span></div><div class="line">            <span class="keyword">throws</span> IOException &#123;</div><div class="line">        <span class="keyword">boolean</span> flag = <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.typeFilters.isEmpty()) &#123;</div><div class="line">            <span class="keyword">for</span> (TypeFilter filter : <span class="keyword">this</span>.typeFilters) &#123;</div><div class="line">                <span class="keyword">if</span> (filter.match(reader, readerFactory)) &#123;</div><div class="line">                    <span class="keyword">continue</span>;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    flag = <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> flag;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 通过自定义扫描class获得class的集合，然后获取<span class="doctag">@OAuthRule</span>的标签，然后获得注释里面每个属性的的值</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> classSet</div><div class="line">     *            class集合</div><div class="line">     * <span class="doctag">@throws</span> ServiceException</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getOAuthRule</span><span class="params">(Set&lt;Class&lt;?&gt;&gt; classSet)</span> <span class="keyword">throws</span> ServiceException </span>&#123;</div><div class="line">        logger.info(<span class="string">"=====Oauth参数开始初始化============"</span>);</div><div class="line"></div><div class="line">        Map&lt;String, OAuthConfig&gt; map = <span class="keyword">new</span> HashMap&lt;String, OAuthConfig&gt;();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line"></div><div class="line">            String fontendUrl;</div><div class="line"></div><div class="line">            fontendUrl = configService.getStringBy(Config.CATEGORY_APP, Const.CONF_KEY_FRONTURL);</div><div class="line"></div><div class="line">            String baseUrl = configService.getStringBy(Config.CATEGORY_CORE, Const.CONF_KEY_OAUTH2_BASE_REDIRECT_URL);</div><div class="line"></div><div class="line">            String userinfoUrl = configService.getStringBy(Config.CATEGORY_CORE,</div><div class="line">                    Const.CONF_KEY_OAUTH2_USERINFO_REDIRECT_URL);</div><div class="line"></div><div class="line">            OAuthConfig.setOAUTH2_BASE_PATH(baseUrl);</div><div class="line">            OAuthConfig.setOAUTH2_USERINFO_PATH(userinfoUrl);</div><div class="line">            OAuthConfig.setOAUTH2_BASE_REDIRECT_URL(fontendUrl + baseUrl);</div><div class="line">            OAuthConfig.setOAUTH2_USERINFO_REDIRECT_URL(fontendUrl + userinfoUrl);</div><div class="line"></div><div class="line">            <span class="keyword">for</span> (Class&lt;?&gt; clazz : classSet) &#123;</div><div class="line">                <span class="comment">// 获取方法的数组</span></div><div class="line">                Method[] methodList = clazz.getDeclaredMethods();</div><div class="line">                <span class="keyword">for</span> (Method method : methodList) &#123;</div><div class="line">                    <span class="comment">// 获取OAuthRule annotation</span></div><div class="line">                    OAuthRule rule = method.getAnnotation(OAuthRule.class);</div><div class="line">                    <span class="keyword">if</span> (rule != <span class="keyword">null</span>) &#123;</div><div class="line">                        <span class="comment">// 获取annotation的每个属性的值</span></div><div class="line">                      </div><div class="line">                        OAuthConfig config = <span class="keyword">new</span> OAuthConfig();</div><div class="line">                        config.setUrl(rule.path());</div><div class="line">                        config.setOauthType(rule.type());</div><div class="line">                        config.setRule(rule.rule());</div><div class="line">                        <span class="comment">// 放入到map</span></div><div class="line">                        map.put(rule.path(), config);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            <span class="comment">// 将map放入到OAuthConfig容器当中</span></div><div class="line">            OAuthConfig.setOauthUrls(map);</div><div class="line"></div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            logger.error(<span class="string">"init OAuthRule annotation error"</span>);</div><div class="line">           </div><div class="line">        &#125;</div><div class="line">        logger.info(<span class="string">"=====Oauth参数初始化结束====="</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>获取传进来的参数，然后将获取目标package下面的class集合</li>
+<li>然后筛选class集合，然后将符合条件的class的自定义标签加载</li>
+<li>完。</li>
+</ul>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag">#spring</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/06/给部署在github上的hexo绑定域名/" rel="prev">给部署在github上的hexo绑定域名</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/03/JAVA中的锁/" rel="next">JAVA中的锁（转）</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/04/spring自定义扫描/"
+     data-title="Spring自定义扫描"
+     data-content=""
+     data-url="http://dingran.tk/2016/05/04/spring自定义扫描/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/05/04/spring自定义扫描/"
+                   data-title="Spring自定义扫描" data-url="http://dingran.tk/2016/05/04/spring自定义扫描/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。"><span class="nav-number">1.</span> <span class="nav-text">之前做项目时候，项目组长给了一个任务，他写了几个自定义标签，让我把自定义标签中的几个属性加载到static块里面，用于后面发送请求的时候进行判断。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理类"><span class="nav-number">2.</span> <span class="nav-text">处理类</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>

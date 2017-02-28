@@ -1,0 +1,879 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="mysql," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="一、备份的目的做灾难恢复：对损坏的数据进行恢复和还原需求改变：因需求改变而需要把数据还原到改变以前测试：测试新功能是否可用
+二、备份需要考虑的问题可以容忍丢失多长时间的数据；恢复数据要在多长时间内完；恢复的时候是否需要持续提供服务；恢复的对象，是整个库，多个表，还是单个库，单个表。
+三、备份的类型1、根据是否需要数据库离线冷备（cold backup）：需要关mysql服务，读写请求均不允许状态下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql备份的三种方式详解">
+<meta property="og:url" content="http://dingran.tk/2016/06/02/mysql备份的三种方式详解/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="一、备份的目的做灾难恢复：对损坏的数据进行恢复和还原需求改变：因需求改变而需要把数据还原到改变以前测试：测试新功能是否可用
+二、备份需要考虑的问题可以容忍丢失多长时间的数据；恢复数据要在多长时间内完；恢复的时候是否需要持续提供服务；恢复的对象，是整个库，多个表，还是单个库，单个表。
+三、备份的类型1、根据是否需要数据库离线冷备（cold backup）：需要关mysql服务，读写请求均不允许状态下">
+<meta property="og:updated_time" content="2016-06-02T13:46:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql备份的三种方式详解">
+<meta name="twitter:description" content="一、备份的目的做灾难恢复：对损坏的数据进行恢复和还原需求改变：因需求改变而需要把数据还原到改变以前测试：测试新功能是否可用
+二、备份需要考虑的问题可以容忍丢失多长时间的数据；恢复数据要在多长时间内完；恢复的时候是否需要持续提供服务；恢复的对象，是整个库，多个表，还是单个库，单个表。
+三、备份的类型1、根据是否需要数据库离线冷备（cold backup）：需要关mysql服务，读写请求均不允许状态下">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> mysql备份的三种方式详解 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              mysql备份的三种方式详解
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-06-02T21:37:04+08:00" content="2016-06-02">
+            2016-06-02
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/数据库/" itemprop="url" rel="index">
+                  <span itemprop="name">数据库</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/06/02/mysql备份的三种方式详解/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/02/mysql备份的三种方式详解/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/06/02/mysql备份的三种方式详解/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h1 id="一、备份的目的"><a href="#一、备份的目的" class="headerlink" title="一、备份的目的"></a>一、备份的目的</h1><p>做灾难恢复：对损坏的数据进行恢复和还原<br>需求改变：因需求改变而需要把数据还原到改变以前<br>测试：测试新功能是否可用</p>
+<h1 id="二、备份需要考虑的问题"><a href="#二、备份需要考虑的问题" class="headerlink" title="二、备份需要考虑的问题"></a>二、备份需要考虑的问题</h1><p>可以容忍丢失多长时间的数据；<br>恢复数据要在多长时间内完；<br>恢复的时候是否需要持续提供服务；<br>恢复的对象，是整个库，多个表，还是单个库，单个表。</p>
+<h1 id="三、备份的类型"><a href="#三、备份的类型" class="headerlink" title="三、备份的类型"></a>三、备份的类型</h1><h2 id="1、根据是否需要数据库离线"><a href="#1、根据是否需要数据库离线" class="headerlink" title="1、根据是否需要数据库离线"></a>1、根据是否需要数据库离线</h2><p>冷备（cold backup）：需要关mysql服务，读写请求均不允许状态下进行；<br>温备（warm backup）： 服务在线，但仅支持读请求，不允许写请求；<br>热备（hot backup）：备份的同时，业务不受影响。<br>注：<br>1、这种类型的备份，取决于业务的需求，而不是备份工具<br>2、MyISAM不支持热备，InnoDB支持热备，但是需要专门的工具</p>
+<h2 id="2、根据要备份的数据集合的范围"><a href="#2、根据要备份的数据集合的范围" class="headerlink" title="2、根据要备份的数据集合的范围"></a>2、根据要备份的数据集合的范围</h2><p>完全备份：full backup，备份全部字符集。<br>增量备份: incremental backup 上次完全备份或增量备份以来改变了的数据，不能单独使用，要借助完全备份，备份的频率取决于数据的更新频率。<br>差异备份：differential backup 上次完全备份以来改变了的数据。<br>建议的恢复策略：<br>完全+增量+二进制日志<br>完全+差异+二进制日志</p>
+<h2 id="3、根据备份数据或文件"><a href="#3、根据备份数据或文件" class="headerlink" title="3、根据备份数据或文件"></a>3、根据备份数据或文件</h2><p>物理备份：直接备份数据文件<br>优点：<br>备份和恢复操作都比较简单，能够跨mysql的版本，<br>恢复速度快，属于文件系统级别的<br>建议：<br>不要假设备份一定可用，要测试<br>mysql&gt;check tables；检测表是否可用<br>逻辑备份: 备份表中的数据和代码<br>优点：<br>恢复简单、<br>备份的结果为ASCII文件，可以编辑<br>与存储引擎无关<br>可以通过网络备份和恢复<br>缺点：<br>备份或恢复都需要mysql服务器进程参与<br>备份结果占据更多的空间，<br>浮点数可能会丢失精度<br>还原之后，缩影需要重建</p>
+<h1 id="四：备份的对象"><a href="#四：备份的对象" class="headerlink" title="四：备份的对象"></a>四：备份的对象</h1><p>1、 数据；<br>2、配置文件；<br>3、代码：存储过程、存储函数、触发器<br>4、os相关的配置文件<br>5、复制相关的配置<br>6、二进制日志</p>
+<h1 id="五、备份和恢复的实现"><a href="#五、备份和恢复的实现" class="headerlink" title="五、备份和恢复的实现"></a>五、备份和恢复的实现</h1><h2 id="1、利用select-into-outfile实现数据的备份与还原"><a href="#1、利用select-into-outfile实现数据的备份与还原" class="headerlink" title="1、利用select into outfile实现数据的备份与还原"></a>1、利用select into outfile实现数据的备份与还原</h2><h3 id="1-1把需要备份的数据备份出来"><a href="#1-1把需要备份的数据备份出来" class="headerlink" title="1.1把需要备份的数据备份出来"></a>1.1把需要备份的数据备份出来</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mysql&gt; use hellodb;     //打开hellodb库 </div><div class="line">mysql&gt; select * from students;  查看students的属性 </div><div class="line">mysql&gt; select * from students where Age &gt; 30 into outfile ‘/tmp/stud.txt' ;   //将年龄大于三十的同学的信息备份出来</div></pre></td></tr></table></figure>
+<p>注意：<br>备份的目录路径必须让当前运行mysql服务器的用户mysql具有访问权限<br>备份完成之后需要把备份的文件从tmp目录复制走，要不就失去备份的目的了<br>回到tmp目录下查看刚才备份的文件</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# cd /tmp</div><div class="line">[root@www tmp]# cat stud.txt</div><div class="line">3Xie Yanke53M216</div><div class="line">4Ding Dian32M44</div><div class="line">6Shi Qing46M5\N</div><div class="line">13Tian Boguang33M2\N</div><div class="line">25Sun Dasheng100M\N\N</div><div class="line">[root@www tmp]#</div></pre></td></tr></table></figure>
+<p>你会发现是个文本文件。所以不能直接导入数据库了。需要使用load data infile 恢复<br>回到mysql服务器端，删除年龄大于30的用户，模拟数据被破坏</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; delete from students where Age &gt; 30;</div><div class="line">mysql&gt; load data infile '/tmp/stud.txt' into table students;</div></pre></td></tr></table></figure>
+<h2 id="2、利用mysqldump工具对数据进行备份和还原"><a href="#2、利用mysqldump工具对数据进行备份和还原" class="headerlink" title="2、利用mysqldump工具对数据进行备份和还原"></a>2、利用mysqldump工具对数据进行备份和还原</h2><p>mysqldump 常用来做温备，所以我们首先需要对想备份的数据施加读锁，</p>
+<h3 id="2-1-施加读锁的方式："><a href="#2-1-施加读锁的方式：" class="headerlink" title="2.1 施加读锁的方式："></a>2.1 施加读锁的方式：</h3><p>1.直接在备份的时候添加选项<br>–lock-all-tables 是对要备份的数据库的所有表施加读锁<br>–lock-table 仅对单张表施加读锁，即使是备份整个数据库，它也是在我们备份某张表的时候才对该表施加读锁，因此适用于备份单张表<br>2、在服务器端书写命令，<br>mysql&gt; flush tables with read lock; 施加锁，表示把位于内存上的表统统都同步到磁盘上去，然后施加读锁<br>mysql&gt; flush tables with read lock;释放读锁<br>但这对于InnoDB存储引擎来讲，虽然你也能够请求道读锁，但是不代表它的所有数据都已经同步到磁盘上，因此当面对InnoDB的时候，我们要使用mysql&gt; show engine innodb status; 看看InnoDB所有的数据都已经同步到磁盘上去了，才进行备份操作。</p>
+<h3 id="2-2备份的策略："><a href="#2-2备份的策略：" class="headerlink" title="2.2备份的策略："></a>2.2备份的策略：</h3><p>完全备份+增量备份+二进制日志<br>演示备份的过程;</p>
+<h3 id="2-3-先给数据库做完全备份："><a href="#2-3-先给数据库做完全备份：" class="headerlink" title="2.3 先给数据库做完全备份："></a>2.3 先给数据库做完全备份：</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# mysqldump -uroot --single-transaction --master-data=2 --databases hellodb &gt; /backup/hellodb_`date +%F`.sql</div></pre></td></tr></table></figure>
+<p>–single-transaction: 基于此选项能实现热备InnoDB表；因此，不需要同时使用–lock-all-tables；<br>–master-data=2  记录备份那一时刻的二进制日志的位置，并且注释掉，1是不注释的<br>–databases hellodb 指定备份的数据库然后回到mysql服务器端，</p>
+<h3 id="2-4回到mysql服务器端更新数据"><a href="#2-4回到mysql服务器端更新数据" class="headerlink" title="2.4回到mysql服务器端更新数据"></a>2.4回到mysql服务器端更新数据</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; create table tb1(id int); 创建表 </div><div class="line">mysql&gt; insert into tb1 values (1),(2),(3);</div></pre></td></tr></table></figure>
+<p>插入数据，这里只做演示，随便插入了几个数据</p>
+<h3 id="2-5先查看完全备份文件里边记录的位置："><a href="#2-5先查看完全备份文件里边记录的位置：" class="headerlink" title="2.5先查看完全备份文件里边记录的位置："></a>2.5先查看完全备份文件里边记录的位置：</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@www <span class="keyword">backup</span>]# cat hellodb_2013<span class="number">-09</span><span class="number">-08.</span><span class="keyword">sql</span> | <span class="keyword">less</span> </div><div class="line"><span class="comment">-- CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000013', MASTER_LOG_POS=15684; 记录了二进制日志的位置</span></div></pre></td></tr></table></figure>
+<h3 id="2-6-在回到服务器端："><a href="#2-6-在回到服务器端：" class="headerlink" title="2.6 在回到服务器端："></a>2.6 在回到服务器端：</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql&gt; show master status; 显示此时的二进制日志的位置</div></pre></td></tr></table></figure>
+<p> 从备份文件里边记录的位置到我们此时的位置，即为增量的部分 </p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>-</th>
+<th>-</th>
+<th>-</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File</td>
+<td>Position</td>
+<td>Binlog_Do_DB</td>
+<td>Binlog_Ignore_DB</td>
+</tr>
+<tr>
+<td>mysql-bin.000004</td>
+<td>15982</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-7做增量备份"><a href="#2-7做增量备份" class="headerlink" title="2.7做增量备份"></a>2.7做增量备份</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@www <span class="keyword">backup</span>]# mysqlbinlog <span class="comment">--start-position=15694 --stop-position=15982</span></div><div class="line">/mydata/<span class="keyword">data</span>/mysql-<span class="keyword">bin</span><span class="number">.000013</span> &gt; /<span class="keyword">backup</span>/hellodb_<span class="string">`date +$F_%H`</span>.sql</div></pre></td></tr></table></figure>
+<h3 id="2-8再回到服务器"><a href="#2-8再回到服务器" class="headerlink" title="2.8再回到服务器"></a>2.8再回到服务器</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; insert into tb1 values (4),(5); 在插入一些数值 </div><div class="line">mysql&gt; drop database hellodb;   删除hellodb库</div></pre></td></tr></table></figure>
+<h3 id="2-9导出这次得二进制日志："><a href="#2-9导出这次得二进制日志：" class="headerlink" title="2.9导出这次得二进制日志："></a>2.9导出这次得二进制日志：</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">[root@www <span class="keyword">backup</span>]# mysqlbinlog <span class="comment">--start-position=15982 /mydata/data/mysql-bin.000013 查看删除操作时二进制日志的位置 </span></div><div class="line">[root@www <span class="keyword">backup</span>]# mysqlbinlog <span class="comment">--start-position=15982 --stop-position=16176 /mydata/data/mysql-bin.000013 &gt; /tmp/hellodb.sql  //导出二进制日志</span></div></pre></td></tr></table></figure>
+<h3 id="2-10先让mysql离线"><a href="#2-10先让mysql离线" class="headerlink" title="2.10先让mysql离线"></a>2.10先让mysql离线</h3><p>回到服务器端：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; set sql_log_bin=0;  关闭二进制日志 </div><div class="line">mysql&gt; flush logs; 滚动下日志</div></pre></td></tr></table></figure>
+<h3 id="2-11模拟数据库损坏"><a href="#2-11模拟数据库损坏" class="headerlink" title="2.11模拟数据库损坏"></a>2.11模拟数据库损坏</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql&gt; drop database hellodb;</div></pre></td></tr></table></figure>
+<h3 id="2-12开始恢复数据："><a href="#2-12开始恢复数据：" class="headerlink" title="2.12开始恢复数据："></a>2.12开始恢复数据：</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@www ]# mysql &lt; /backup/hellodb_2013-09-08.sql  //导入完全备份文件 </div><div class="line">[root@www ]# mysql &lt; /backup/hellodb_2013-09-08_05.sql //导入增量备份文件 </div><div class="line">[root@www ]# mysql&lt; hellodb.sql //导入二进制文件</div></pre></td></tr></table></figure>
+<p>验证完成，显示结果为我们预想的那样</p>
+<p>注：<br>1、真正在生产环境中，我们应该导出的是整个mysql服务器中的数据，而不是单个库，因此应该使用–all-databases<br>2、在导出二进制日志的时候，可以直接复制文件即可，但是要注意的是，备份之前滚动下日志。<br>3、利用lvm快照实现几乎热备的数据备份与恢复</p>
+<p>3.1策略：<br>完全备份+二进制日志；</p>
+<p>3.2准备：<br>注：事务日志必须跟数据文件在同一个LV上；</p>
+<p>3.3创建lvm Lvm的创建这里就不多说了，想了解话点击<a href="http://www.jb51.net/LINUXjishu/105937.html" target="_blank" rel="external">http://www.jb51.net/LINUXjishu/105937.html</a></p>
+<p>3.4 修改mysql主配置文件存放目录内的文件的权限与属主属组，并初始化mysql</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">[root@www ~]# mkdir /mydata/data             //创建数据目录 </div><div class="line">[root@www ~]# chown mysql:mysql /mydata/data  //改属组属主 </div><div class="line">[root@www ~]# </div><div class="line">[root@www ~]# cd /usr/local/mysql/    //必须站在此目录下       </div><div class="line">[root@www mysql]# scripts/mysql_install_db --user=mysql --datadir=/mydata/data  //初始化mysql</div></pre></td></tr></table></figure>
+<p>3.5修改配置文件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vim /etc/my.cof </div><div class="line">datadir=/mydata/data   添加数据目录 </div><div class="line">sync_binlog = 1  开启此功能</div></pre></td></tr></table></figure>
+<p>3.6 启动服务</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@www mysql]# service mysqld start </div><div class="line">mysql&gt; set session sql_log_bin=0;  关闭二进制日志 </div><div class="line">mysql&gt; source /backup/all_db_2013-09-08.sql   读取备份文件</div></pre></td></tr></table></figure>
+<p>3.7回到mysql服务器：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql&gt; FLUSH TABLES WITH READ LOCK; 请求读锁</div></pre></td></tr></table></figure>
+<p>注：不要退出，另起一个终端： </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql&gt; SHOW MASTER STATUS;          查看二进制文件的位置</div></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>-</th>
+<th>-</th>
+<th>-</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File</td>
+<td>Position</td>
+<td>Binlog_Do_DB</td>
+<td>Binlog_Ignore_DB</td>
+</tr>
+<tr>
+<td>mysql-bin.000004</td>
+<td>107</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>1 row in set (0.00 sec) </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql&gt; FLUSH LOGS;  建议滚动下日志。这样备份日志的时候就会很方便了</div></pre></td></tr></table></figure>
+<p>3.8导出二进制文件，创建个目录单独存放</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# mkdir /backup/limian </div><div class="line">[root@www ~]# mysql -e 'show master status;' &gt; /backup/limian/binlog.txt </div><div class="line">[root@www ~]#</div></pre></td></tr></table></figure>
+<p>3.9为数据所在的卷创建快照：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# lvcreate -L 100M -s -p r -n mysql_snap /dev/myvg/mydata</div></pre></td></tr></table></figure>
+<p>回到服务器端，释放读锁</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mysql&gt; UNLOCK TABLES; </div><div class="line">[root@www ~]# mount /dev/myvg/mysql_snap /mnt/data </div><div class="line">[root@www data]# cp * /backup/limian/ </div><div class="line">[root@www data]#lvremove /dev/myvg/mylv_snap</div></pre></td></tr></table></figure>
+<p>3.10更新数据库的数据，并删除数据目录先的数据文件，模拟数据库损坏</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt;  create table limiantb (id int,name CHAR(10)); </div><div class="line">mysql&gt; insert into limiantb values (1,'tom'); </div><div class="line">[root@www data]# mysqlbinlog --start-position=187 mysql-bin.000003 &gt; /backup/limian/binlog.sql </div><div class="line">[root@www backup]# cd /mydata/data/ </div><div class="line">[root@www data]#  rm -rf * </div><div class="line">[root@www ~]# cp -a /backup/limian/* /mydata/data/ </div><div class="line">[root@www data]# chown mysql:mysql *</div></pre></td></tr></table></figure>
+<p>3.11测试<br>启动服务</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@www data]# service mysqld start </div><div class="line">[root@www data]# mysql 登陆测试 </div><div class="line">mysql&gt; SHOW DATABASES; </div><div class="line">mysql&gt; SET sql_log_bin=0</div><div class="line">mysql&gt; source/backup/limian/binlog.sql; #二进制恢复 </div><div class="line">mysql&gt; SHOW TABLES;         #查看恢复结果 </div><div class="line">mysql&gt; SET sql_log_bin=1;   #开启二进制日志</div></pre></td></tr></table></figure>
+<p>注：此方式实现了接近于热备的方式备份数据文件，而且数据文件放在lvm中可以根据数据的大小灵活改变lvm的大小，备份的方式也很简单。<br>4、基于Xtrabackup做备份恢复<br>官方站点：www.percona.com<br>优势：<br>1、快速可靠的进行完全备份<br>2、在备份的过程中不会影响到事务<br>3、支持数据流、网络传输、压缩，所以它可以有效的节约磁盘资源和网络带宽。<br>4、可以自动备份校验数据的可用性。<br>安装Xtrabackup</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# rpm -ivh percona-xtrabackup-2.1.4-656.rhel6.i686.rpm</div></pre></td></tr></table></figure>
+<p>其最新版的软件可从 <a href="http://www.percona.com/software/percona-xtrabackup/" target="_blank" rel="external">http://www.percona.com/software/percona-xtrabackup/</a> 获得<br>注意：在备份数据库的时候，我们应该具有权限，但需要注意的是应该给备份数据库时的用户最小的权限，以保证安全性，<br>4.1前提：<br>应该确定采用的是单表一个表空间，否则不支持单表的备份与恢复。<br>在配置文件里边的mysqld段加上<br>innodb_file_per_table = 1<br>4.2备份策略<br>完全备份+增量备份+二进制日志<br>4.3准备个目录用于存放备份数据</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">[root@www ~]# makdir /innobackup</div></pre></td></tr></table></figure>
+<p>4.4做完全备份：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# innobackupex --user=root --password=mypass /innobackup/</div></pre></td></tr></table></figure>
+<p>注：<br>1、只要在最后一行显示 innobackupex: completed OK!，就说明你的备份是正确的。<br>2、另外要注意的是每次备份之后，会自动在数据目录下创建一个以当前时间点命名的目录用于存放备份的数据，那我们去看看都有什么</p>
+<p>[root@www 2013-09-12_11-03-04]# ls<br>backup-my.cnf ibdata1 performance_schema xtrabackup_binary xtrabackup_checkpoints<br>hellodb mysql test xtrabackup_binlog_info xtrabackup_logfile<br>[root@www 2013-09-12_11-03-04]#<br>xtrabackup_checkpoints<br>：备份类型、备份状态和LSN(日志序列号)范围信息；<br>xtrabackup_binlog_info ：mysql服务器当前正在使用的二进制日志文件及至备份这一刻为止二进制日志事件的位置。<br>xtrabackup_logfile ：非文本文件，xtrabackup自己的日志文件<br>xtrabackup_binlog_pos_innodb ：二进制日志文件及用于InnoDB或XtraDB表的二进制日志文件的当前position。<br>backup-my.cnf ：备份时数据文件中关于mysqld的配置</p>
+<p>4.5回到mysql服务器端对数据进行更新操作</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; use hellodb; </div><div class="line">mysql&gt; delete from students where StuID&gt;=24;</div></pre></td></tr></table></figure>
+<p>4.6增量备份</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">innobackupex <span class="comment">--user=root --password=mypass --incremental /innobackup/--incremental-basedir=/innobackup/2013-09-12_11-03-04/ </span></div><div class="line"><span class="comment">--incremental  指定备份类型 </span></div><div class="line"><span class="comment">--incremental-basedir=</span></div></pre></td></tr></table></figure>
+<p>指定这次增量备份是基于哪一次备份的，这里是完全备份文件,这样可以把增量备份的数据合并到完全备份中去</p>
+<p>4.7第二次增量<br>先去修改数据</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; insert into students (Name,Age,Gender,ClassID,TeacherID) values ('tom',33,'M',2,4); </div><div class="line">innobackupex --user=root --password=mypass --incremental /innobackup/ --incremental-basedir=/innobackup/2013-09-12_11-37-01/</div></pre></td></tr></table></figure>
+<p> 这里只须要把最后的目录改为第一次增量备份的数据目录即可 </p>
+<p>4.8最后一次对数据更改但是没做增量备份</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql&gt; delete from coc where id=14;</div></pre></td></tr></table></figure>
+<p>4.9把二进制日志文件备份出来，(因为最后一次修改，没做增量备份，要依赖二进制日志做时间点恢复)</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@www data]# cp mysql-bin.000003 /tmp/</div></pre></td></tr></table></figure>
+<p>4.10模拟数据库崩溃</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@www data]# service mysqld stop </div><div class="line">[root@www data]# rm -rf *</div></pre></td></tr></table></figure>
+<p>恢复前准备<br>4.11对完全备份做数据同步</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# innobackupex --apply-log --redo-only /innobackup/2013-09-12_11-03-04/</div></pre></td></tr></table></figure>
+<p>4.12对第一次增量做数据同步</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">innobackupex <span class="comment">--apply-log --redo-only /innobackup/2013-09-12_11-03-04/ --incremental-basedir=/innobackup/2013-09-12_11-37-01/</span></div></pre></td></tr></table></figure>
+<p>4.13对第二次增量做数据同步</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">innobackupex <span class="comment">--apply-log --redo-only /innobackup/2013-09-12_11-03-04/ --incremental-basedir=/innobackup/2013-09-12_11-45-53/</span></div></pre></td></tr></table></figure>
+<p>–apply-log 的意义在于把备份时没commit的事务撤销，已经commit的但还在事务日志中的应用到数据库<br>注：<br>对于xtrabackup来讲，它是基于事务日志和数据文件备份的，备份的数据中可能会包含尚未提交的事务或已经提交但尚未同步至数据库文件中的事务，还应该对其做预处理，把已提交的事务同步到数据文件，未提交的事务要回滚。因此其备份的数据库，不能立即拿来恢复。<br>预处理的过程：<br>首先对完全备份文件只把已提交的事务同步至数据文件，要注意的是有增量的时候，不能对事务做数据回滚，不然你的增量备份就没有效果了。<br>然后把第一次的增量备份合并到完全备份文件内，<br>以此类推，把后几次的增量都合并到前一次合并之后的文件中，这样的话，我们只要拿着完全备份+二进制日志，就可以做时间点恢复。<br>4.14数据恢复</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@www ~]# service mysqld stop </div><div class="line">[root@www data]# rm -rf *  模拟数据库崩溃 </div><div class="line">[root@www ~]# innobackupex --copy-back /innobackup/2013-09-12_11-03-04/ </div><div class="line">--copy-back数据库恢复，后面跟上备份目录的位置</div></pre></td></tr></table></figure>
+<p>4.15检测：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">[root@www ~]# cd /mydata/data/ </div><div class="line">[root@www data]# chown mysql:mysql * </div><div class="line">[root@www data]#service mysqld start</div></pre></td></tr></table></figure>
+<p>检测结果数据正常。<br>本文出自 “遗失ぜ的ァ美好~” 博客</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/03/RabbitMQ/" rel="prev">RabbitMQ</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/01/Mysql事件学习/" rel="next">Mysql事件学习</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/02/mysql备份的三种方式详解/"
+     data-title="mysql备份的三种方式详解"
+     data-content=""
+     data-url="http://dingran.tk/2016/06/02/mysql备份的三种方式详解/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/06/02/mysql备份的三种方式详解/"
+                   data-title="mysql备份的三种方式详解" data-url="http://dingran.tk/2016/06/02/mysql备份的三种方式详解/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">20</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、备份的目的"><span class="nav-number">1.</span> <span class="nav-text">一、备份的目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、备份需要考虑的问题"><span class="nav-number">2.</span> <span class="nav-text">二、备份需要考虑的问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、备份的类型"><span class="nav-number">3.</span> <span class="nav-text">三、备份的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、根据是否需要数据库离线"><span class="nav-number">3.1.</span> <span class="nav-text">1、根据是否需要数据库离线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、根据要备份的数据集合的范围"><span class="nav-number">3.2.</span> <span class="nav-text">2、根据要备份的数据集合的范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、根据备份数据或文件"><span class="nav-number">3.3.</span> <span class="nav-text">3、根据备份数据或文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四：备份的对象"><span class="nav-number">4.</span> <span class="nav-text">四：备份的对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、备份和恢复的实现"><span class="nav-number">5.</span> <span class="nav-text">五、备份和恢复的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、利用select-into-outfile实现数据的备份与还原"><span class="nav-number">5.1.</span> <span class="nav-text">1、利用select into outfile实现数据的备份与还原</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1把需要备份的数据备份出来"><span class="nav-number">5.1.1.</span> <span class="nav-text">1.1把需要备份的数据备份出来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、利用mysqldump工具对数据进行备份和还原"><span class="nav-number">5.2.</span> <span class="nav-text">2、利用mysqldump工具对数据进行备份和还原</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-施加读锁的方式："><span class="nav-number">5.2.1.</span> <span class="nav-text">2.1 施加读锁的方式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2备份的策略："><span class="nav-number">5.2.2.</span> <span class="nav-text">2.2备份的策略：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-先给数据库做完全备份："><span class="nav-number">5.2.3.</span> <span class="nav-text">2.3 先给数据库做完全备份：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4回到mysql服务器端更新数据"><span class="nav-number">5.2.4.</span> <span class="nav-text">2.4回到mysql服务器端更新数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5先查看完全备份文件里边记录的位置："><span class="nav-number">5.2.5.</span> <span class="nav-text">2.5先查看完全备份文件里边记录的位置：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-在回到服务器端："><span class="nav-number">5.2.6.</span> <span class="nav-text">2.6 在回到服务器端：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7做增量备份"><span class="nav-number">5.2.7.</span> <span class="nav-text">2.7做增量备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8再回到服务器"><span class="nav-number">5.2.8.</span> <span class="nav-text">2.8再回到服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9导出这次得二进制日志："><span class="nav-number">5.2.9.</span> <span class="nav-text">2.9导出这次得二进制日志：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-10先让mysql离线"><span class="nav-number">5.2.10.</span> <span class="nav-text">2.10先让mysql离线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-11模拟数据库损坏"><span class="nav-number">5.2.11.</span> <span class="nav-text">2.11模拟数据库损坏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-12开始恢复数据："><span class="nav-number">5.2.12.</span> <span class="nav-text">2.12开始恢复数据：</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
