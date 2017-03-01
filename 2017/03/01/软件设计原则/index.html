@@ -1,0 +1,832 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="设计模式," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="软件设计七大原则
+正如牛顿三大定律在经典力学中的位置一样，“开-闭”原则（Open-Closed Principle）是面向对象的可复用设计（Object Oriented Design或OOD）的基石。其他设计原则（里氏代换原则、依赖倒转原则、合成/聚合复用原则、迪米特法则、接口隔离原则）是实现“开-闭”原则的手段和工具。
+
+一.开-闭原则(Open-Closed Principle, OCP)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="软件设计原则">
+<meta property="og:url" content="http://dingran.tk/2017/03/01/软件设计原则/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="软件设计七大原则
+正如牛顿三大定律在经典力学中的位置一样，“开-闭”原则（Open-Closed Principle）是面向对象的可复用设计（Object Oriented Design或OOD）的基石。其他设计原则（里氏代换原则、依赖倒转原则、合成/聚合复用原则、迪米特法则、接口隔离原则）是实现“开-闭”原则的手段和工具。
+
+一.开-闭原则(Open-Closed Principle, OCP)">
+<meta property="og:updated_time" content="2017-03-01T13:55:47.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="软件设计原则">
+<meta name="twitter:description" content="软件设计七大原则
+正如牛顿三大定律在经典力学中的位置一样，“开-闭”原则（Open-Closed Principle）是面向对象的可复用设计（Object Oriented Design或OOD）的基石。其他设计原则（里氏代换原则、依赖倒转原则、合成/聚合复用原则、迪米特法则、接口隔离原则）是实现“开-闭”原则的手段和工具。
+
+一.开-闭原则(Open-Closed Principle, OCP)">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> 软件设计原则 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              软件设计原则
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-03-01T21:52:06+08:00" content="2017-03-01">
+            2017-03-01
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/设计/" itemprop="url" rel="index">
+                  <span itemprop="name">设计</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2017/03/01/软件设计原则/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/01/软件设计原则/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2017/03/01/软件设计原则/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h1 id="软件设计七大原则"><a href="#软件设计七大原则" class="headerlink" title="软件设计七大原则"></a>软件设计七大原则</h1><blockquote>
+<p>正如牛顿三大定律在经典力学中的位置一样，“开-闭”原则（Open-Closed Principle）是面向对象的可复用设计（Object Oriented Design或OOD）的基石。其他设计原则（里氏代换原则、依赖倒转原则、合成/聚合复用原则、迪米特法则、接口隔离原则）是实现“开-闭”原则的手段和工具。</p>
+</blockquote>
+<h2 id="一-开-闭原则-Open-Closed-Principle-OCP"><a href="#一-开-闭原则-Open-Closed-Principle-OCP" class="headerlink" title="一.开-闭原则(Open-Closed Principle, OCP)"></a>一.开-闭原则(Open-Closed Principle, OCP)</h2><h3 id="1-什么是开闭原则"><a href="#1-什么是开闭原则" class="headerlink" title="1.什么是开闭原则"></a>1.什么是开闭原则</h3><p>1988年，Bertrand Meyer在他的著作《Object Oriented Software Construction》中提出了开闭原则，它的原文是这样：“Software entities should be open for extension,but closed for modification”。翻译过来就是：“软件实体应当对扩展开放，对修改关闭”。这句话说得略微有点专业，我们把它讲得更通俗一点，也就是：软件系统中包含的各种组件，例如模块（Modules）、类（Classes）以及功能（Functions）等等，应该在不修改现有代码的基础上，引入新功能。开闭原则中“开”，是指对于组件功能的扩展是开放的，是允许对其进行功能扩展的；开闭原则中“闭”，是指对于原有代码的修改是封闭的，即不应该修改原有的代码。</p>
+<h3 id="2-如何实现开闭原则"><a href="#2-如何实现开闭原则" class="headerlink" title="2.如何实现开闭原则"></a>2.如何实现开闭原则</h3><p>实现开闭原则的关键就在于“抽象”。把系统的所有可能的行为抽象成一个抽象底层，这个抽象底层规定出所有的具体实现必须提供的方法的特征。作为系统设计的抽象层，要预见所有可能的扩展，从而使得在任何扩展情况下，系统的抽象底层不需修改；同时，由于可以从抽象底层导出一个或多个新的具体实现，可以改变系统的行为，因此系统设计对扩展是开放的。</p>
+<p>我们在软件开发的过程中，一直都是提倡需求导向的。这就要求我们在设计的时候，要非常清楚地了解用户需求，判断需求中包含的可能的变化，从而明确在什么情况下使用开闭原则。</p>
+<p>关于系统可变的部分，还有一个更具体的原则是对可变性的封装原则（Principle of Encapsulation of Variation,  EVP），它从软件工程实现的角度对开闭原则进行了进一步的解释。EVP要求在做系统设计的时候，对系统所有可能发生变化的部分进行评估和分类，每一个可变的因素都单独进行封装。“对可变性的封装原则”意味着两点：</p>
+<p>（1）一种可变性不应当散落在代码的很多角落里，而应当被封装到一个对象里面。同一种可变性的不同表象意味着同一个继承等级结构中的具体子类，因此，我们可以期待在设计模式中看到继承关系。继承应当被看做是封装变化的方法，而不应当被认为是从一般的对象生成特殊的对象的方法。</p>
+<p>（2）一种可变性不应当与另一种可变性混合在一起。</p>
+<p>我们在实际开发过程的设计开始阶段，就要罗列出来系统所有可能的行为，并把这些行为加入到抽象底层，根本就是不可能的，这么去做也是不经济的，费时费力。另外，在设计开始阶段，对所有的可变因素进行预计和封装也不太现实，也是很难做得到。所以，开闭原则描绘的愿景只是一种理想情况或是极端状态，现实世界中是很难被完全实现的。我们只能在某些组件，在某种程度上符合开闭原则的要求。</p>
+<p>通过以上的分析，对于开闭原则，我们可以得出这样的结论：虽然我们不可能做到百分之百的封闭，但是在系统设计的时候，我们还是要尽量做到这一点。</p>
+<p>对于软件系统的功能扩展，我们可以通过继承、重载或者委托等手段实现。以接口为例，它对修改就是是封闭的，而对具体的实现是开放的，我们可以根据实际的需要提供不同的实现，所以接口是符合开闭原则的。</p>
+<h3 id="3-开闭原则能够带来什么好处"><a href="#3-开闭原则能够带来什么好处" class="headerlink" title="3.开闭原则能够带来什么好处"></a>3.开闭原则能够带来什么好处</h3><p>如果一个软件系统符合开闭原则的，那么从软件工程的角度来看，它至少具有这样的好处：</p>
+<p>（1）可复用性好</p>
+<p>我们可以在软件完成以后，仍然可以对软件进行扩展，加入新的功能，非常灵活。因此，这个软件系统就可以通过不断地增加新的组件，来满足不断变化的需求。</p>
+<p>（2）可维护性好</p>
+<p>由于对于已有的软件系统的组件，特别是它的抽象底层不去修改，因此，我们不用担心软件系统中原有组件的稳定性，这就使变化中的软件系统有一定的稳定性和延续性。</p>
+<p>4.闭原则与其它原则的关系</p>
+<p>开闭原则具有理想主义的色彩，它是面向对象设计的终极目标。因此，针对开闭原则的实现方法，一直都有面向对象设计的大师费尽心机，研究开闭原则的实现方式。其它原则和方法如：里氏代换原则（LSP）、依赖倒转原则（DIP）、接口隔离原则（ISP）以及抽象类（Abstract Class）、接口(Interace)等等，都可以看作是开闭原则的实现方法。</p>
+<p>此部分参考：<a href="http://www.cnblogs.com/wanghao72214/archive/2009/03/13/1410610.html" target="_blank" rel="external">http://www.cnblogs.com/wanghao72214/archive/2009/03/13/1410610.html</a></p>
+<h1 id="二-里氏代换原则-Liskov-Substitution-Principle-LSP"><a href="#二-里氏代换原则-Liskov-Substitution-Principle-LSP" class="headerlink" title="二.里氏代换原则(Liskov Substitution Principle,LSP)"></a>二.里氏代换原则(Liskov Substitution Principle,LSP)</h1><p>里氏代换原则(Liskov Substitution Principle LSP)面向对象设计的基本原则之一。 里氏代换原则中说，任何基类可以出现的地方，子类一定可以出现。 LSP是继承复用的基石，只有当衍生类可以替换掉基类，软件单位的功能不受到影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。里氏代换原则是对“开-闭”原则的补充。实现“开-闭”原则的关键步骤就是抽象化。而基类与子类的继承关系就是抽象化的具体实现，所以里氏代换原则是对实现抽象化的具体步骤的规范。</p>
+<p>LSP讲的是基类和子类的关系。只有当这种关系存在时，里氏代换关系才存在。如果两个具体的类A，B之间的关系违反了LSP的设计，(假设是从B到A的继承关系)那么根据具体的情况可以在下面的两种重构方案中选择一种。</p>
+<p>—–创建一个新的抽象类C，作为两个具体类的超类，将A，B的共同行为移动到C中来解决问题。</p>
+<p>—–从B到A的继承关系改为委派关系。</p>
+<p>为了说明，我们先用第一种方法来看一个例子，第二种办法在另外一个原则中说明。我们就看那个著名的长方形和正方形的例子。对于长方形的类，如果它的长宽相等，那么它就是一个正方形，因此，长方形类的对象中有一些正方形的对象。对于一个正方形的类，它的方法有个setSide和getSide，它不是长方形的子类，和长方形也不会符合LSP。</p>
+<p>eg:</p>
+<p>长方形类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span></span>&#123;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">setWidth(<span class="keyword">int</span> width)&#123;</div><div class="line"></div><div class="line"><span class="keyword">this</span>.width=width;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">setHeight(<span class="keyword">int</span> height)&#123;</div><div class="line"></div><div class="line"><span class="keyword">this</span>.height=height</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>正方形类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Square</span></span>&#123;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">setWidth(<span class="keyword">int</span> width)&#123;</div><div class="line"></div><div class="line"><span class="keyword">this</span>.width=width;</div><div class="line"></div><div class="line"><span class="keyword">this</span>. height=width;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">setHeight(<span class="keyword">int</span> height)&#123;</div><div class="line"></div><div class="line"><span class="keyword">this</span>.setWidth(height);</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>例子中改变边长的函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resize</span><span class="params">(Rectangle r)</span></span>&#123;</div><div class="line"></div><div class="line"><span class="keyword">while</span>(r.getHeight()&lt;r.getWidth)&#123;</div><div class="line"></div><div class="line">r.setHeight(r.getWidth+<span class="number">1</span>);</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么，如果让正方形当做是长方形的子类，会出现什么情况呢？我们让正方形从长方形继承，然后在它的内部设置width等于height，这样，只要width或者height被赋值，那么width和height会被同时赋值，这样就保证了正方形类中，width和height总是相等的.现在我们假设有个客户类，其中有个方法，规则是这样的，测试传入的长方形的宽度是否大于高度，如果满足就停止下来，否则就增加宽度的值。现在我们来看，如果传入的是基类长方形，这个运行的很好。根据LSP，我们把基类替换成它的子类，结果应该也是一样的，但是因为正方形类的width和height会同时赋值，这个方法没有结束的时候，条件总是不满足，也就是说，替换成子类后，程序的行为发生了变化，它不满足LSP。</p>
+<p>那么我们用第一种方案进行重构，我们构造一个抽象的四边形类，把长方形和正方形共同的行为放到这个四边形类里面，让长方形和正方形都是它的子类，问题就OK了。对于长方形和正方形，取width和height是它们共同的行为，但是给width和height赋值，两者行为不同，因此，这个抽象的四边形的类只有取值方法，没有赋值方法。上面的例子中那个方法只会适用于不同的子类，LSP也就不会被破坏。</p>
+<p>在进行设计的时候，我们尽量从抽象类继承，而不是从具体类继承。如果从继承等级树来看，所有叶子节点应当是具体类，而所有的树枝节点应当是抽象类或者接口。当然这个只是一个一般性的指导原则，使用的时候还要具体情况具体分析。</p>
+<h1 id="三-依赖倒置原则-Dependence-Inversion-Principle-DIP"><a href="#三-依赖倒置原则-Dependence-Inversion-Principle-DIP" class="headerlink" title="三.依赖倒置原则(Dependence Inversion Principle,DIP)"></a>三.依赖倒置原则(Dependence Inversion Principle,DIP)</h1><h2 id="1-概念"><a href="#1-概念" class="headerlink" title="1.概念"></a>1.概念</h2><p>依赖倒转原则就是要依赖于抽象，不要依赖于实现。（Abstractions should not depend upon details. Details should depend upon abstractions.）要针对接口编程，不要针对实现编程。（Program to an interface, not an implementation.）也就是说应当使用接口和抽象类进行变量类型声明、参数类型声明、方法返还类型说明，以及数据类型的转换等。而不要用具体类进行变量的类型声明、参数类型声明、方法返还类型说明，以及数据类型的转换等。要保证做到这一点，一个具体类应当只实现接口和抽象类中声明过的方法，而不要给出多余的方法。<br>传统的过程性系统的设计办法倾向于使高层次的模块依赖于低层次的模块，抽象层次依赖于具体层次。倒转原则就是把这个错误的依赖关系倒转过来。面向对象设计的重要原则是创建抽象化，并且从抽象化导出具体化，具体化给出不同的实现。继承关系就是一种从抽象化到具体化的导出。抽象层包含的应该是应用系统的商务逻辑和宏观的、对整个系统来说重要的战略性决定，是必然性的体现。具体层次含有的是一些次要的与实现有关的算法和逻辑，以及战术性的决定，带有相当大的偶然性选择。具体层次的代码是经常变动的，不能避免出现错误。<br>从复用的角度来说，高层次的模块是应当复用的，而且是复用的重点，因为它含有一个应用系统最重要的宏观商务逻辑，是较为稳定的。而在传统的过程性设计中，复用则侧重于具体层次模块的复用。依赖倒转原则则是对传统的过程性设计方法的“倒转”，是高层次模块复用及其可维护性的有效规范。<br>特例：对象的创建过程是违背“开—闭”原则以及依赖倒转原则的，但通过工厂模式，能很好地解决对象创建过程中的依赖倒转问题。</p>
+<h2 id="2-关系"><a href="#2-关系" class="headerlink" title="2.关系"></a>2.关系</h2><p>“开-闭”原则与依赖倒转原则是目标和手段的关系。如果说开闭原则是目标,依赖倒转原则是到达”开闭”原则的手段。如果要达到最好的”开闭”原则,就要尽量的遵守依赖倒转原则，依赖倒转原则是对”抽象化”的最好规范。</p>
+<p>里氏代换原则是依赖倒转原则的基础，依赖倒转原则是里氏代换原则的重要补充。</p>
+<h2 id="3-耦合（依赖）关系的种类"><a href="#3-耦合（依赖）关系的种类" class="headerlink" title="3.耦合（依赖）关系的种类"></a>3.耦合（依赖）关系的种类</h2><p>零耦合（Nil Coupling）关系：两个类没有耦合关系<br>具体耦合（Concrete Coupling）关系：发生在两个具体的（可实例化的）类之间，经由一个类对另一个具体类的直接引用造成。<br>抽象耦合（Abstract Coupling）关系：发生在一个具体类和一个抽象类（或接口）之间，使两个必须发生关系的类之间存有最大的灵活性。</p>
+<h3 id="3-1如何把握耦合"><a href="#3-1如何把握耦合" class="headerlink" title="3.1如何把握耦合"></a>3.1如何把握耦合</h3><p>我们应该尽可能的避免实现继承，原因如下：<br>1 失去灵活性，使用具体类会给底层的修改带来麻烦。<br>2 耦合问题，耦合是指两个实体相互依赖于对方的一个量度。程序员每天都在(有意识地或者无意识地)做出影响耦合的决定：类耦合、API耦合、应用程序耦合等等。在一个用扩展的继承实现系统中，派生类是非常紧密的与基类耦合，而且这种紧密的连接可能是被不期望的。如B extends A ，当B不全用A中的所有methods时，这时候，B调用的方法可能会产生错误!<br>我们必须客观的评价耦合度，系统之间不可能总是松耦合的，那样肯定什么也做不了。</p>
+<h3 id="3-2我们决定耦合程度的依据是什么"><a href="#3-2我们决定耦合程度的依据是什么" class="headerlink" title="3.2我们决定耦合程度的依据是什么"></a>3.2我们决定耦合程度的依据是什么</h3><p>简单的说，就是根据需求的稳定性，来决定耦合的程度。对于稳定性高的需求，不容易发生变化的需求，我们完全可以把各类设计成紧耦合的(我们虽然讨论类之间的耦合度，但其实功能块、模块、包之间的耦合度也是一样的)，因为这样可以提高效率，而且我们还可以使用一些更好的技术来提高效率或简化代码，例如c# 中的内部类技术。可是，如果需求极有可能变化，我们就需要充分的考虑类之间的耦合问题，我们可以想出各种各样的办法来降低耦合程度，但是归纳起来，不外乎增加抽象的层次来隔离不同的类，这个抽象层次可以是抽象的类、具体的类，也可以是接口，或是一组的类。我们可以用一句话来概括降低耦合度的思想：”针对接口编程，而不是针对实现编程。<br>在我们进行编码的时候，都会留下我们的指纹，如public的多少，代码的格式等等。我们可以耦合度量评估重新构建代码的风险。因为重新构建实际上是维护编码的一种形式，维护中遇到的那些麻烦事在重新构建时同样会遇到。我们知道在重新构建之后，最常见的随机bug大部分都是不当耦合造成的 。<br>如果不稳定因素越大，它的耦合度也就越大。<br>某类的不稳定因素=依赖的类个数/被依赖的类个数<br>依赖的类个数＝ 在编译此类的时被编译的其它类的个数总和</p>
+<h3 id="3-3怎样将大系统拆分成效系统"><a href="#3-3怎样将大系统拆分成效系统" class="headerlink" title="3.3怎样将大系统拆分成效系统"></a>3.3怎样将大系统拆分成效系统</h3><p>解决这个问题的一个思路是将许多类集合成一个更高层次的单位,形成一个高内聚、低耦合的类的集合，这是我们设计过程中应该着重考虑的问题！<br>耦合的目标是维护依赖的单向性，有时我们也会需要使用坏的耦合。在这种情况下，应当小心记录下原因，以帮助日后该代码的用户了解使用耦合真正的原因。</p>
+<h2 id="4-怎样做到依赖倒转"><a href="#4-怎样做到依赖倒转" class="headerlink" title="4.怎样做到依赖倒转"></a>4.怎样做到依赖倒转</h2><p>以抽象方式耦合是依赖倒转原则的关键。抽象耦合关系总要涉及具体类从抽象类继承，并且需要保证在任何引用到基类的地方都可以改换成其子类，因此，里氏代换原则是依赖倒转原则的基础。<br>在抽象层次上的耦合虽然有灵活性，但也带来了额外的复杂性，如果一个具体类发生变化的可能性非常小，那么抽象耦合能发挥的好处便十分有限，这时可以用具体耦合反而会更好。<br>层次化：所有结构良好的面向对象构架都具有清晰的层次定义，每个层次通过一个定义良好的、受控的接口向外提供一组内聚的服务。<br>依赖于抽象：建议不依赖于具体类，即程序中所有的依赖关系都应该终止于抽象类或者接口。尽量做到：<br>1、任何变量都不应该持有一个指向具体类的指针或者引用。<br>2、任何类都不应该从具体类派生。<br>3、任何方法都不应该覆写它的任何基类中的已经实现的方法。</p>
+<h2 id="5-依赖倒转原则的优缺点"><a href="#5-依赖倒转原则的优缺点" class="headerlink" title="5.依赖倒转原则的优缺点"></a>5.依赖倒转原则的优缺点</h2><p>依赖倒转原则虽然很强大，但却最不容易实现。因为依赖倒转的缘故，对象的创建很可能要使用对象工厂，以避免对具体类的直接引用，此原则的使用可能还会导致产生大量的类，对不熟悉面向对象技术的工程师来说，维护这样的系统需要较好地理解面向对象设计。</p>
+<p>依赖倒转原则假定所有的具体类都是会变化的，这也不总是正确。有一些具体类可能是相当稳定，不会变化的，使用这个具体类实例的应用完全可以依赖于这个具体类型，而不必为此创建一个抽象类型。</p>
+<p>此部分引用自：<a href="http://www.cnblogs.com/temptation/archive/2008/03/10/1098351.html" target="_blank" rel="external">http://www.cnblogs.com/temptation/archive/2008/03/10/1098351.html</a></p>
+<p>四.接口隔离原则(Interface Segregation Principle, ISP)</p>
+<p>在讲接口隔离原则之前，先明确一下我们的主角——接口。接口分为两种：</p>
+<ul>
+<li>◇ 实例接口（Object Interface），在Java中声明一个类，然后用new关键字产生的一个实例，它是对一个类型的事物的描述，这是一种接口，比如你定义Person这个类，然后使用Person zhangSan = new Person()产生了一个实例，这个实例要遵从的标准就是Person这个类，Person类就是zhangSan的接口，疑惑？看不懂？不要紧，那是因为让Java语言浸染的时间太长了，只要知道从这个角度来看，Java中的类也是一种接口；  </li>
+<li>◇ 类接口（Class Interface），Java中经常使用的interface关键字定义的接口。<br>主角已经定义清楚了，那什么是隔离呢？它有两种定义，如下所示：  </li>
+<li>◇ “Clients should not be forced to depend upon interfaces that they don’t use”——客户端不应该依赖它不需用的接口。  </li>
+<li>◇ “The dependency of one class to another one should depend on the smallest possible interface”——类间的依赖关系应该建立在最小的接口上。<br>新事物的定义一般都比较难理解，晦涩难懂是正常的。我们把这两个定义剖析一下，先说第一种定义：“客户端不应该依赖它不需要接口”，那依赖什么？依赖它需要的接口，客户端需要什么接口就提供什么接口，把不需要的接口剔除掉，那就需要对接口进行细化，保证其纯洁性；再看第二个定义：“类间的依赖关系应该建立在最小的接口上”，它要求是最小的接口，也是要求接口细化，接口纯洁，与第一个定义如出一辙，只是一个事物的两种不同描述。<br>我们可以把这两个定义概括为一句话：建立单一接口，不要建立臃肿庞大的接口。再通俗一点讲：接口尽量细化，同时接口中的方法尽量少。看到这里大家有可能要疑惑了，这与单一职责原则不是相同的吗？错，接口隔离原则与单一职责的审视角度是不相同的，单一职责要求的是类和接口职责单一，注重的是职责，这是业务逻辑上的划分，而接口隔离原则要求接口的方法尽量少。例如一个接口的职责可能包含10个方法，这10个方法都放在一个接口中，并且提供给多个模块访问，各个模块按照规定的权限来访问，在系统外通过文档约束“不使用的方法不要访问”，按照单一职责原则是允许的，按照接口隔离原则是不允许的，因为它要求“尽量使用多个专门的接口”,专门的接口指什么？就是指提供给每个模块都应该是单一接口，提供给几个模块就应该有几个接口，而不是建立一个庞大的臃肿的接口，容纳所有的客户端访问。</li>
+</ul>
+<h1 id="五-合成-聚合复用原则-Composite-Aggregate-Reuse-Principle-CARP"><a href="#五-合成-聚合复用原则-Composite-Aggregate-Reuse-Principle-CARP" class="headerlink" title="五.合成/聚合复用原则(Composite/Aggregate Reuse Principle,CARP)"></a>五.合成/聚合复用原则(Composite/Aggregate Reuse Principle,CARP)</h1><h2 id="5-1-概念"><a href="#5-1-概念" class="headerlink" title="5.1 概念"></a>5.1 概念</h2><p>定义：在一个新的对象里面使用一些已有的对象，使之成为新对象的一部分；新的对象通过向这些对象的委派达到复用这些对象的目的。应首先使用合成/聚合，合成/聚合则使系统灵活，其次才考虑继承，达到复用的目的。而使用继承时，要严格遵循里氏代换原则。有效地使用继承会有助于对问题的理解，降低复杂度，而滥用继承会增加系统构建、维护时的难度及系统的复杂度。<br>如果两个类是“Has-a”关系应使用合成、聚合，如果是“Is-a”关系可使用继承。”Is-A”是严格的分类学意义上定义，意思是一个类是另一个类的”一种”。而”Has-A”则不同，它表示某一个角色具有某一项责任。</p>
+<h2 id="5-2-什么是合成-什么是聚合？"><a href="#5-2-什么是合成-什么是聚合？" class="headerlink" title="5.2 什么是合成?什么是聚合？"></a>5.2 什么是合成?什么是聚合？</h2><p>合成（Composition）和聚合（Aggregation）都是关联（Association）的特殊种类。<br>聚合表示整体和部分的关系，表示“拥有”。如奔驰S360汽车，对奔驰S360引擎、奔驰S360轮胎的关系是聚合关系，离开了奔驰S360汽车，引擎、轮胎就失去了存在的意义。在设计中, 聚合不应该频繁出现，这样会增大设计的耦合度。<br>合成则是一种更强的“拥有”，部分和整体的生命周期一样。合成的新的对象完全支配其组成部分，包括它们的创建和湮灭等。一个合成关系的成分对象是不能与另一个合成关系共享的。<br>换句话说，合成是值的聚合（Aggregation by Value），而一般说的聚合是引用的聚合（Aggregation by Reference）。<br>明白了合成和聚合关系，再来理解合成/聚合原则应该就清楚了，要避免在系统设计中出现，一个类的继承层次超过3层，则需考虑重构代码，或者重新设计结构。当然最好的办法就是考虑使用合成/聚合原则。</p>
+<h2 id="5-3-通过合成-聚合来进行复用的优缺点"><a href="#5-3-通过合成-聚合来进行复用的优缺点" class="headerlink" title="5.3 通过合成/聚合来进行复用的优缺点"></a>5.3 通过合成/聚合来进行复用的优缺点</h2><p>优点：</p>
+<ul>
+<li>1) 新对象存取成分对象的唯一方法是通过成分对象的接口。 </li>
+<li>2) 这种复用是黑箱复用，因为成分对象的内部细节是新对象所看不见的。 </li>
+<li>3) 这种复用支持包装。 </li>
+<li>4) 这种复用所需的依赖较少。 </li>
+<li>5) 每一个新的类可以将焦点集中在一个任务上。 </li>
+<li>6) 这种复用可以在运行时间内动态进行，新对象可以动态的引用与成分对象类型相同的对象。 </li>
+<li>7) 作为复用手段可以应用到几乎任何环境中去。 </li>
+</ul>
+<p>缺点:就是系统中会有较多的对象需要管理。</p>
+<h2 id="5-4-通过继承来进行复用的优缺点"><a href="#5-4-通过继承来进行复用的优缺点" class="headerlink" title="5.4 通过继承来进行复用的优缺点"></a>5.4 通过继承来进行复用的优缺点</h2><p>优点：<br>1)新的实现较为容易，因为超类的大部分功能可以通过继承的关系自动进入子类。</p>
+<p>2)修改和扩展继承而来的实现较为容易。</p>
+<p>缺点：<br>1) 继承复用破坏包装，因为继承将超类的实现细节暴露给子类。由于超类的内部细节常常是对于子类透明的，所以这种复用是透明的复用，又称“白箱”复用。</p>
+<p>2) 如果超类发生改变，那么子类的实现也不得不发生改变。</p>
+<p>3)从超类继承而来的实现是静态的，不可能在运行时间内发生改变，没有足够的灵活性。</p>
+<p>4)继承只能在有限的环境中使用。</p>
+<p>此部分引用自：<a href="http://www.cnblogs.com/temptation/archive/2008/03/10/1098351.html" target="_blank" rel="external">http://www.cnblogs.com/temptation/archive/2008/03/10/1098351.html</a></p>
+<h1 id="六-迪米特法则-Law-of-Demeter-LoD"><a href="#六-迪米特法则-Law-of-Demeter-LoD" class="headerlink" title="六.迪米特法则(Law of Demeter LoD)"></a>六.迪米特法则(Law of Demeter LoD)</h1><h2 id="5-1概述"><a href="#5-1概述" class="headerlink" title="5.1概述"></a>5.1概述</h2><p>定义：一个软件实体应当尽可能少的与其他实体发生相互作用。<br>这样，当一个模块修改时，就会尽量少的影响其他的模块。扩展会相对容易。<br>这是对软件实体之间通信的限制。它要求限制软件实体之间通信的宽度和深度。 </p>
+<h2 id="5-2迪米特法则的其他表述："><a href="#5-2迪米特法则的其他表述：" class="headerlink" title="5.2迪米特法则的其他表述："></a>5.2迪米特法则的其他表述：</h2><p>1）只与你直接的朋友们通信。<br>2）不要跟“陌生人”说话。<br>3）每一个软件单位对其他的单位都只有最少的知识，而且局限于那些与本单位密切相关的软件单位。 </p>
+<h2 id="5-3狭义的迪米特法则"><a href="#5-3狭义的迪米特法则" class="headerlink" title="5.3狭义的迪米特法则"></a>5.3狭义的迪米特法则</h2><p>如果两个类不必彼此直接通信，那么这两个类就不应当发生直接的相互作用。如果其中的一个类需要调用另一个类的某一个方法的话，可以通过第三者转发这个调用。<br>朋友圈的确定<br>“朋友”条件：<br>1）当前对象本身（this）<br>2）以参量形式传入到当前对象方法中的对象<br>3）当前对象的实例变量直接引用的对象<br>4）当前对象的实例变量如果是一个聚集，那么聚集中的元素也都是朋友<br>5）当前对象所创建的对象<br>任何一个对象，如果满足上面的条件之一，就是当前对象的“朋友”；否则就是“陌生人”。<br>缺点：会在系统里造出大量的小方法，散落在系统的各个角落。<br>与依赖倒转原则互补使用 </p>
+<h2 id="5-4狭义的迪米特法则的缺点："><a href="#5-4狭义的迪米特法则的缺点：" class="headerlink" title="5.4狭义的迪米特法则的缺点："></a>5.4狭义的迪米特法则的缺点：</h2><p>在系统里造出大量的小方法，这些方法仅仅是传递间接的调用，与系统的商务逻辑无关。<br>遵循类之间的迪米特法则会是一个系统的局部设计简化，因为每一个局部都不会和远距离的对象有直接的关联。但是，这也会造成系统的不同模块之间的通信效率降低，也会使系统的不同模块之间不容易协调。 </p>
+<h2 id="5-5迪米特法则与设计模式"><a href="#5-5迪米特法则与设计模式" class="headerlink" title="5.5迪米特法则与设计模式"></a>5.5迪米特法则与设计模式</h2><p>门面（外观）模式和调停者（中介者）模式实际上就是迪米特法则的具体应用。 </p>
+<h2 id="5-6广义的迪米特法则"><a href="#5-6广义的迪米特法则" class="headerlink" title="5.6广义的迪米特法则"></a>5.6广义的迪米特法则</h2><p>迪米特法则的主要用意是控制信息的过载。在将迪米特法则运用到系统设计中时，要注意下面的几点：<br>1）在类的划分上，应当创建有弱耦合的类。<br>2）在类的结构设计上，每一个类都应当尽量降低成员的访问权限。<br>3）在类的设计上，只要有可能，一个类应当设计成不变类。<br>4）在对其他类的引用上，一个对象对其对象的引用应当降到最低。 </p>
+<h2 id="5-7广义迪米特法则在类的设计上的体现"><a href="#5-7广义迪米特法则在类的设计上的体现" class="headerlink" title="5.7广义迪米特法则在类的设计上的体现"></a>5.7广义迪米特法则在类的设计上的体现</h2><p>1）优先考虑将一个类设置成不变类<br>2）尽量降低一个类的访问权限<br>3）谨慎使用Serializable<br>4）尽量降低成员的访问权限<br>5）取代C Struct<br>迪米特法则又叫作最少知识原则（Least Knowledge Principle或简写为LKP），就是说一个对象应当对其他对象有尽可能少的了解。 </p>
+<h2 id="5-8如何实现迪米特法则"><a href="#5-8如何实现迪米特法则" class="headerlink" title="5.8如何实现迪米特法则"></a>5.8如何实现迪米特法则</h2><p>迪米特法则的主要用意是控制信息的过载，在将其运用到系统设计中应注意以下几点：<br>1) 在类的划分上，应当创建有弱耦合的类。类之间的耦合越弱，就越有利于复用。<br>2) 在类的结构设计上，每一个类都应当尽量降低成员的访问权限。一个类不应当public自己的属性，而应当提供取值和赋值的方法让外界间接访问自己的属性。<br>3) 在类的设计上，只要有可能，一个类应当设计成不变类。<br>4) 在对其它对象的引用上，一个类对其它对象的引用应该降到最低。</p>
+<h1 id="七-单一职责原则-Simple-responsibility-pinciple-SRP"><a href="#七-单一职责原则-Simple-responsibility-pinciple-SRP" class="headerlink" title="七.单一职责原则(Simple responsibility pinciple SRP)"></a>七.单一职责原则(Simple responsibility pinciple SRP)</h1><p>一个类，应该只有一个职责。每一个职责都是变化的一个轴线，如果一个类有一个以上的职责，这些职责就耦合在了一起。这会导致脆弱的设计。当一个职责发生变化时，可能会影响其它的职责。另外，多个职责耦合在一起，会影响复用性。我们可能只需要复用该类的某一个职责，但这个职责跟其它职责耦合在了一起，很难分离出来，即第7章提到的牢固性。</p>
+<p>SRP中，把职责定义为“变化的原因”。如果你能想到N个动机去改变一个类，那么这个类就具有多于一个的职责。这里说的“变化的原因”，只有实际发生时才有意义。可能预测到会有多个原因引起这个类的变化，但这仅仅是预测，并没有真的发生，这个类仍可看做具有单一职责，不需要分离职责。如果分离，会带来不必要的复杂性。</p>
+<p>如果发现一个类有多于一个的职责，应该尽量解耦。如果很难解耦，也要分离接口，在概念上解耦。</p>
+<p>众所周知，OOPL可以提高程序的封装性、复用性、可维护性。但仅仅是“可以”。能不能实现OOPL的这些优点，要看具体怎么做。如果一个类的代码非常混乱，各种功能的代码都混在一起，封装性、复用性、可维护性无从谈起。</p>
+<p>SRP是所有原则中最简单的，也是最基本的一个。运用这个原则，可以提高类的内聚性，有助于充分发挥OOPL的优势。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag">#设计模式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/28/新的起点/" rel="next">新的起点</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/03/01/软件设计原则/"
+     data-title="软件设计原则"
+     data-content=""
+     data-url="http://dingran.tk/2017/03/01/软件设计原则/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2017/03/01/软件设计原则/"
+                   data-title="软件设计原则" data-url="http://dingran.tk/2017/03/01/软件设计原则/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="💋D.R💘" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">💋D.R💘</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">68</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">58</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#软件设计七大原则"><span class="nav-number">1.</span> <span class="nav-text">软件设计七大原则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-开-闭原则-Open-Closed-Principle-OCP"><span class="nav-number">1.1.</span> <span class="nav-text">一.开-闭原则(Open-Closed Principle, OCP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-什么是开闭原则"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.什么是开闭原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-如何实现开闭原则"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.如何实现开闭原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-开闭原则能够带来什么好处"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.开闭原则能够带来什么好处</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-里氏代换原则-Liskov-Substitution-Principle-LSP"><span class="nav-number">2.</span> <span class="nav-text">二.里氏代换原则(Liskov Substitution Principle,LSP)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-依赖倒置原则-Dependence-Inversion-Principle-DIP"><span class="nav-number">3.</span> <span class="nav-text">三.依赖倒置原则(Dependence Inversion Principle,DIP)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-概念"><span class="nav-number">3.1.</span> <span class="nav-text">1.概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-关系"><span class="nav-number">3.2.</span> <span class="nav-text">2.关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-耦合（依赖）关系的种类"><span class="nav-number">3.3.</span> <span class="nav-text">3.耦合（依赖）关系的种类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1如何把握耦合"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.1如何把握耦合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2我们决定耦合程度的依据是什么"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.2我们决定耦合程度的依据是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3怎样将大系统拆分成效系统"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.3怎样将大系统拆分成效系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-怎样做到依赖倒转"><span class="nav-number">3.4.</span> <span class="nav-text">4.怎样做到依赖倒转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-依赖倒转原则的优缺点"><span class="nav-number">3.5.</span> <span class="nav-text">5.依赖倒转原则的优缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-合成-聚合复用原则-Composite-Aggregate-Reuse-Principle-CARP"><span class="nav-number">4.</span> <span class="nav-text">五.合成/聚合复用原则(Composite/Aggregate Reuse Principle,CARP)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-概念"><span class="nav-number">4.1.</span> <span class="nav-text">5.1 概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-什么是合成-什么是聚合？"><span class="nav-number">4.2.</span> <span class="nav-text">5.2 什么是合成?什么是聚合？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-通过合成-聚合来进行复用的优缺点"><span class="nav-number">4.3.</span> <span class="nav-text">5.3 通过合成/聚合来进行复用的优缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4-通过继承来进行复用的优缺点"><span class="nav-number">4.4.</span> <span class="nav-text">5.4 通过继承来进行复用的优缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六-迪米特法则-Law-of-Demeter-LoD"><span class="nav-number">5.</span> <span class="nav-text">六.迪米特法则(Law of Demeter LoD)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1概述"><span class="nav-number">5.1.</span> <span class="nav-text">5.1概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2迪米特法则的其他表述："><span class="nav-number">5.2.</span> <span class="nav-text">5.2迪米特法则的其他表述：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3狭义的迪米特法则"><span class="nav-number">5.3.</span> <span class="nav-text">5.3狭义的迪米特法则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4狭义的迪米特法则的缺点："><span class="nav-number">5.4.</span> <span class="nav-text">5.4狭义的迪米特法则的缺点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-5迪米特法则与设计模式"><span class="nav-number">5.5.</span> <span class="nav-text">5.5迪米特法则与设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-6广义的迪米特法则"><span class="nav-number">5.6.</span> <span class="nav-text">5.6广义的迪米特法则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-7广义迪米特法则在类的设计上的体现"><span class="nav-number">5.7.</span> <span class="nav-text">5.7广义迪米特法则在类的设计上的体现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-8如何实现迪米特法则"><span class="nav-number">5.8.</span> <span class="nav-text">5.8如何实现迪米特法则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七-单一职责原则-Simple-responsibility-pinciple-SRP"><span class="nav-number">6.</span> <span class="nav-text">七.单一职责原则(Simple responsibility pinciple SRP)</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">💋D.R💘</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/MrDingran">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dingran"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
