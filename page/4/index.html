@@ -240,6 +240,105 @@
           
           
             
+              <a class="post-title-link" href="/2016/06/27/java虚拟机GC Roots/" itemprop="url">
+                java虚拟机可达性分析法中，GC ROOTS有哪些？
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-06-27T21:48:06+08:00" content="2016-06-27">
+            2016-06-27
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/jvm/" itemprop="url" rel="index">
+                  <span itemprop="name">jvm</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+             
+              <a href="/2016/06/27/java虚拟机GC Roots/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/27/java虚拟机GC Roots/" itemprop="commentsCount"></span>
+              </a>
+             <!--
+              <a href="/2016/06/27/java虚拟机GC Roots/#comments" itemprop="discussionUrl">
+                <span>评论</span>
+              </a>
+			  -->
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody">
+            
+            可达性分析：设立若干种根对象，当任何一个根对象到某一个对象均不可达时，则认为这个对象是可以被回收的。
+从根（GC Roots）的对象作为起始点，开始向下搜索，搜索所走过的路径称为“引用链”，当一个对象到GC Roots没有任何引用链相连（用图论的概念来讲，就是从GC Roots到这个对象不可达）时，
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/06/27/java虚拟机GC Roots/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/06/22/Spring的BeanFactoryPostProcessor和BeanPostProcessor/" itemprop="url">
                 Spring的BeanFactoryPostProcessor和BeanPostProcessor
               </a>
@@ -1146,105 +1245,6 @@ Mysql作为目前世界上使用最广泛的免费数据库，相信所有从事
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/06/07/Java中的ReentrantLock和synchronized两种锁定机制的对比/" itemprop="url">
-                Java中的ReentrantLock和synchronized两种锁定机制的对比
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-06-07T21:49:04+08:00" content="2016-06-07">
-            2016-06-07
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/并发/" itemprop="url" rel="index">
-                  <span itemprop="name">并发</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-             
-              <a href="/2016/06/07/Java中的ReentrantLock和synchronized两种锁定机制的对比/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/07/Java中的ReentrantLock和synchronized两种锁定机制的对比/" itemprop="commentsCount"></span>
-              </a>
-             <!--
-              <a href="/2016/06/07/Java中的ReentrantLock和synchronized两种锁定机制的对比/#comments" itemprop="discussionUrl">
-                <span>评论</span>
-              </a>
-			  -->
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-            原文：http://www.ibm.com/developerworks/cn/java/j-jtp10264/index.html
-多线程和并发性并不是什么新内容，但是 Java 语言设计中的创新之一就是，它是第一个直接把跨平台线程模型和正规的内存模型集成到语言中的主流语言。核心类库包含一个 Th
-            ...
-          </span>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/06/07/Java中的ReentrantLock和synchronized两种锁定机制的对比/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1283,21 +1283,21 @@ Mysql作为目前世界上使用最广泛的免费数据库，相信所有从事
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">77</span>
+              <span class="site-state-item-count">78</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-count">25</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">63</span>
+              <span class="site-state-item-count">66</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
