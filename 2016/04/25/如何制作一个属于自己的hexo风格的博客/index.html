@@ -48,8 +48,8 @@
 然后在cmd中看到如下就是安装成功了
 申请GitHub 申请过程略 注意事项后文提到。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="何如制作一个属于自己的hexo风格的博客">
-<meta property="og:url" content="http://dingran.tk/2016/04/25/何如制作一个属于自己的hexo风格的博客/index.html">
+<meta property="og:title" content="如何制作一个属于自己的hexo风格的博客">
+<meta property="og:url" content="http://dingran.tk/2016/04/25/如何制作一个属于自己的hexo风格的博客/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
 <meta property="og:description" content="hexo是什么？如何安装呢？Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。几分钟就可安装好！
 准备工作：
@@ -67,9 +67,9 @@
 <meta property="og:image" content="http://7xjzgy.com1.z0.glb.clouddn.com/image/20150701/hexo20150701028.png">
 <meta property="og:image" content="http://7xjzgy.com1.z0.glb.clouddn.com/image/20150701/hexo20150701029.png">
 <meta property="og:image" content="http://7xjzgy.com1.z0.glb.clouddn.com/image/20150701/hexo20150701030.png">
-<meta property="og:updated_time" content="2016-05-06T15:29:46.000Z">
+<meta property="og:updated_time" content="2017-03-31T06:11:12.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="何如制作一个属于自己的hexo风格的博客">
+<meta name="twitter:title" content="如何制作一个属于自己的hexo风格的博客">
 <meta name="twitter:description" content="hexo是什么？如何安装呢？Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。几分钟就可安装好！
 准备工作：
 电脑一台以window 7 为主哦
@@ -87,7 +87,7 @@
   };
 </script>
 
-  <title> 何如制作一个属于自己的hexo风格的博客 | 崎岖的路,走出自己的脚步 </title>
+  <title> 如何制作一个属于自己的hexo风格的博客 | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -243,7 +243,7 @@
           
           
             
-              何如制作一个属于自己的hexo风格的博客
+              如何制作一个属于自己的hexo风格的博客
             
           
         </h1>
@@ -279,11 +279,11 @@
             <span class="post-comments-count">
               &nbsp; | &nbsp;
              
-              <a href="/2016/04/25/何如制作一个属于自己的hexo风格的博客/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/25/何如制作一个属于自己的hexo风格的博客/" itemprop="commentsCount"></span>
+              <a href="/2016/04/25/如何制作一个属于自己的hexo风格的博客/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/25/如何制作一个属于自己的hexo风格的博客/" itemprop="commentsCount"></span>
               </a>
              <!--
-              <a href="/2016/04/25/何如制作一个属于自己的hexo风格的博客/#comments" itemprop="discussionUrl">
+              <a href="/2016/04/25/如何制作一个属于自己的hexo风格的博客/#comments" itemprop="discussionUrl">
                 <span>评论</span>
               </a>
 			  -->
@@ -360,7 +360,14 @@
 <li>基础-&gt;进阶<a href="http://www.ituring.com.cn/article/199294?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">http://www.ituring.com.cn/article/199294?utm_source=tuicool&amp;utm_medium=referral</a></li>
 </ul>
 </blockquote>
-</span>
+<h2 id="补充：博客中插入图片-音乐"><a href="#补充：博客中插入图片-音乐" class="headerlink" title="补充：博客中插入图片,音乐"></a>补充：博客中插入图片,音乐</h2><p>基本分为两种办法</p>
+<h3 id="（1）放在本地文件"><a href="#（1）放在本地文件" class="headerlink" title="（1）放在本地文件"></a>（1）放在本地文件</h3><p>首先在nanshanyi.github.io目录下确认 _config.yml 中有 post_asset_folder:true 。<br>在 hexo 目录，执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">$ npm install https://github.com/CodeFalling/hexo-asset-image --save</div></pre></td></tr></table></figure>
+<p>　<br>之后再使用 hexo new ‘new’ 创建新博客的时候，会在source/_posts里面创建.md文件的同时生成一个相同的名字的文件夹。把该文章中需要使用的图片放在该文件夹下即可。<br>使用的时候</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">![“图片描述”（可以不写）](/文件夹名/你的图片名字.JPG)</div></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">![](/new/text.jpg)</div></pre></td></tr></table></figure>
+<h3 id="2-放在七牛上，需要先注册，上传图片生成链接，直接在文章中使用链接即可。"><a href="#2-放在七牛上，需要先注册，上传图片生成链接，直接在文章中使用链接即可。" class="headerlink" title="(2)放在七牛上，需要先注册，上传图片生成链接，直接在文章中使用链接即可。"></a>(2)放在七牛上，需要先注册，上传图片生成链接，直接在文章中使用链接即可。</h3></span>
       
     </div>
 
@@ -400,24 +407,17 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/04/25/何如制作一个属于自己的hexo风格的博客/"
-     data-title="何如制作一个属于自己的hexo风格的博客"
-     data-content=""
-     data-url="http://dingran.tk/2016/04/25/何如制作一个属于自己的hexo风格的博客/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
+        <div class="bdsharebuttonbox">
+	<a href="#" class="bds_more" data-cmd="more"></a>
+	<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+	<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+	<a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
 </div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
       
     </div>
   </div>
@@ -429,12 +429,11 @@
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2016/04/25/何如制作一个属于自己的hexo风格的博客/"
-                   data-title="何如制作一个属于自己的hexo风格的博客" data-url="http://dingran.tk/2016/04/25/何如制作一个属于自己的hexo风格的博客/">
+              <div class="ds-thread" data-thread-key="2016/04/25/如何制作一个属于自己的hexo风格的博客/"
+                   data-title="如何制作一个属于自己的hexo风格的博客" data-url="http://dingran.tk/2016/04/25/如何制作一个属于自己的hexo风格的博客/">
               </div>
             
-          </div>
-        
+           
       </div>
 
       
@@ -470,7 +469,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">78</span>
+              <span class="site-state-item-count">79</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -484,7 +483,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">66</span>
+              <span class="site-state-item-count">65</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -529,7 +528,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo是什么？如何安装呢？"><span class="nav-number">1.</span> <span class="nav-text">hexo是什么？如何安装呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备工作："><span class="nav-number">2.</span> <span class="nav-text">准备工作：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化："><span class="nav-number">3.</span> <span class="nav-text">初始化：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地运行hexo"><span class="nav-number">4.</span> <span class="nav-text">本地运行hexo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理博客"><span class="nav-number">5.</span> <span class="nav-text">管理博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后面想怎么折腾就怎么折腾吧-把你的想法发挥极致！"><span class="nav-number">6.</span> <span class="nav-text">后面想怎么折腾就怎么折腾吧 把你的想法发挥极致！</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo是什么？如何安装呢？"><span class="nav-number">1.</span> <span class="nav-text">hexo是什么？如何安装呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备工作："><span class="nav-number">2.</span> <span class="nav-text">准备工作：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化："><span class="nav-number">3.</span> <span class="nav-text">初始化：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地运行hexo"><span class="nav-number">4.</span> <span class="nav-text">本地运行hexo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理博客"><span class="nav-number">5.</span> <span class="nav-text">管理博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后面想怎么折腾就怎么折腾吧-把你的想法发挥极致！"><span class="nav-number">6.</span> <span class="nav-text">后面想怎么折腾就怎么折腾吧 把你的想法发挥极致！</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充：博客中插入图片-音乐"><span class="nav-number">7.</span> <span class="nav-text">补充：博客中插入图片,音乐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#（1）放在本地文件"><span class="nav-number">7.1.</span> <span class="nav-text">（1）放在本地文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-放在七牛上，需要先注册，上传图片生成链接，直接在文章中使用链接即可。"><span class="nav-number">7.2.</span> <span class="nav-text">(2)放在七牛上，需要先注册，上传图片生成链接，直接在文章中使用链接即可。</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
