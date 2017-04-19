@@ -303,10 +303,11 @@
             
             mysql中的if用法：
 
-使我们经常使用的case when
-还有就是mysql本身就有的一种if(exp1,exp2,exp3)
+一种是我们经常使用的case when
+还有一种是mysql本身自带函数 if(exp1,exp2,exp3)
 
-123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，如果最大id不为n
+用法如下：
+123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，
             ...
           </span>
           <div class="post-more-link text-center">

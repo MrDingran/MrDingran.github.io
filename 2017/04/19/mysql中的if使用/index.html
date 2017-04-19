@@ -42,32 +42,35 @@
 
 <meta name="description" content="mysql中的if用法：
 
-使我们经常使用的case when
-还有就是mysql本身就有的一种if(exp1,exp2,exp3)
+一种是我们经常使用的case when
+还有一种是mysql本身自带函数 if(exp1,exp2,exp3)
 
+用法如下：
 123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，如果最大id不为null，就将最大id加1
-可以用来进行一些简单的转换mybatis推荐使用typehandler">
+可以用来进行一些简单的转换mybatis推荐使用type">
 <meta property="og:type" content="article">
 <meta property="og:title" content="mysql中的if使用">
 <meta property="og:url" content="http://dingran.tk/2017/04/19/mysql中的if使用/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
 <meta property="og:description" content="mysql中的if用法：
 
-使我们经常使用的case when
-还有就是mysql本身就有的一种if(exp1,exp2,exp3)
+一种是我们经常使用的case when
+还有一种是mysql本身自带函数 if(exp1,exp2,exp3)
 
+用法如下：
 123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，如果最大id不为null，就将最大id加1
-可以用来进行一些简单的转换mybatis推荐使用typehandler">
-<meta property="og:updated_time" content="2017-04-19T06:09:43.000Z">
+可以用来进行一些简单的转换mybatis推荐使用type">
+<meta property="og:updated_time" content="2017-04-19T06:11:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql中的if使用">
 <meta name="twitter:description" content="mysql中的if用法：
 
-使我们经常使用的case when
-还有就是mysql本身就有的一种if(exp1,exp2,exp3)
+一种是我们经常使用的case when
+还有一种是mysql本身自带函数 if(exp1,exp2,exp3)
 
+用法如下：
 123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，如果最大id不为null，就将最大id加1
-可以用来进行一些简单的转换mybatis推荐使用typehandler">
+可以用来进行一些简单的转换mybatis推荐使用type">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -291,9 +294,10 @@
       
         <span itemprop="articleBody"><p>mysql中的if用法：</p>
 <ul>
-<li>使我们经常使用的case when</li>
-<li>还有就是mysql本身就有的一种if(exp1,exp2,exp3)</li>
+<li>一种是我们经常使用的case when</li>
+<li>还有一种是mysql本身自带函数 if(exp1,exp2,exp3)</li>
 </ul>
+<p>用法如下：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">select</span> <span class="keyword">if</span>(<span class="keyword">max</span>(<span class="keyword">id</span>) <span class="keyword">is</span> <span class="literal">null</span>,<span class="number">1</span>,<span class="keyword">max</span>(<span class="keyword">id</span>)+<span class="number">1</span>) <span class="keyword">from</span> <span class="keyword">table</span></div><div class="line">#描述为如果<span class="keyword">id</span>最大值是<span class="literal">null</span>，就为<span class="number">1</span>，如果最大<span class="keyword">id</span>不为<span class="literal">null</span>，就将最大<span class="keyword">id</span>加<span class="number">1</span></div></pre></td></tr></table></figure>
 <p>可以用来进行一些简单的转换<br>mybatis推荐使用typehandler</p>
 </span>
