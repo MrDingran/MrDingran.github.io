@@ -28,7 +28,7 @@
 
 <meta name="baidu-site-verification" content="xSJDurVHbh" />
 
-  <meta name="keywords" content="springMVC,struts2," />
+  <meta name="keywords" content="mysql," />
 
 
 
@@ -40,25 +40,34 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="我们用struts2时采用的传统的配置文件的方式，并没有使用传说中的0配置。spring3 mvc可以认为已经100%零配置了（除了配置spring mvc-servlet.xml外）。
-Spring MVC和Struts2的区别：
+<meta name="description" content="mysql中的if用法：
 
-机制：spring mvc的入口是servlet，而struts2是filter（这里要指出，filter和servlet是不同的。以前认为filter是servl">
+使我们经常使用的case when
+还有就是mysql本身就有的一种if(exp1,exp2,exp3)
+
+123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，如果最大id不为null，就将最大id加1
+可以用来进行一些简单的转换mybatis推荐使用typehandler">
 <meta property="og:type" content="article">
-<meta property="og:title" content="springmvc和struts2的区别（转载）">
-<meta property="og:url" content="http://dingran.tk/2016/04/25/springmvc和struts2的区别（转载）/index.html">
+<meta property="og:title" content="mysql中的if使用">
+<meta property="og:url" content="http://dingran.tk/2017/04/19/mysql中的if使用/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
-<meta property="og:description" content="我们用struts2时采用的传统的配置文件的方式，并没有使用传说中的0配置。spring3 mvc可以认为已经100%零配置了（除了配置spring mvc-servlet.xml外）。
-Spring MVC和Struts2的区别：
+<meta property="og:description" content="mysql中的if用法：
 
-机制：spring mvc的入口是servlet，而struts2是filter（这里要指出，filter和servlet是不同的。以前认为filter是servl">
-<meta property="og:updated_time" content="2016-04-25T14:28:56.000Z">
+使我们经常使用的case when
+还有就是mysql本身就有的一种if(exp1,exp2,exp3)
+
+123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，如果最大id不为null，就将最大id加1
+可以用来进行一些简单的转换mybatis推荐使用typehandler">
+<meta property="og:updated_time" content="2017-04-19T06:09:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="springmvc和struts2的区别（转载）">
-<meta name="twitter:description" content="我们用struts2时采用的传统的配置文件的方式，并没有使用传说中的0配置。spring3 mvc可以认为已经100%零配置了（除了配置spring mvc-servlet.xml外）。
-Spring MVC和Struts2的区别：
+<meta name="twitter:title" content="mysql中的if使用">
+<meta name="twitter:description" content="mysql中的if用法：
 
-机制：spring mvc的入口是servlet，而struts2是filter（这里要指出，filter和servlet是不同的。以前认为filter是servl">
+使我们经常使用的case when
+还有就是mysql本身就有的一种if(exp1,exp2,exp3)
+
+123select if(max(id) is null,1,max(id)+1) from table#描述为如果id最大值是null，就为1，如果最大id不为null，就将最大id加1
+可以用来进行一些简单的转换mybatis推荐使用typehandler">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -68,7 +77,7 @@ Spring MVC和Struts2的区别：
   };
 </script>
 
-  <title> springmvc和struts2的区别（转载） | 崎岖的路,走出自己的脚步 </title>
+  <title> mysql中的if使用 | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -224,7 +233,7 @@ Spring MVC和Struts2的区别：
           
           
             
-              springmvc和struts2的区别（转载）
+              mysql中的if使用
             
           
         </h1>
@@ -233,8 +242,8 @@ Spring MVC和Struts2的区别：
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-04-25T22:24:41+08:00" content="2016-04-25">
-            2016-04-25
+          <time itemprop="dateCreated" datetime="2017-04-19T14:05:22+08:00" content="2017-04-19">
+            2017-04-19
           </time>
         </span>
 
@@ -243,8 +252,8 @@ Spring MVC和Struts2的区别：
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/wiki/" itemprop="url" rel="index">
-                  <span itemprop="name">wiki</span>
+                <a href="/categories/数据库/" itemprop="url" rel="index">
+                  <span itemprop="name">数据库</span>
                 </a>
               </span>
 
@@ -260,11 +269,11 @@ Spring MVC和Struts2的区别：
             <span class="post-comments-count">
               &nbsp; | &nbsp;
              
-              <a href="/2016/04/25/springmvc和struts2的区别（转载）/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/25/springmvc和struts2的区别（转载）/" itemprop="commentsCount"></span>
+              <a href="/2017/04/19/mysql中的if使用/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/19/mysql中的if使用/" itemprop="commentsCount"></span>
               </a>
              <!--
-              <a href="/2016/04/25/springmvc和struts2的区别（转载）/#comments" itemprop="discussionUrl">
+              <a href="/2017/04/19/mysql中的if使用/#comments" itemprop="discussionUrl">
                 <span>评论</span>
               </a>
 			  -->
@@ -280,24 +289,13 @@ Spring MVC和Struts2的区别：
       
 
       
-        <span itemprop="articleBody"><p>我们用struts2时采用的传统的配置文件的方式，并没有使用传说中的0配置。<br>spring3 mvc可以认为已经100%零配置了（除了配置spring mvc-servlet.xml外）。</p>
-<p>Spring MVC和Struts2的区别：</p>
-<ol>
-<li><p>机制：spring mvc的入口是servlet，而struts2是filter（这里要指出，filter和servlet是不同的。以前认为filter是servlet的一种特殊），这样就导致了二者的机制不同，这里就牵涉到servlet和filter的区别了。</p>
-</li>
-<li><p>性能：spring会稍微比struts快。spring mvc是基于方法的设计，而sturts是基于类，每次发一次请求都会实例一个action，每个action都会被注入属性.<br> 而spring基于方法，粒度更细，但要小心把握像在servlet控制数据一样。spring3 mvc是方法级别的拦截，拦截到方法后根据参数上的注解，把request数据注入进去，在spring3 mvc中，一个方法对应一个request上下文。<br> 而struts2框架是类级别的拦截，每次来了请求就创建一个Action，然后调用setter getter方法把request中的数据注入；struts2实际上是通过setter getter方法与request打交道的；struts2中，一个Action对象对应一个request上下文。</p>
-</li>
-<li><p>参数传递：struts是在接受参数的时候，可以用属性来接受参数，这就说明参数是让多个方法共享的。</p>
-</li>
-<li><p>设计思想上：struts更加符合oop的编程思想， spring就比较谨慎，在servlet上扩展。</p>
-</li>
-<li><p>intercepter的实现机制：struts有以自己的interceptor机制，spring mvc用的是独立的AOP方式。这样导致struts的配置文件量还是比spring mvc大，虽然struts的配置能继承，所以我觉得论使用上来讲，spring mvc使用更加简洁，开发效率Spring MVC确实比struts2高。<br> spring mvc是方法级别的拦截，一个方法对应一个request上下文，而方法同时又跟一个url对应，所以说从架构本身上spring3 mvc就容易实现restful url。<br> struts2是类级别的拦截，一个类对应一个request上下文；实现restful url要费劲，因为struts2 action的一个方法可以对应一个url；而其类属性却被所有方法共享，这也就无法用注解或其他方式标识其所属方法了。<br>  spring3 mvc的方法之间基本上独立的，独享request response数据，请求数据通过参数获取，处理结果通过ModelMap交回给框架方法之间不共享变量，而struts2搞的就比较乱，虽然方法之间也是独立的，但其所有Action变量是共享的，这不会影响程序运行，却给我们编码，读程序时带来麻烦。</p>
-</li>
-<li><p>另外，spring3 mvc的验证也是一个亮点，支持JSR303，处理ajax的请求更是方便，只需一个注解@ResponseBody ，然后直接返回响应文本即可。</p>
-</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RequestMapping</span>(value=<span class="string">"/whitelists"</span>)   </div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">index</span><span class="params">(ModelMap map)</span></span>&#123;   </div><div class="line">    Account account = accountManager.getByDigitId(SecurityContextHolder.get().getDigitId()) ;   </div><div class="line">    List&lt;Group&gt; groupList = groupManager.findAllGroup(account.getId()) ;   </div><div class="line">    map.put(<span class="string">"account"</span>, account);   </div><div class="line">    map.put(<span class="string">"groupList"</span>, groupList);   </div><div class="line">    <span class="keyword">return</span> <span class="string">"/group/group-index"</span> ;   </div><div class="line">&#125;   </div><div class="line">       <span class="comment">//@ResponseBody ajax响应     </span></div><div class="line"><span class="meta">@RequestMapping</span>(value=<span class="string">"/whitelist/&#123;whiteListId&#125;/del"</span>)   </div><div class="line"><span class="meta">@ResponseBody</span>     </div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">delete</span><span class="params">(@PathVariable Integer whiteListId)</span></span>&#123;   </div><div class="line">    whiteListManager.deleteWhiteList(whiteListId) ;   </div><div class="line">    <span class="keyword">return</span> <span class="string">"success"</span> ;   </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><a href="http://langgufu.iteye.com/blog/2160907" target="_blank" rel="external">原址链接</a></p>
+        <span itemprop="articleBody"><p>mysql中的if用法：</p>
+<ul>
+<li>使我们经常使用的case when</li>
+<li>还有就是mysql本身就有的一种if(exp1,exp2,exp3)</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">select</span> <span class="keyword">if</span>(<span class="keyword">max</span>(<span class="keyword">id</span>) <span class="keyword">is</span> <span class="literal">null</span>,<span class="number">1</span>,<span class="keyword">max</span>(<span class="keyword">id</span>)+<span class="number">1</span>) <span class="keyword">from</span> <span class="keyword">table</span></div><div class="line">#描述为如果<span class="keyword">id</span>最大值是<span class="literal">null</span>，就为<span class="number">1</span>，如果最大<span class="keyword">id</span>不为<span class="literal">null</span>，就将最大<span class="keyword">id</span>加<span class="number">1</span></div></pre></td></tr></table></figure>
+<p>可以用来进行一些简单的转换<br>mybatis推荐使用typehandler</p>
 </span>
       
     </div>
@@ -306,9 +304,7 @@ Spring MVC和Struts2的区别：
       
         <div class="post-tags">
           
-            <a href="/tags/springMVC/" rel="tag">#springMVC</a>
-          
-            <a href="/tags/struts2/" rel="tag">#struts2</a>
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
           
         </div>
       
@@ -317,13 +313,11 @@ Spring MVC和Struts2的区别：
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/04/25/使用XStream注解实现Java对象与XML互相转换的代码示例/" rel="prev">使用XStream注解实现Java对象与XML互相转换的代码示例</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/25/Apache与Tomcat三种连接负载均衡方式/" rel="next">Apache与Tomcat三种连接负载均衡方式</a>
+              <a href="/2017/04/19/伪共享，并发编程无声的性能杀手/" rel="next">伪共享，并发编程无声的性能杀手</a>
             
           </div>
         </div>
@@ -338,10 +332,10 @@ Spring MVC和Struts2的区别：
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/04/25/springmvc和struts2的区别（转载）/"
-     data-title="springmvc和struts2的区别（转载）"
+        <div class="ds-share flat" data-thread-key="2017/04/19/mysql中的if使用/"
+     data-title="mysql中的if使用"
      data-content=""
-     data-url="http://dingran.tk/2016/04/25/springmvc和struts2的区别（转载）/">
+     data-url="http://dingran.tk/2017/04/19/mysql中的if使用/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -367,8 +361,8 @@ Spring MVC和Struts2的区别：
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2016/04/25/springmvc和struts2的区别（转载）/"
-                   data-title="springmvc和struts2的区别（转载）" data-url="http://dingran.tk/2016/04/25/springmvc和struts2的区别（转载）/">
+              <div class="ds-thread" data-thread-key="2017/04/19/mysql中的if使用/"
+                   data-title="mysql中的if使用" data-url="http://dingran.tk/2017/04/19/mysql中的if使用/">
               </div>
             
           </div>
