@@ -28,7 +28,7 @@
 
 <meta name="baidu-site-verification" content="xSJDurVHbh" />
 
-  <meta name="keywords" content="spring,redes," />
+  <meta name="keywords" content="途牛," />
 
 
 
@@ -40,16 +40,19 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="redis与spring缓存实例，mark一下：http://www.importnew.com/19315.html">
+<meta name="description" content="t给予2g内存 但是改完的接口在我本地没查询一次几乎都不可能在5s内返回结果，也许是我开了其他应用导致的，但是之前相同情况下返回的结果也能在5s以内返回啊，这是有很大的问题的，数据中心余位查询是核心接口，性能太慢了也说不过去了，而且还有很多其他分销商接进来，这么慢不是会让人家吐槽的么。发布到测试环境反应速度还可以2~4秒跑长趟，但是本机还是很慢，所以，还是从我的机器山入手，来查询瓶颈在哪：
+找了一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis+Spring缓存实例">
-<meta property="og:url" content="http://dingran.tk/2016/05/02/Redis+Spring缓存实例/index.html">
+<meta property="og:title" content="记途牛火车票数据中心余位接口优化记录">
+<meta property="og:url" content="http://dingran.tk/2017/05/05/记途牛火车票数据中心余位接口优化记录/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
-<meta property="og:description" content="redis与spring缓存实例，mark一下：http://www.importnew.com/19315.html">
-<meta property="og:updated_time" content="2016-05-02T14:27:16.000Z">
+<meta property="og:description" content="t给予2g内存 但是改完的接口在我本地没查询一次几乎都不可能在5s内返回结果，也许是我开了其他应用导致的，但是之前相同情况下返回的结果也能在5s以内返回啊，这是有很大的问题的，数据中心余位查询是核心接口，性能太慢了也说不过去了，而且还有很多其他分销商接进来，这么慢不是会让人家吐槽的么。发布到测试环境反应速度还可以2~4秒跑长趟，但是本机还是很慢，所以，还是从我的机器山入手，来查询瓶颈在哪：
+找了一">
+<meta property="og:updated_time" content="2017-05-05T10:36:34.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis+Spring缓存实例">
-<meta name="twitter:description" content="redis与spring缓存实例，mark一下：http://www.importnew.com/19315.html">
+<meta name="twitter:title" content="记途牛火车票数据中心余位接口优化记录">
+<meta name="twitter:description" content="t给予2g内存 但是改完的接口在我本地没查询一次几乎都不可能在5s内返回结果，也许是我开了其他应用导致的，但是之前相同情况下返回的结果也能在5s以内返回啊，这是有很大的问题的，数据中心余位查询是核心接口，性能太慢了也说不过去了，而且还有很多其他分销商接进来，这么慢不是会让人家吐槽的么。发布到测试环境反应速度还可以2~4秒跑长趟，但是本机还是很慢，所以，还是从我的机器山入手，来查询瓶颈在哪：
+找了一">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -59,7 +62,7 @@
   };
 </script>
 
-  <title> Redis+Spring缓存实例 | 崎岖的路,走出自己的脚步 </title>
+  <title> 记途牛火车票数据中心余位接口优化记录 | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -215,7 +218,7 @@
           
           
             
-              Redis+Spring缓存实例
+              记途牛火车票数据中心余位接口优化记录
             
           
         </h1>
@@ -224,8 +227,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-05-02T22:22:04+08:00" content="2016-05-02">
-            2016-05-02
+          <time itemprop="dateCreated" datetime="2017-05-05T16:23:29+08:00" content="2017-05-05">
+            2017-05-05
           </time>
         </span>
 
@@ -234,8 +237,8 @@
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/缓存/" itemprop="url" rel="index">
-                  <span itemprop="name">缓存</span>
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
                 </a>
               </span>
 
@@ -251,11 +254,11 @@
             <span class="post-comments-count">
               &nbsp; | &nbsp;
              
-              <a href="/2016/05/02/Redis+Spring缓存实例/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/02/Redis+Spring缓存实例/" itemprop="commentsCount"></span>
+              <a href="/2017/05/05/记途牛火车票数据中心余位接口优化记录/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/05/记途牛火车票数据中心余位接口优化记录/" itemprop="commentsCount"></span>
               </a>
              <!--
-              <a href="/2016/05/02/Redis+Spring缓存实例/#comments" itemprop="discussionUrl">
+              <a href="/2017/05/05/记途牛火车票数据中心余位接口优化记录/#comments" itemprop="discussionUrl">
                 <span>评论</span>
               </a>
 			  -->
@@ -271,7 +274,22 @@
       
 
       
-        <span itemprop="articleBody"><p>redis与spring缓存实例，mark一下：<br><a href="http://www.importnew.com/19315.html" target="_blank" rel="external">http://www.importnew.com/19315.html</a></p>
+        <span itemprop="articleBody"><p>t给予2g内存 但是改完的接口在我本地没查询一次几乎都不可能在5s内返回结果，也许是我开了其他应用导致的，但是之前相同情况下返回的结果也能在5s以内返回啊，这是有很大的问<br>题的，数据中心余位查询是核心接口，性能太慢了也说不过去了，而且还有很多其他分销商<br>接进来，这么慢不是会让人家吐槽的么。发布到测试环境反应速度还可以2~4秒跑长趟，但<br>是本机还是很慢，所以，还是从我的机器山入手，来查询瓶颈在哪：</p>
+<p>找了一个车次 上海-南京 这个一天的车次大概有260个左右 所以就拿这个测，如果这个查询速度快了，那么其他的就会更快了。</p>
+<ol>
+<li><p>首先判断是否是12306返回的结果时间太长，加上日志，用java自带的毫秒函数来判断发<br>现12306返回的结果（上海-南京）最慢的也在2秒以内，70kb左右，由于使用代理ip可能还会有点耗时，也不会太久，但是我用接口调用用chrome浏览器发起请求到返回总共一共用了<br>20多秒，多以和12306和代理ip返回结果没有多大关系。</p>
+</li>
+<li><p>是不是拼装12306返回数据很慢呢？同样，打上日志，调用一次接口发现260个车次解析成对象放到list里面，总共耗时15秒左右，嗯，这是一个优化的地方，如何优化呢？我想到<br>使用多线程解析数据，然后将数据放到一个容器中，最后将容器数据返回即可。想法有了，<br>开始做，先创建一个list，然后循环12306返回数据，每拿到一组数据，用线程池发起一个线程去处理，外面用闭锁await，当所有线程都解析完成后，闭锁释放，实现起来也很容易，我先拿抢票接口做实验，调用接口查看时间发现可以在3秒左右返回数据这是相当的快呀，然后将一些没用的字符串去掉，比如string a = “abc”，这种也会创建临时变量的全部拿掉，减少创建对象节省jvm内存；再次相同的办法处理余位接口，拿上海到南京来查询，发现返回数据的速度快了很多，但是到chrome的数据返回时间还是有20多秒，这是怎么回事？</p>
+</li>
+<li><p>再次判断抢票专用接口和通用余位查询接口为什么这么大差距呢？对比发现抢票接口的缓存数据就是要返回的数据，是我当初就这么设计的，而通用余位查询接口返回的数据格式还需要再次进行改造才能返回前端展示，于是专门看buildCache方法，这个方法每次查询都会调用，包括数据格式的变化，还有价格的反刷的问题，瞬间我就想到价格反刷有问题，查看逻辑，里面会有个向前推得判断方法，现在12306经常一天一个价这种办法已经不太实用了，但是没办法，不能随便改，先打到日志看看处理完花费时间，全部处理完数据总共花了18秒左右，总共胡斐21秒左右，处理这个就花费了近3/4，太奢侈了，这距离我们规定的5秒以内差距太远了，我给每个车次反刷打上日志查看，每个车次处理还算快大概平局60ms左右，但是260*60大概有16秒左右，到这里其实就是单个线程一个一个处理，非常耗时。</p>
+</li>
+<li><p>找到问题症结了，开始继续采用多线程+闭锁处理，这样其实是多个线程并行，260个车次，在线程池并行处理下不到3秒就处理完了，真爽，发布代码，启动后，调用接口上海-南京，不走缓存，返回时间在3~4秒之间 ，再来个数据上海到北京大概有46个左右车次，不到一秒返回，走缓存就更快了，嗯，终于感受到多线程的快感了。</p>
+</li>
+<li><p>由于以上都是在我本机测试，所以我要发布到测试环境，提交代码，进行构建后，调用接口，发现上海-南京返回时间在1.2秒左右 ，之前返回还在5秒左右，提高了将近3秒左右，在查上海-北京几乎都是几百毫秒，秒回，加上缓存的作用下，相信后面再线上部署后会更加有效果。</p>
+</li>
+</ol>
+<p>本次优化使用多线程+闭锁，其实没有多大的新意，但是我一直遵守一句话就是：做什么事要有想法，没想法做什么？其实所谓的想法就是经验，经验多了想法当然就多了，在平时平庸的代码里面，加上一些并行操作会让系统跑的更加快。</p>
+<p>其中也遇到了很多问题，比如多线程向list里面存放数据的时候就会报concurrentModificationException，是因为迭代的时候发现list的数据个数发生变化就会报这个异常，那么就要解决这个问题，解决办法是copyonwritearraylist和collections.synchronizedList，由于我这边主要是写数据，经过对比查询，synchronizeList比较适合我，copyOnWrite适合读多写少的情况，改完后再也没有报这个异常。                                                  </p>
 </span>
       
     </div>
@@ -280,9 +298,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/spring/" rel="tag">#spring</a>
-          
-            <a href="/tags/redes/" rel="tag">#redes</a>
+            <a href="/tags/途牛/" rel="tag">#途牛</a>
           
         </div>
       
@@ -291,13 +307,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/05/02/JVM配置/" rel="prev">JVM内存划分以及调优（转）</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/28/js 将json字符串转换为json对象的方法解析/" rel="next">js 将json字符串转换为json对象的方法解析</a>
+              <a href="/2017/05/04/记途牛火车票数据中心0426变动记录/" rel="next">途牛火车票12306数据中心0426变动记录</a>
             
           </div>
         </div>
@@ -312,10 +326,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/05/02/Redis+Spring缓存实例/"
-     data-title="Redis+Spring缓存实例"
+        <div class="ds-share flat" data-thread-key="2017/05/05/记途牛火车票数据中心余位接口优化记录/"
+     data-title="记途牛火车票数据中心余位接口优化记录"
      data-content=""
-     data-url="http://dingran.tk/2016/05/02/Redis+Spring缓存实例/">
+     data-url="http://dingran.tk/2017/05/05/记途牛火车票数据中心余位接口优化记录/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -341,8 +355,8 @@
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2016/05/02/Redis+Spring缓存实例/"
-                   data-title="Redis+Spring缓存实例" data-url="http://dingran.tk/2016/05/02/Redis+Spring缓存实例/">
+              <div class="ds-thread" data-thread-key="2017/05/05/记途牛火车票数据中心余位接口优化记录/"
+                   data-title="记途牛火车票数据中心余位接口优化记录" data-url="http://dingran.tk/2017/05/05/记途牛火车票数据中心余位接口优化记录/">
               </div>
             
           </div>
