@@ -28,7 +28,7 @@
 
 <meta name="baidu-site-verification" content="xSJDurVHbh" />
 
-  <meta name="keywords" content="js,json," />
+  <meta name="keywords" content="途牛," />
 
 
 
@@ -40,19 +40,22 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="例如：JSON字符串:var str1 = ‘{ “name”: “cxh”, “sex”: “man” }’;JSON对象:var str2 = { “name”: “cxh”, “sex”: “man” };
-JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的方法先转化为JSON对象：//由JSON字符串转换为JSON对象 var obj = eval(‘(‘ + str +">
+<meta name="description" content="5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？
+我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪里没有处理好，造成车次丢失，可以没有办法正确定位问题。
+5.15号团建回来第一天上班，出现了好几单这个问题，有一个Z29的车次映入眼帘，由于">
 <meta property="og:type" content="article">
-<meta property="og:title" content="js 将json字符串转换为json对象的方法解析">
-<meta property="og:url" content="http://dingran.tk/2016/04/28/js 将json字符串转换为json对象的方法解析/index.html">
+<meta property="og:title" content="车次缺失问题排查">
+<meta property="og:url" content="http://dingran.tk/2017/05/16/车次缺失问题排查/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
-<meta property="og:description" content="例如：JSON字符串:var str1 = ‘{ “name”: “cxh”, “sex”: “man” }’;JSON对象:var str2 = { “name”: “cxh”, “sex”: “man” };
-JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的方法先转化为JSON对象：//由JSON字符串转换为JSON对象 var obj = eval(‘(‘ + str +">
-<meta property="og:updated_time" content="2016-04-28T13:54:54.000Z">
+<meta property="og:description" content="5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？
+我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪里没有处理好，造成车次丢失，可以没有办法正确定位问题。
+5.15号团建回来第一天上班，出现了好几单这个问题，有一个Z29的车次映入眼帘，由于">
+<meta property="og:updated_time" content="2017-05-16T10:30:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="js 将json字符串转换为json对象的方法解析">
-<meta name="twitter:description" content="例如：JSON字符串:var str1 = ‘{ “name”: “cxh”, “sex”: “man” }’;JSON对象:var str2 = { “name”: “cxh”, “sex”: “man” };
-JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的方法先转化为JSON对象：//由JSON字符串转换为JSON对象 var obj = eval(‘(‘ + str +">
+<meta name="twitter:title" content="车次缺失问题排查">
+<meta name="twitter:description" content="5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？
+我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪里没有处理好，造成车次丢失，可以没有办法正确定位问题。
+5.15号团建回来第一天上班，出现了好几单这个问题，有一个Z29的车次映入眼帘，由于">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -62,7 +65,7 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
   };
 </script>
 
-  <title> js 将json字符串转换为json对象的方法解析 | 崎岖的路,走出自己的脚步 </title>
+  <title> 车次缺失问题排查 | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -218,7 +221,7 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
           
           
             
-              js 将json字符串转换为json对象的方法解析
+              车次缺失问题排查
             
           
         </h1>
@@ -227,8 +230,8 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-04-28T19:37:04+08:00" content="2016-04-28">
-            2016-04-28
+          <time itemprop="dateCreated" datetime="2017-05-16T10:54:04+08:00" content="2017-05-16">
+            2017-05-16
           </time>
         </span>
 
@@ -237,8 +240,8 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/前端/" itemprop="url" rel="index">
-                  <span itemprop="name">前端</span>
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
                 </a>
               </span>
 
@@ -254,11 +257,11 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
             <span class="post-comments-count">
               &nbsp; | &nbsp;
              
-              <a href="/2016/04/28/js 将json字符串转换为json对象的方法解析/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/28/js 将json字符串转换为json对象的方法解析/" itemprop="commentsCount"></span>
+              <a href="/2017/05/16/车次缺失问题排查/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/16/车次缺失问题排查/" itemprop="commentsCount"></span>
               </a>
              <!--
-              <a href="/2016/04/28/js 将json字符串转换为json对象的方法解析/#comments" itemprop="discussionUrl">
+              <a href="/2017/05/16/车次缺失问题排查/#comments" itemprop="discussionUrl">
                 <span>评论</span>
               </a>
 			  -->
@@ -274,10 +277,11 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
       
 
       
-        <span itemprop="articleBody"><p>例如：<br>JSON字符串:<br>var str1 = ‘{ “name”: “cxh”, “sex”: “man” }’;<br>JSON对象:<br>var str2 = { “name”: “cxh”, “sex”: “man” };</p>
-<h2 id="JSON字符串转换为JSON对象"><a href="#JSON字符串转换为JSON对象" class="headerlink" title="JSON字符串转换为JSON对象"></a>JSON字符串转换为JSON对象</h2><p>要使用上面的str1，必须使用下面的方法先转化为JSON对象：<br>//由JSON字符串转换为JSON对象<br> var obj = eval(‘(‘ + str + ‘)’);<br>或者<br>var obj = str.parseJSON(); //由JSON字符串转换为JSON对象<br>或者<br>var obj = JSON.parse(str); //由JSON字符串转换为JSON对象<br>然后，就可以这样读取：<br>Alert(obj.name);<br>Alert(obj.sex);<br>特别注意：如果obj本来就是一个JSON对象，那么使用eval（）函数转换后（哪怕是多次转换）还是JSON对象，但是使用parseJSON（）函数处理后会有问题（抛出语法异常）。</p>
-<h2 id="可以使用toJSONString-或者全局方法JSON-stringify-将JSON对象转化为JSON字符串"><a href="#可以使用toJSONString-或者全局方法JSON-stringify-将JSON对象转化为JSON字符串" class="headerlink" title="可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串"></a>可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串</h2><p>例如：<br>var last=obj.toJSONString(); //将JSON对象转化为JSON字符<br>或者<br>var last=JSON.stringify(obj); //将JSON对象转化为JSON字符<br>alert(last);</p>
-<h2 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h2><p>上面的几个方法中，除了eval()函数是js自带的之外，其他的几个方法都来自json.js包。新版本的 JSON 修改了 API，将 JSON.stringify() 和 JSON.parse() 两个方法都注入到了 Javascript 的内建对象里面，前者变成了 Object.toJSONString()，而后者变成了 String.parseJSON()。如果提示找不到toJSONString()和parseJSON()方法，则说明您的json包版本太低。</p>
+        <span itemprop="articleBody"><p>5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？</p>
+<p>我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪里没有处理好，造成车次丢失，可以没有办法正确定位问题。</p>
+<p>5.15号团建回来第一天上班，出现了好几单这个问题，有一个Z29的车次映入眼帘，由于只能使用ELK查看日志，不是很方便还有延迟，但是怀着试试的心态，我调用这个接口，赶快查看日志，输入关键字Z29<br>调节时间到最近，搜索，哇塞，出现了，报了一个匹配车次的异常。ok，有异常出现，那么下面就是排查问题了，后面跟着nullpointer，可以堆栈没有打出来，不过参数打印出来了，根据打印日志找到相关<br>的代码，排查一下，最后定位到是反刷结果的时候出现的问题，在用户成功下单后，会把真的下单结果反刷给dtc，由于算下铺的时候需要用到硬座，但是Z29这种车是没有硬座的，于是出现空指针异常，判断没<br>有判断到位，造成有相关车次的丢失。</p>
+<p>于是修改代码，将线上的反刷缓存放到测试redis里面，在用我们自己的程序跑一下，果然报错了，并且丢失了那个车次，于是根据问题，修改代码，修复了这个问题。</p>
+<p>最近再彻底重构DTC数据中心的代码，有的地方重构出现没有考虑完整的情况，造成此类问题的发生，希望以后引起注意，勿再发生。</p>
 </span>
       
     </div>
@@ -286,9 +290,7 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
       
         <div class="post-tags">
           
-            <a href="/tags/js/" rel="tag">#js</a>
-          
-            <a href="/tags/json/" rel="tag">#json</a>
+            <a href="/tags/途牛/" rel="tag">#途牛</a>
           
         </div>
       
@@ -297,13 +299,11 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/05/02/Redis+Spring缓存实例/" rel="prev">Redis+Spring缓存实例</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/27/增大TOMCAT内存/" rel="next">增大TOMCAT内存</a>
+              <a href="/2017/05/12/线程池理解误区/" rel="next">线程池理解误区</a>
             
           </div>
         </div>
@@ -318,10 +318,10 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/04/28/js 将json字符串转换为json对象的方法解析/"
-     data-title="js 将json字符串转换为json对象的方法解析"
+        <div class="ds-share flat" data-thread-key="2017/05/16/车次缺失问题排查/"
+     data-title="车次缺失问题排查"
      data-content=""
-     data-url="http://dingran.tk/2016/04/28/js 将json字符串转换为json对象的方法解析/">
+     data-url="http://dingran.tk/2017/05/16/车次缺失问题排查/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -347,8 +347,8 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2016/04/28/js 将json字符串转换为json对象的方法解析/"
-                   data-title="js 将json字符串转换为json对象的方法解析" data-url="http://dingran.tk/2016/04/28/js 将json字符串转换为json对象的方法解析/">
+              <div class="ds-thread" data-thread-key="2017/05/16/车次缺失问题排查/"
+                   data-title="车次缺失问题排查" data-url="http://dingran.tk/2017/05/16/车次缺失问题排查/">
               </div>
             
           </div>
@@ -447,7 +447,7 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON字符串转换为JSON对象"><span class="nav-number">1.</span> <span class="nav-text">JSON字符串转换为JSON对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可以使用toJSONString-或者全局方法JSON-stringify-将JSON对象转化为JSON字符串"><span class="nav-number">2.</span> <span class="nav-text">可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意："><span class="nav-number">3.</span> <span class="nav-text">注意：</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
