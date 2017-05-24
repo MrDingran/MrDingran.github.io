@@ -28,7 +28,7 @@
 
 <meta name="baidu-site-verification" content="xSJDurVHbh" />
 
-  <meta name="keywords" content="redis," />
+  <meta name="keywords" content="途牛," />
 
 
 
@@ -40,22 +40,19 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="了解redis内部数据结构–跳表，这是非常好的一篇学习文档。
-
-文章地址：http://www.open-open.com/lib/view/open1476086096563.html">
+<meta name="description" content="从过年到现在过去了三个月，这段时间可能是我入职途牛以来干的事情最有成果，也是自己最有收获的几个月。这几月熟悉的老司机一个一个离开，自己的身上的单子也越来越重，12306也不省心，三天两头的变动接口，最近还更换了接口的返回数据结构。
+这段时间里面，主要是负责数据中心的DTC系统的改造，原来负责的牛抢票业务跟着迭代走就可以了，抢票也几乎没什么需求，但是dtc的问题太多了，急需整改，经过了三个月的整改，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis为什么用跳表而不用平衡树？">
-<meta property="og:url" content="http://dingran.tk/2017/03/21/Redis为什么用跳表而不用平衡树？/index.html">
+<meta property="og:title" content="工作总结">
+<meta property="og:url" content="http://dingran.tk/2017/05/24/工作总结/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
-<meta property="og:description" content="了解redis内部数据结构–跳表，这是非常好的一篇学习文档。
-
-文章地址：http://www.open-open.com/lib/view/open1476086096563.html">
-<meta property="og:updated_time" content="2017-03-21T02:34:52.000Z">
+<meta property="og:description" content="从过年到现在过去了三个月，这段时间可能是我入职途牛以来干的事情最有成果，也是自己最有收获的几个月。这几月熟悉的老司机一个一个离开，自己的身上的单子也越来越重，12306也不省心，三天两头的变动接口，最近还更换了接口的返回数据结构。
+这段时间里面，主要是负责数据中心的DTC系统的改造，原来负责的牛抢票业务跟着迭代走就可以了，抢票也几乎没什么需求，但是dtc的问题太多了，急需整改，经过了三个月的整改，">
+<meta property="og:updated_time" content="2017-05-24T04:59:56.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis为什么用跳表而不用平衡树？">
-<meta name="twitter:description" content="了解redis内部数据结构–跳表，这是非常好的一篇学习文档。
-
-文章地址：http://www.open-open.com/lib/view/open1476086096563.html">
+<meta name="twitter:title" content="工作总结">
+<meta name="twitter:description" content="从过年到现在过去了三个月，这段时间可能是我入职途牛以来干的事情最有成果，也是自己最有收获的几个月。这几月熟悉的老司机一个一个离开，自己的身上的单子也越来越重，12306也不省心，三天两头的变动接口，最近还更换了接口的返回数据结构。
+这段时间里面，主要是负责数据中心的DTC系统的改造，原来负责的牛抢票业务跟着迭代走就可以了，抢票也几乎没什么需求，但是dtc的问题太多了，急需整改，经过了三个月的整改，">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -65,7 +62,7 @@
   };
 </script>
 
-  <title> Redis为什么用跳表而不用平衡树？ | 崎岖的路,走出自己的脚步 </title>
+  <title> 工作总结 | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -221,7 +218,7 @@
           
           
             
-              Redis为什么用跳表而不用平衡树？
+              工作总结
             
           
         </h1>
@@ -230,8 +227,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2017-03-21T10:28:20+08:00" content="2017-03-21">
-            2017-03-21
+          <time itemprop="dateCreated" datetime="2017-05-24T11:27:30+08:00" content="2017-05-24">
+            2017-05-24
           </time>
         </span>
 
@@ -240,8 +237,8 @@
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/redis/" itemprop="url" rel="index">
-                  <span itemprop="name">redis</span>
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
                 </a>
               </span>
 
@@ -257,11 +254,11 @@
             <span class="post-comments-count">
               &nbsp; | &nbsp;
              
-              <a href="/2017/03/21/Redis为什么用跳表而不用平衡树？/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/21/Redis为什么用跳表而不用平衡树？/" itemprop="commentsCount"></span>
+              <a href="/2017/05/24/工作总结/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/24/工作总结/" itemprop="commentsCount"></span>
               </a>
              <!--
-              <a href="/2017/03/21/Redis为什么用跳表而不用平衡树？/#comments" itemprop="discussionUrl">
+              <a href="/2017/05/24/工作总结/#comments" itemprop="discussionUrl">
                 <span>评论</span>
               </a>
 			  -->
@@ -277,10 +274,23 @@
       
 
       
-        <span itemprop="articleBody"><blockquote>
-<p>了解redis内部数据结构–跳表，这是非常好的一篇学习文档。</p>
-</blockquote>
-<p>文章地址：<a href="http://www.open-open.com/lib/view/open1476086096563.html" target="_blank" rel="external">http://www.open-open.com/lib/view/open1476086096563.html</a></p>
+        <span itemprop="articleBody"><p>从过年到现在过去了三个月，这段时间可能是我入职途牛以来干的事情最有成果，也是自己最有收获的几个月。这几月熟悉的老司机一个一个离开，自己的身上的单子也越来越重，12306也不省心，三天两头的变动接口，最近还更换了接口的返回数据结构。</p>
+<p>这段时间里面，主要是负责数据中心的DTC系统的改造，原来负责的牛抢票业务跟着迭代走就可以了，抢票也几乎没什么需求，但是dtc的问题太多了，急需整改，经过了三个月的整改，主要以下的成果：</p>
+<ul>
+<li><p>DTC的接口响应时间由原来的3秒左右提高到1.5秒以内，大部分车辆几百毫秒，向上海到南京有260+的车辆，响应时间也在1秒左右。</p>
+</li>
+<li><p>DTC价格问题抓取不准确，经过整改，价格每天抓取一次，价格带有新鲜度，超过新鲜度会再次出发抓取，每天的价格必须要有。</p>
+</li>
+<li><p>缓存插入失败问题，这个是我意外查到的每天大概有上千次插入缓存失败，经过排查是获取不到连接池，并且jar包太古老。升级完jar包后，适量增大redis连接池，现在已经没有插入缓存失败的问题。</p>
+</li>
+<li><p>JVM堆区不正常的偏大GC频繁。我经常用jvisualvm监控线上jvm情况，发现jvm堆有点大，快要溢出了，打了dump后，用eclipse的分析工具发现，在某个代码里面有个全局queue，不断往里面放数据，消费者却很慢，造成数据成倍增加。改造完成后，queue里面的数据几乎很快被消费掉，再次监控jvm堆得数据也恢复了正常水平。</p>
+</li>
+<li><p>DTC增加抢票专用接口 其实这个接口就是只查询余位信息，不查价格的接口。余位监控只关注是否有余位。这样可以节省很多代理ip的消耗问题。这个接口并发量比较大，一天的查询量平时大概几百万，春运期间大概有上千万的查询量。</p>
+</li>
+<li><p>线程池的使用问题。平时对配置线程池的参数没有什么概念，但是现在发现配置线程池参数很重要。经过合理配置，系统的线程由原来启动1000+降到现在500左右，没有出现问题。</p>
+</li>
+</ul>
+<p>这段时间有的时候很是折磨，但是看到现在系统平稳运行，心理还是十分高兴地。</p>
 </span>
       
     </div>
@@ -289,7 +299,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/redis/" rel="tag">#redis</a>
+            <a href="/tags/途牛/" rel="tag">#途牛</a>
           
         </div>
       
@@ -298,13 +308,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/03/27/JDK8对并发的新支持/" rel="prev">JDK8对并发的新支持</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/17/ClassCastException/" rel="next">ClassCastException</a>
+              <a href="/2017/05/20/搭建代理ip仓库想法/" rel="next">搭建代理ip仓库想法</a>
             
           </div>
         </div>
@@ -319,10 +327,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017/03/21/Redis为什么用跳表而不用平衡树？/"
-     data-title="Redis为什么用跳表而不用平衡树？"
+        <div class="ds-share flat" data-thread-key="2017/05/24/工作总结/"
+     data-title="工作总结"
      data-content=""
-     data-url="http://dingran.tk/2017/03/21/Redis为什么用跳表而不用平衡树？/">
+     data-url="http://dingran.tk/2017/05/24/工作总结/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -348,8 +356,8 @@
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2017/03/21/Redis为什么用跳表而不用平衡树？/"
-                   data-title="Redis为什么用跳表而不用平衡树？" data-url="http://dingran.tk/2017/03/21/Redis为什么用跳表而不用平衡树？/">
+              <div class="ds-thread" data-thread-key="2017/05/24/工作总结/"
+                   data-title="工作总结" data-url="http://dingran.tk/2017/05/24/工作总结/">
               </div>
             
           </div>
