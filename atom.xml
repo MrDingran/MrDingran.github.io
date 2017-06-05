@@ -1,0 +1,984 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>崎岖的路,走出自己的脚步</title>
+  <subtitle>崎岖的路,走出自己的脚步</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://dingran.tk/"/>
+  <updated>2017-06-03T08:05:23.000Z</updated>
+  <id>http://dingran.tk/</id>
+  
+  <author>
+    <name>D.R</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Rx_java</title>
+    <link href="http://dingran.tk/2017/06/03/Rx-java/"/>
+    <id>http://dingran.tk/2017/06/03/Rx-java/</id>
+    <published>2017-06-03T02:29:22.000Z</published>
+    <updated>2017-06-03T08:05:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="rxJava是什么"><a href="#rxJava是什么" class="headerlink" title="rxJava是什么"></a>rxJava是什么</h1><blockquote>
+<p>a library for composing asynchronous and event-based programs using observable sequences for the Java VM</p>
+</blockquote>
+<p>一个对于构成使用的Java虚拟机观察序列异步和基于事件的程序库</p>
+<p>github：<a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">https://github.com/ReactiveX/RxJava</a></p>
+<p>详细信息可以参考：</p>
+<p><a href="http://www.oschina.net/p/rxjava" target="_blank" rel="external">http://www.oschina.net/p/rxjava</a></p>
+<p><a href="http://www.jianshu.com/p/845549ac4623" target="_blank" rel="external">http://www.jianshu.com/p/845549ac4623</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;rxJava是什么&quot;&gt;&lt;a href=&quot;#rxJava是什么&quot; class=&quot;headerlink&quot; title=&quot;rxJava是什么&quot;&gt;&lt;/a&gt;rxJava是什么&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;a library for composing async
+    
+    </summary>
+    
+      <category term="java" scheme="http://dingran.tk/categories/java/"/>
+    
+    
+      <category term="java" scheme="http://dingran.tk/tags/java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>APP反刷余位信息上线</title>
+    <link href="http://dingran.tk/2017/06/02/APP%E5%8F%8D%E5%88%B7%E7%81%AB%E8%BD%A6%E7%A5%A8%E4%BD%99%E4%BD%8D%E4%BF%A1%E6%81%AF%E4%B8%8A%E7%BA%BF/"/>
+    <id>http://dingran.tk/2017/06/02/APP反刷火车票余位信息上线/</id>
+    <published>2017-06-02T07:33:58.000Z</published>
+    <updated>2017-06-02T08:31:28.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>说起app反刷的功能，在火车票数据中心有两个：</p>
+<p>第一个是在查询的火车票列表的时候进行反刷12306的余位信息给我们，由于我们的代理ip是有限的，不是每个请求都能分配到代理ip，故而这种情况再返回缓存的时候如果缓存过期就让app去12306获取余位信息，将最新余位信息刷给我们，我们组装信息再返回给前端。最终效果不是很好，会出现卡顿的效果暂时关闭状态。</p>
+<p>还有一个app反刷，也是用来处理余位更新的。也是为了节省代理ip，原理就是在手机端开启个线程，每隔一段时间去数据中心访问是否有数据需要抓取。而数据中心这边在代理ip不足的情况下，便需要将抓取的url放进队列里面，手机端的请求每次都从队列里面取数据，这样如果手机端取到数据就直接去访问12306，然后再将获取的结果发送给数据中心，整个流程下来需要在5秒以内完成。</p>
+<p>整个反刷功能已经开发好一段时间了，由于现在请求量也不是很大，所以这个功能一直没有开启。最近6.1号开始卖学生票了，由于成人票和学生票是两个接口，代理ip在抓取学生票的时候出现大量被封的现象，被封率达到99%；由于成人票和学生票的代理ip使用逻辑是一套的，这样不仅影响学生票售卖，还影响成人票的售卖。由于学生票接口开始被封，最近又开始卖学生票，没办法只能先将学生票的接口走成人票接口。</p>
+<p>走成人票接口只是权宜之计，首先我想先买一批代理ip，从中测试学生票接口能够用的拿出来，其他的给成人票使用，但是询问后得知代理不能够先测试使用，如果买了50个代理ip能够使用的只有40个话，那就亏大了。我爬取ip的小爬虫也写好了但是抓取了3W+的ip能够使用的也就400~500个，关键是不够稳定，放到测试环境还是可以的，放到线上根本不行，于是我想起了app反刷。</p>
+<p>稍微修改一下代码，将学生票全部切到app反刷，上线后，我测试了一下，效果不是很好，经常出现查询为空的现象而且再次加载还是为空。经过排查，是我在放入队列的时候做了限制，一个站战对团期只能放入一次，是我想的太多了，因为不是每个放入的数据都能返回来的，去掉这个限制，再次在sit环境测试，效果还不是很好，和前端一起排查，经过推敲分析，发现放入队列的数据，前端查询12306的时候也会出现返回为空的现象。后来前端提醒我可以多放入队列两次，我瞬间豁然开朗，怎么没想到呢？因为线上不是每个人的手机都网速畅通的，有可能像花生地铁这种比较low的，我多放入两次就可以有几率被网速相对好一点的取走，快速返回结果，就会更快返回火车票列表数据。</p>
+<p>再次修改代码，将放入队列次数配置在diamond，先配置3次，重新打包。在前端和测试的共同验证下，放进3个，取走3个，查询成功的只有1一个返回，我这边的列表也显示正常，这就看出来不是每次请求都成功，失败率还是挺高的。今天有紧急上线，于是我搭上这趟快车，将代码上线。上线完成后我将配置改为4次，加大查询效率。在app端查询学生票，显示效果还不错，也会出现查询不出来的情况，但是再刷一次就出来了，还可以接受。</p>
+<p>app反刷这个功能能够实现，前提是必须有大量的请求才能实现，我监控了一段时间发现这段时间请求量大平稳可以使用，也可算是个小小的里程碑。学生票使用这个功能算是告一段落，后面还要接入成人票。</p>
+<p>回头再看这个学生票的解决，内心坎坷呀，由于产品催的紧还和产品小吵了一下，说到底还是自己太浮躁，脾气咋这么大腻？也是自己要好好反思的地方。还好产品心胸开阔，不和我见识，还请我喝奶茶（应该是我请人家啦），实在让我无地自容。这次也算是给自己积累了一些经验，能够在后面乃至将来的工作中应对各种问题更加自如。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;说起app反刷的功能，在火车票数据中心有两个：&lt;/p&gt;
+&lt;p&gt;第一个是在查询的火车票列表的时候进行反刷12306的余位信息给我们，由于我们的代理ip是有限的，不是每个请求都能分配到代理ip，故而这种情况再返回缓存的时候如果缓存过期就让app去12306获取余位信息，将最新余
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>工作总结</title>
+    <link href="http://dingran.tk/2017/05/24/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+    <id>http://dingran.tk/2017/05/24/工作总结/</id>
+    <published>2017-05-24T03:27:30.000Z</published>
+    <updated>2017-05-24T04:59:56.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>从过年到现在过去了三个月，这段时间可能是我入职途牛以来干的事情最有成果，也是自己最有收获的几个月。这几月熟悉的老司机一个一个离开，自己的身上的单子也越来越重，12306也不省心，三天两头的变动接口，最近还更换了接口的返回数据结构。</p>
+<p>这段时间里面，主要是负责数据中心的DTC系统的改造，原来负责的牛抢票业务跟着迭代走就可以了，抢票也几乎没什么需求，但是dtc的问题太多了，急需整改，经过了三个月的整改，主要以下的成果：</p>
+<ul>
+<li><p>DTC的接口响应时间由原来的3秒左右提高到1.5秒以内，大部分车辆几百毫秒，向上海到南京有260+的车辆，响应时间也在1秒左右。</p>
+</li>
+<li><p>DTC价格问题抓取不准确，经过整改，价格每天抓取一次，价格带有新鲜度，超过新鲜度会再次出发抓取，每天的价格必须要有。</p>
+</li>
+<li><p>缓存插入失败问题，这个是我意外查到的每天大概有上千次插入缓存失败，经过排查是获取不到连接池，并且jar包太古老。升级完jar包后，适量增大redis连接池，现在已经没有插入缓存失败的问题。</p>
+</li>
+<li><p>JVM堆区不正常的偏大GC频繁。我经常用jvisualvm监控线上jvm情况，发现jvm堆有点大，快要溢出了，打了dump后，用eclipse的分析工具发现，在某个代码里面有个全局queue，不断往里面放数据，消费者却很慢，造成数据成倍增加。改造完成后，queue里面的数据几乎很快被消费掉，再次监控jvm堆得数据也恢复了正常水平。</p>
+</li>
+<li><p>DTC增加抢票专用接口 其实这个接口就是只查询余位信息，不查价格的接口。余位监控只关注是否有余位。这样可以节省很多代理ip的消耗问题。这个接口并发量比较大，一天的查询量平时大概几百万，春运期间大概有上千万的查询量。</p>
+</li>
+<li><p>线程池的使用问题。平时对配置线程池的参数没有什么概念，但是现在发现配置线程池参数很重要。经过合理配置，系统的线程由原来启动1000+降到现在500左右，没有出现问题。</p>
+</li>
+</ul>
+<p>这段时间有的时候很是折磨，但是看到现在系统平稳运行，心理还是十分高兴地。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;从过年到现在过去了三个月，这段时间可能是我入职途牛以来干的事情最有成果，也是自己最有收获的几个月。这几月熟悉的老司机一个一个离开，自己的身上的单子也越来越重，12306也不省心，三天两头的变动接口，最近还更换了接口的返回数据结构。&lt;/p&gt;
+&lt;p&gt;这段时间里面，主要是负责数据
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>搭建代理ip仓库想法</title>
+    <link href="http://dingran.tk/2017/05/20/%E6%90%AD%E5%BB%BA%E4%BB%A3%E7%90%86ip%E4%BB%93%E5%BA%93%E6%83%B3%E6%B3%95/"/>
+    <id>http://dingran.tk/2017/05/20/搭建代理ip仓库想法/</id>
+    <published>2017-05-20T02:42:01.000Z</published>
+    <updated>2017-05-20T03:31:25.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>5.20号周六，今天来到公司来加班，公司的环境比较好，既可以学习，又可以做剩下的工作，还可以拿加班费^_^</p>
+<p>刚才打了那么多字，可恶的ultraEdit退出了，还没保存！！</p>
+<p>途牛火车票的盈利点很简单，至少我是这么认为的，就是在乘客购买火车票的时候能够购买保险，但是总起计算下来客户购买保险所占的比例还是不高的。但是火车票部门每个月的花费还是多的，这里面有一项就是代理ip的费用。</p>
+<p>由于12306会不定时对过于频繁访问的用户进行限制，但是超过一定的限制，这种访问的限制有可能是长期的，所以我们在抓取12306信息的时候都会使用代理ip，模拟多客户端多用户访问12306，让12306不能够轻易的屏蔽我们，我们这边控制好代理ip的使用频率，平时应该没有什么问题，但是常在河边走，哪能不湿鞋，碰到流量大的时候，也会有几个代理ip被屏蔽的现象。</p>
+<p>代理ip的费用还是蛮贵的，有阿里云、京东等供应商，价格也都在几十块一个月不等。途牛火车票在平时购买车票不多的情况下，也需要几百个代理ip，遇到春运的时候购买上千个也不在话下。所以代理ip的费用占途牛火车票每个月的预算的大部分了。如果代理ip十分好用也就不说了，但是不是每个代理ip都是十分高效抓取数据，这让我十分头疼，比如昨天的学生票接口使用代理ip就死活访问不了，几乎全军覆没，而成人票接口就没有问题。可能说和代理ip没有关系，但是在本地就是可以的，或者我换用其他新鲜的代理ip就是可以的。</p>
+<p>由于以上的原因，我萌生了一个想法，搭建代理ip的仓库。网上有很多的免费的代理ip，没错有很多代理ip是不能用的，但是数量多呀，有一万个，1%能用也是不错的，我准备分为两步走：</p>
+<p>第一步：先固定抓取一部分页面，获取代理ip，先测试成功率能够有多少</p>
+<p>第二步：直接使用搜索引擎（百度和谷歌）然后利用搜索引擎返回的url再次进行爬取，获取页面里面的代理ip，说到底就是做个智能爬虫，能够解析页面抓取ip</p>
+<p>美好的想法肯定有对应的目标：</p>
+<ul>
+<li><p>满足自己数据中心抓取12306代理ip的使用</p>
+</li>
+<li><p>满足自己后，就可以给公司其他使用代理ip部门提供代理ip，比如机票等</p>
+</li>
+<li><p>公司满足后，就可以向外出售动态代理ip（太长远了）</p>
+</li>
+</ul>
+<p>想法是付诸于实现的基石，我很高兴自己有这种想法，而不是浑浑噩噩的做着开发，因为我不是一个满足现状的人，我渴望有fresh的idea来充实自己，让自己的脑细胞尽量更多使用起来，而不是在那等死，即使那会让我很困。（学习新知识会让人疲倦厌恶摒弃）</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;5.20号周六，今天来到公司来加班，公司的环境比较好，既可以学习，又可以做剩下的工作，还可以拿加班费^_^&lt;/p&gt;
+&lt;p&gt;刚才打了那么多字，可恶的ultraEdit退出了，还没保存！！&lt;/p&gt;
+&lt;p&gt;途牛火车票的盈利点很简单，至少我是这么认为的，就是在乘客购买火车票的时候能
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>抢票接口并发问题记录二</title>
+    <link href="http://dingran.tk/2017/05/18/%E6%8A%A2%E7%A5%A8%E6%8E%A5%E5%8F%A3%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95%E4%BA%8C/"/>
+    <id>http://dingran.tk/2017/05/18/抢票接口并发问题记录二/</id>
+    <published>2017-05-18T06:55:43.000Z</published>
+    <updated>2017-05-18T07:26:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>5.17号早上大概10点，尝试调用抢票的接口，已经直接返回false，无法查询准确的数据，今天把昨天的日志拽下来（昨天的日志会自动copy到一个ftp目录下面），使用linux命令解压日志文件，我预估计可能是线程池满了，直接溢出了，但是正常情况下，应该不会出现这种问题，况且我使用2个线程池，在切换线程池的时候，我还打印了一部分日志—打印线程池的一些参数.经过排查日志，发现在早上6点的时候，第一个线程池已经满了，所有的请求已经递交到第二个线程池了，到了9点左右，第二个线程池也满了，所有后续的请求就直接放不进线程池，就直接丢弃报异常。下面try catch捕捉异常直接反馈前端查询失败。</p>
+<p>解决办法：刚开始打算是准备给线程配置超时时间，如果线程超过了配置时间就强制停掉，但是后来想线程不是想停就停的，也就说线程启动了不是很听话的。又想增大线程池，但是上网看到一句话，让我豁然开朗，“没有找到线程阻塞的原因，就是放再大的线程池，线程池迟早会满”，就是时间的问题。看来还是自己的代码写的有问题。不找到根本问题，接口无法在高并发下提供服务。</p>
+<p>但是回头来想，所有相关接口的地方，我都已经做好控制了，不会出现线程阻塞的情况呀，一行一行看代码，结合日志我终于发现了一个异常点：由于代理ip的问题，可能会出现connect refuse的情况，在初始化httpclient的时候，我使用闭锁，并且使用回调onsuccess后释放闭锁，但是onfail的时候，也就是有异常的时候，我没有释放闭锁，这里漏了一个闭锁的countdown，并且没有给闭锁设置超时时间，至此，所有出现这个异常的请求到这里，清一色全部阻塞住，由于不是所有的请求都出现这个异常，所以过了好长时间才造成的接口不能接受请求，并且线程池满了。</p>
+<p>更改代码，特意使用connect refuse的ip进行测试，后面就很快的释放线程了，并且线程池的第二个都没有使用过。:</p>
+<p>看来细微决定成败，一个小小的问题机会导致整个应用的效率的快慢。自己平时要多关注这种问题。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;5.17号早上大概10点，尝试调用抢票的接口，已经直接返回false，无法查询准确的数据，今天把昨天的日志拽下来（昨天的日志会自动copy到一个ftp目录下面），使用linux命令解压日志文件，我预估计可能是线程池满了，直接溢出了，但是正常情况下，应该不会出现这种问题，况且
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>抢票接口开发问题记录一</title>
+    <link href="http://dingran.tk/2017/05/17/%E6%8A%A2%E7%A5%A8%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95%E4%B8%80/"/>
+    <id>http://dingran.tk/2017/05/17/抢票接口开发问题记录一/</id>
+    <published>2017-05-17T10:49:04.000Z</published>
+    <updated>2017-05-17T11:18:56.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>5.16号，是途牛的会员日，搭上前端组的紧急上线“快车”，准备发布一次，由于之前的车次缺失，导致有一些客户投诉反馈，正好这次修上去；还有一部分是价格问题，价格添加最后更新时间，如果超过规定时间就再次抓取价格，由于12306的价格也不是一成不变的，遇到特殊的情况还是需要手动处理一下；还有的就是对抢票接口的修改。</p>
+<p>抢票接口是我已经更改了好几遍了，上线了好几次，但是每次都是运行一段时间就反馈没有数据了，让我丈二摸不着头脑，这次上线，我对线程池进行了一些改动，并且打印了一些关键日志，能够让我掌握一些重要的参数，5.17号也就是今天，我把昨天的日志拉下来，打开后，排查15点之后的日志，发现了一条记录“插入缓存异常”，我在本地稍微压测了一下发现也报这个异常，于是查看系统的redis连接池，由于使用的事jedis2.1.0还是比较古老的接口了，应用spring-data-redis的jar包进行托管。封装了好多逻辑，我将redis的连接至增大了一倍，但是问题还是没有解决，于是上网搜索一番，更换jedis的redis客户端管理工具，简单方便。首先将jar包升级，然后底层封装改为jedis，原来配置一堆的代码，现在只要几行就搞定了，简单清爽。运行修改了几次后，就可以正常跑起来了。再次调节redis的连接池的大小，这次居然没有任何问题，关键是jedis在每次获取jedis对象，用完后都可以直接finally里面close掉，而spring-data-redis运行多个就会出现获取不到pool的尴尬局面，这是今天的任务一。</p>
+<p>在controller接收到其他系统请求后，我采用线程异步处理，主线程使用countdown闭锁等待一定时间，在异步线程采用线程池，我放了两个，判断线程池的启动数目，如果启动数目大于等于总的数目就用第二个线程池，这里面虽然没有和数据库等其他io交互，但是这里有爬取12306，处理结果，拼装结果，也算不上是cpu密集型，可以算是io密集型。之前配置的是cpu密集型，所以在今天拉下来的日志里面，我看到了线程池启动的数目已经到达极限了，今天将线程池的参数重新配置一下，我在本地重新压测，每秒20次查询，发现没有问题，都可以正常运行。</p>
+<p>由于线上的环境风云变幻，所以还需要做很多操作。并发接口开发起来就像是在大海航行一样，平时风平浪静，但是一旦请求接踵而至的时候，就会波浪滔天，顷刻就有翻船的事故。所以我这次还是让测试准备进行压测一下，平时对这个接口感觉没有任何困难，但是现在看来，不光是代码的问题，比如redis的连接池、线程池的参数配置以及JVM的相关参数优化都是需要再三考虑的。</p>
+<p>互联网公司就是这样，碰到的问题很多，想起了那句话，在互联网公司待一年相当于在其他公司待3年，不光是问题多，成长也很多，收获也很多。</p>
+<p>等待下次上线，这次做好相关测试。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;5.16号，是途牛的会员日，搭上前端组的紧急上线“快车”，准备发布一次，由于之前的车次缺失，导致有一些客户投诉反馈，正好这次修上去；还有一部分是价格问题，价格添加最后更新时间，如果超过规定时间就再次抓取价格，由于12306的价格也不是一成不变的，遇到特殊的情况还是需要手动处
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>车次缺失问题排查</title>
+    <link href="http://dingran.tk/2017/05/16/%E8%BD%A6%E6%AC%A1%E7%BC%BA%E5%A4%B1%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"/>
+    <id>http://dingran.tk/2017/05/16/车次缺失问题排查/</id>
+    <published>2017-05-16T02:54:04.000Z</published>
+    <updated>2017-05-16T10:35:18.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？</p>
+<p>我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪里没有处理好，造成车次丢失，可是没有办法正确定位问题。</p>
+<p>5.15号团建回来第一天上班，出现了好几单这个问题，有一个Z29的车次映入眼帘，由于只能使用ELK查看日志，不是很方便还有延迟，但是怀着试试的心态，我调用这个接口，赶快查看日志，输入关键字Z29调节时间到最近，搜索，哇塞，出现了，报了一个匹配车次的异常。ok，有异常出现，那么下面就是排查问题了，后面跟着nullpointer，可惜堆栈没有打出来，不过参数打印出来了，根据打印日志找到相关的代码，排查一下，最后定位到是反刷结果的时候出现的问题，在用户成功下单后，会把真的下单结果反刷给dtc，由于算下铺的时候需要用到硬座，但是Z29这种车是没有硬座的，于是出现空指针异常，判断没有判断到位，造成有相关车次的丢失。</p>
+<p>于是修改代码，将线上的反刷缓存放到测试redis里面，在用我们自己的程序跑一下，果然报错了，并且丢失了那个车次，于是根据问题，修改代码，修复了这个问题。</p>
+<p>最近再彻底重构DTC数据中心的代码，有的地方重构出现没有考虑完整的情况，造成此类问题的发生，希望以后引起注意，勿再发生。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？&lt;/p&gt;
+&lt;p&gt;我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>线程池理解误区</title>
+    <link href="http://dingran.tk/2017/05/12/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%90%86%E8%A7%A3%E8%AF%AF%E5%8C%BA/"/>
+    <id>http://dingran.tk/2017/05/12/线程池理解误区/</id>
+    <published>2017-05-12T10:26:22.000Z</published>
+    <updated>2017-05-12T10:39:54.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>线程池平时使用的都是很多的，特别是在系统并发的情况下，合理运用线程池就显得特别重要。线程池的参数有以下几个：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">ThreadPoolExecutor mExecutor = <span class="keyword">new</span> ThreadPoolExecutor(corePoolSize,<span class="comment">// 核心线程数  </span></div><div class="line">                        maximumPoolSize, <span class="comment">// 最大线程数  </span></div><div class="line">                        keepAliveTime, <span class="comment">// 闲置线程存活时间  </span></div><div class="line">                        TimeUnit.MILLISECONDS,<span class="comment">// 时间单位  </span></div><div class="line">                        <span class="keyword">new</span> LinkedBlockingDeque&lt;Runnable&gt;(),<span class="comment">// 线程队列  </span></div><div class="line">                        Executors.defaultThreadFactory(),<span class="comment">// 线程工厂  </span></div><div class="line">                        <span class="keyword">new</span> AbortPolicy()<span class="comment">// 队列已满,而且当前线程数已经超过最大线程数时的异常处理策略  </span></div><div class="line">                );</div></pre></td></tr></table></figure>
+<p>这几个参数都能滚瓜烂熟的记下来，但是也许自己没太注意，学习不到位，我的理解是，线程池启动先启动corePoolSize的线程，超过这个线程就在启动一个，直到maxnumpoolsize,然后后面的再添加线程<br>就直接放到队列里面，但是查看代码却不是这样，随后上网查看相关资料，才恍然大悟，配置线程池要根据这个实际应用情况来定，比如来个请求，我起一个线程，线程池配置24，初始化12个，队列1000，那么就是说当<br>来12个请求后的13个请求就会进入队列，并不会创建第13个线程，就会造成请求超时，没有使线程达到最佳的利用率，所以借此<b>谨记</b>这个问题。</p>
+<p>下面为线程池的运行过程：</p>
+<ul>
+<li><p>如果线程池的状态是RUNNING，线程池的大小小于配置的核心线程数，说明还可以创建新线程，则启动新的线程执行这个任务。</p>
+</li>
+<li><p>如果线程池的状态是RUNNING ，线程池的大小小于配置的最大线程数，并且任务队列已经满了，说明现有线程已经不能支持当前的任务了，并且线程池还有继续扩充的空间，就可以创建一个新的线程来处理提交的任务。</p>
+</li>
+<li><p>如果线程池的状态是RUNNING，当前线程池的大小大于等于配置的核心线程数，说明根据配置当前的线程数已经够用，不用创建新线程，只需把任务加入任务队列即可。如果任务队列不满，则提交的任务在任务队列中等待处理；如果任务队列满了则需要考虑是否要扩展线程池的容量。</p>
+</li>
+<li><p>当线程池已经关闭或者上面的条件都不能满足时，则进行拒绝策略，拒绝策略在RejectedExecutionHandler接口中定义，可以有多种不同的实现。</p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;线程池平时使用的都是很多的，特别是在系统并发的情况下，合理运用线程池就显得特别重要。线程池的参数有以下几个：&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="线程池" scheme="http://dingran.tk/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>途牛5.8号上线回顾</title>
+    <link href="http://dingran.tk/2017/05/10/%E9%80%94%E7%89%9B5-8%E5%8F%B7%E4%B8%8A%E7%BA%BF%E5%9B%9E%E9%A1%BE/"/>
+    <id>http://dingran.tk/2017/05/10/途牛5-8号上线回顾/</id>
+    <published>2017-05-10T09:14:33.000Z</published>
+    <updated>2017-05-11T09:59:40.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>5.8号，周一，是个上线的日子。本次改动如下：</p>
+<ol>
+<li>拼装12306返回数据采用多线程处理，本机试验下可提速50%左右</li>
+<li>拼装缓存数据返回给前端，采用多线程处理，本机试验下可提速50%</li>
+<li>再返回结果后要赋值反刷结果到列表里面，多次循环车次信息表，改动点：在拼装缓存结果的时候直接在多线程里面直接赋值反刷结果。</li>
+</ol>
+<p>总结：就是讲以前单一的解析数据改为多线程处理，化整为零，能够快速的反馈结果。</p>
+<p>但是遗憾的是上线不到20分钟，接口预警界面直接报警，接口调用超时严重，没办法直接回滚代码。在jvisualvm监控线上某台jvm的时候发现这台jvm的线程总数已经达到990+，马上要突破1000了，要知道一台机器的<br>线程数量是有限的，线程是十分宝贵的资源，随便乱用会造成系统访问慢等问题发生，直接打开代码搜索new Thread，发现很多地方用了这个代码，全部改为线程池启动，再次搜索new Thread，发现某个前员工在实现initializingBean<br>的afterPropertiesSet里面创建线程池，各项参数配置的挺好的，为什么就是不放到spring进行托管呢，spring不就是做这件事的么？！没办法，开始将所有这种实现的方式的代码全部改为spring托管线程池<br>问运维人员线上服务器的系统参数，根据参数为每个线程池配置好合理的线程数量，然后再启动tomcat，原来启动需要将近400个线程，现在启动后不到180个，节省了近一半的数量。</p>
+<p>然后就是更改代码，代码里面用了闭锁，在countDown.await的时候，添加时间控制，如果规定时间没有返回数据，返回的结果无效。这样不会出现线程出现无限等待的情况。</p>
+<p>在使用countDown.countDown()的时候的代码全部用try catch，不管在何时，就算是出现异常，也要保证countDown。</p>
+<p>这几天最主要的问题就是价格不准，由于预算紧张，代理ip有限，所以必须保证“好刀用到刀刃上”,在抓取价格的时候，如果某一天的价格已经抓取过一次了，就不再进行抓取了，但是这样会有个问题，就是价格<br>如果是10天之前抓的，但是第九天发现12306涨价了，那么这个价格我就没有办法保证是正确的价格。所以本次修改在每个价格的json后面加入lastUpdateTime，只要保证保证lastUpdateTime和当前时间的<br>差距在可配置的时间内，就不再进行抓取，这样就保证了价格准确性。如果规定时间内12306如果改变价格，可以删除缓存，就可以再重新抓取，根据以往的经验，12306不会随意变更价格，就算变更价格<br>也会在首页上进行公示，可以给我们有充足的时间进行改动，保证价格的准确性能够让用户进行买到火车票。</p>
+<p>本次加入“开关”，先进行以前的不使用多线程进行处理，然后全部上线成功后使用多线程处理数据，这样可以统一监控数据。</p>
+<p>希望今天上线一次成功。</p>
+<hr>
+<p>上线一次成功，余位通用接口顺利访问，响应时间也很可观，抢票专用接口刚开始还是很稳定的，但是运行一段时间后，再次发生超时现象预估计为线程池溢出，在一处代码发现bug是自己写代码没注意到整个逻辑，造成抢票接口频繁出现异常，后续已经改正。整个抢票在高并发下问题还有很多，也是自己所有积累的问题。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;5.8号，周一，是个上线的日子。本次改动如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;拼装12306返回数据采用多线程处理，本机试验下可提速50%左右&lt;/li&gt;
+&lt;li&gt;拼装缓存数据返回给前端，采用多线程处理，本机试验下可提速50%&lt;/li&gt;
+&lt;li&gt;再返回结果后要赋值反刷结果到列表里
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>记途牛火车票数据中心余位接口优化记录</title>
+    <link href="http://dingran.tk/2017/05/05/%E8%AE%B0%E9%80%94%E7%89%9B%E7%81%AB%E8%BD%A6%E7%A5%A8%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E4%BD%99%E4%BD%8D%E6%8E%A5%E5%8F%A3%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/"/>
+    <id>http://dingran.tk/2017/05/05/记途牛火车票数据中心余位接口优化记录/</id>
+    <published>2017-05-05T08:23:29.000Z</published>
+    <updated>2017-05-05T10:38:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>今天是5月5号了，距离12306的整改接口整整过去了小半个月，现在数据中心的接口所覆盖&gt;的查询数据已经可以达到之前所有的数据。回头一想，我现在做的工作是有多么的被动，12<br>306抖一抖，我们就要震两三天，没办法，谁让我们是爬取人家的数据呢。</p>
+<p>按照新的12306接口提供的数据采用竖线分割的方法获取的数据与之前的对比在效率上是有&gt;很大的差别的，至少从我本机上来看的。本机是公司配的开发机器：双核 8g内存 tomcat给予2g内存 但是改完的接口在我本地没查询一次几乎都不可能在5s内返回结果，也许是我开了其他应用导致的，但是之前相同情况下返回的结果也能在5s以内返回啊，这是有很大的问<br>题的，数据中心余位查询是核心接口，性能太慢了也说不过去了，而且还有很多其他分销商<br>接进来，这么慢不是会让人家吐槽的么。发布到测试环境反应速度还可以2~4秒跑长趟，但<br>是本机还是很慢，所以，还是从我的机器山入手，来查询瓶颈在哪：</p>
+<p>找了一个车次 上海-南京 这个一天的车次大概有260个左右 所以就拿这个测，如果这个查询速度快了，那么其他的就会更快了。</p>
+<ol>
+<li><p>首先判断是否是12306返回的结果时间太长，加上日志，用java自带的毫秒函数来判断发<br>现12306返回的结果（上海-南京）最慢的也在2秒以内，70kb左右，由于使用代理ip可能还会有点耗时，也不会太久，但是我用接口调用用chrome浏览器发起请求到返回总共一共用了<br>20多秒，多以和12306和代理ip返回结果没有多大关系。</p>
+</li>
+<li><p>是不是拼装12306返回数据很慢呢？同样，打上日志，调用一次接口发现260个车次解析成对象放到list里面，总共耗时15秒左右，嗯，这是一个优化的地方，如何优化呢？我想到<br>使用多线程解析数据，然后将数据放到一个容器中，最后将容器数据返回即可。想法有了，<br>开始做，先创建一个list，然后循环12306返回数据，每拿到一组数据，用线程池发起一个线程去处理，外面用闭锁await，当所有线程都解析完成后，闭锁释放，实现起来也很容易，我先拿抢票接口做实验，调用接口查看时间发现可以在3秒左右返回数据这是相当的快呀，然后将一些没用的字符串去掉，比如string a = “abc”，这种也会创建临时变量的全部拿掉，减少创建对象节省jvm内存；再次相同的办法处理余位接口，拿上海到南京来查询，发现返回数据的速度快了很多，但是到chrome的数据返回时间还是有20多秒，这是怎么回事？</p>
+</li>
+<li><p>再次判断抢票专用接口和通用余位查询接口为什么这么大差距呢？对比发现抢票接口的缓存数据就是要返回的数据，是我当初就这么设计的，而通用余位查询接口返回的数据格式还需要再次进行改造才能返回前端展示，于是专门看buildCache方法，这个方法每次查询都会调用，包括数据格式的变化，还有价格的反刷的问题，瞬间我就想到价格反刷有问题，查看逻辑，里面会有个向前推得判断方法，现在12306经常一天一个价这种办法已经不太实用了，但是没办法，不能随便改，先打到日志看看处理完花费时间，全部处理完数据总共花了18秒左右，总共胡斐21秒左右，处理这个就花费了近3/4，太奢侈了，这距离我们规定的5秒以内差距太远了，我给每个车次反刷打上日志查看，每个车次处理还算快大概平局60ms左右，但是260*60大概有16秒左右，到这里其实就是单个线程一个一个处理，非常耗时。</p>
+</li>
+<li><p>找到问题症结了，开始继续采用多线程+闭锁处理，这样其实是多个线程并行，260个车次，在线程池并行处理下不到3秒就处理完了，真爽，发布代码，启动后，调用接口上海-南京，不走缓存，返回时间在3~4秒之间 ，再来个数据上海到北京大概有46个左右车次，不到一秒返回，走缓存就更快了，嗯，终于感受到多线程的快感了。</p>
+</li>
+<li><p>由于以上都是在我本机测试，所以我要发布到测试环境，提交代码，进行构建后，调用接口，发现上海-南京返回时间在1.2秒左右 ，之前返回还在5秒左右，提高了将近3秒左右，在查上海-北京几乎都是几百毫秒，秒回，加上缓存的作用下，相信后面再线上部署后会更加有效果。</p>
+</li>
+</ol>
+<p>本次优化使用多线程+闭锁，其实没有多大的新意，但是我一直遵守一句话就是：做什么事要有想法，没想法做什么？其实所谓的想法就是经验，经验多了想法当然就多了，在平时平庸的代码里面，加上一些并行操作会让系统跑的更加快。</p>
+<p>其中也遇到了很多问题，比如多线程向list里面存放数据的时候就会报concurrentModificationException，是因为迭代的时候发现list的数据个数发生变化就会报这个异常，那么就要解决这个问题，解决办法是copyonwritearraylist和collections.synchronizedList，由于我这边主要是写数据，经过对比查询，synchronizeList比较适合我，copyOnWrite适合读多写少的情况，改完后再也没有报这个异常。                                                  </p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;今天是5月5号了，距离12306的整改接口整整过去了小半个月，现在数据中心的接口所覆盖&amp;gt;的查询数据已经可以达到之前所有的数据。回头一想，我现在做的工作是有多么的被动，12&lt;br&gt;306抖一抖，我们就要震两三天，没办法，谁让我们是爬取人家的数据呢。&lt;/p&gt;
+&lt;p&gt;按照新
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>途牛火车票12306数据中心0426变动记录</title>
+    <link href="http://dingran.tk/2017/05/04/%E8%AE%B0%E9%80%94%E7%89%9B%E7%81%AB%E8%BD%A6%E7%A5%A8%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%830426%E5%8F%98%E5%8A%A8%E8%AE%B0%E5%BD%95/"/>
+    <id>http://dingran.tk/2017/05/04/记途牛火车票数据中心0426变动记录/</id>
+    <published>2017-05-04T08:00:47.000Z</published>
+    <updated>2017-05-05T07:48:43.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>我们能达到今天的成就，是因为我们站在巨人的肩膀上</p>
+</blockquote>
+<p>之前博客都是转发或者摘抄别人的优秀文档，自己很少弄点东西上来，也许是自己没有善于积累的习惯，今天灵机一动，想写点什么！</p>
+<p>话说2017年4月26日，是我进途牛的第八个月了，一切过得都还是顺利，虽然每天或多或少会有一些线上的bug之类的问题，但是都不紧急，每天轻车熟路，按部就班。4.27号刚到公司楼下。德良打电话说余位接口查不出数据了，走的全是缓存数据，根据我的想法，查不出数据一共有两个方面1.代理ip封掉了2.服务降级了，我进入公司先查看代理ip情况，一切正常，服务也没有降级。我调用余位接口，发现返回都是昨天的数据。瞬间一股凉意袭上心头，查看12306突然发现返回的数据全部变掉了，造成我们这边“不认识”这是数据格式，没办法紧急和德良黄甲商量后抓紧修改，本来是上线日，所有数据中心的上线计划全部推掉，我开始解析12306返回的数据，之前是有字段标识的，现在全部是“|”分割，幸好之前我保留了一份完整的数据，然后查询相同车次，获取12306返回结果，一个一个对比，正好一共35个字段，问题来了，原来返回40多个，现在只有35个，缺少这么多，有一些还是结果必须要用的比如起售时间，心中暗骂12306不地道，不过想想要是我也不会传送这个字段，略显尴尬，先叫产品停掉预售票，然后开始写代码，瞬时感觉时间过得好快啊，到了下午4点，根据开闭原则，我没有直接修改原来的方法，新创建方法，一遍吐槽老代码写的烂一别提醒自己别干这样的事—老代码先把对象放进map里面，在给对象赋值：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">pubic void main()&#123;</div><div class="line">Object obj = new Object();</div><div class="line">Map map = new HashMap()'</div><div class="line">map.put("obj",obj);</div><div class="line">obj.set...</div><div class="line">obj.set...</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>艾玛，这不是打破我的认知么，咱不能先创建好对象，赋值之后，在放进map里面，我还以为下面都是没用的数据，这引用传递都玩上天了。</p>
+<p>下午4点一刻，第一个版本可以了，自测可以查出数据，兼容老的设计，一切都很妥当，但是就是没有车站开始预售时间啊，没办法，先把数据查出来，毕竟分销商（JD）和boss3打包已经爆炸了，赶快提交测试，经过几轮的bug修复，第一个版本上线了，可以查询12306最新的余位信息，还有一些细节没处理好，等这个版本上完已经晚上了，心好累，早些回去，第二天再收尾。如果按照之前的接口完成的任务量，现在的只完成了之前的60%左右的任务。</p>
+<p>第二天4.28号，做了一宿改代码的噩梦后，boss3说我们这边传送的列车经过几天不对，我一查发现和他们的计算方式不对，原来这个字段是12306自己提供的，现在没有了，只能我自己搞了，修修改改可以了，由于之前资源落地的数据有很多是脏数据，导致这些数据要被更新掉，现在ris搜索的接口推送mq更新res，测试发现数据没有更新，我擦，一个接一个的问题啊，查看逻辑没有问题，问题出现在最后的mq的推送的问题，就是推送不过去啊，经过查看插入资源的代码，发现和更新的代码最后殊途同归啊，我擦，插入资源用tsp，更新资源用mq，这是什么道理，我直接将更新资源改用插入的tsp，我了擦，居然直接更新数据，困扰好长时间的问题解决了（这里省略我查找对比插入和更新资源的过程），随后在测试机器进行测试，出发时间，到达时间，售价，随便改，查询后立即更新。就是这么高效，喜欢这种感觉。今天再紧急上线，达到之前接口80%的功能量。</p>
+<p>好好休息了一个周末，5.2号来，还差预售时间了，刚开始准备放进db里面，后来考虑还要创建表、查询频率和速率等方面，如果预售时间发生变化，修改起来比较困难，想来先去，还是放入缓存吧，但是缓存需要支持key-value类型，查看项目用的redis太老了，不敢升级，升级报错一堆，没把那只能继续封装原来接口，采用redis的hash的方法，封装了两个接口，数据存进去，起售时间-车站s，ok，完美解决。再封装一个方法，根据车站查询预售时间，就是根据value查找key，恶心的上海的各个站还是预售时间不一致，我擦，没办法，先模糊识别，在精确识别，一套查询袭来耗时也就10毫秒左右，可以忍受。后面比较麻烦的来了，就是算预售时间，通用接口的把预售时间赋值上去，稍微改动没有问题，但是抢票接口的就麻烦了，逻辑不一致，经过多次修改，终于搞定了，很完美。经过这一天的完成，接口终于可以达到之前99%的功能了。</p>
+<p>由于12306接口的返回结果变动，改用“|”分割的数据解析，在我本地机器上运行起来很慢，但是在测试服务器上和线上还是很快的，经过打日志发现解析12306返回结果数据相当耗时，所以今天我想采用多线程+闭锁的方式来实现，说干就干，抽取代码，改用线程池+闭锁，实现起来不难，测试抢票接口之前本机上5s都不能返回数据，现在2~4秒以内就可以返回，算是不小的改进，化整为零的思想还是不错的。但是又出现了list的java.util.concurrentModificationException，这个需要细心排查，没有进行remove操作还是会出现，排查中..（让我想起面试EMC的面试官的一道题，就是统计一本书的每个字出现的个数，什么方法都行，当时稚嫩的我如何想到分布式或者多线程呀，想想就汗颜呀）</p>
+<p>回想起来，我这一短时间到底在途牛学到了什么，仔细回想其实还是不少的，我新开了一个接口供自己负责的牛抢票用，第一次一段时间后报警了，经过简单排查插入数据库可能频繁访问拖得db很慢，造成查询很慢，去掉后，自上线发现还是很慢，这次准备改为闭锁，之前是用的future.get时间返回，但是很慢，正在改进中。一个接口在正常情况下没问题，但是在高并发下就会凸显一系列问题。</p>
+<p>崎岖的路，继续走。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;我们能达到今天的成就，是因为我们站在巨人的肩膀上&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;之前博客都是转发或者摘抄别人的优秀文档，自己很少弄点东西上来，也许是自己没有善于积累的习惯，今天灵机一动，想写点什么！&lt;/p&gt;
+&lt;p&gt;话说2017年4月26
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>spring的bean生命周期</title>
+    <link href="http://dingran.tk/2017/04/24/spring%E7%9A%84bean%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
+    <id>http://dingran.tk/2017/04/24/spring的bean生命周期/</id>
+    <published>2017-04-24T03:18:37.000Z</published>
+    <updated>2017-04-24T03:35:25.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="spring-bean-的生命周期"><a href="#spring-bean-的生命周期" class="headerlink" title="spring bean 的生命周期"></a>spring bean 的生命周期</h1><p>Spring作为当前Java最流行、最强大的轻量级框架，受到了程序员的热烈欢迎。准确的了解Spring Bean的生命周期是非常必要的。我们通常使用ApplicationContext作为Spring容器。这里，我们讲的也是 ApplicationContext中Bean的生命周期。而实际上BeanFactory也是差不多的，只不过处理器需要手动注册。</p>
+<p> 转载请注明地址 <b><a href="http://www.cnblogs.com/zrtqsk/p/3735273.html" target="_blank" rel="external">http://www.cnblogs.com/zrtqsk/p/3735273.html</a></b>，谢谢。</p>
+<h2 id="一、生命周期流程图："><a href="#一、生命周期流程图：" class="headerlink" title="一、生命周期流程图："></a>一、生命周期流程图：</h2><p>Spring Bean的完整生命周期从创建Spring容器开始，直到最终Spring容器销毁Bean，这其中包含了一系列关键点。<br><img src="http://images.cnitblog.com/i/580631/201405/181453414212066.png" alt=""></p>
+<p>若容器注册了以上各种接口，程序那么将会按照以上的流程进行。下面将仔细讲解各接口作用。</p>
+<h2 id="二、各种接口方法分类"><a href="#二、各种接口方法分类" class="headerlink" title="二、各种接口方法分类"></a>二、各种接口方法分类</h2><p>Bean的完整生命周期经历了各种方法调用，这些方法可以划分为以下几类：</p>
+<h3 id="1、Bean自身的方法："><a href="#1、Bean自身的方法：" class="headerlink" title="1、Bean自身的方法："></a>1、Bean自身的方法：</h3><p>这个包括了Bean本身调用的方法和通过配置文件中<bean>的init-method和destroy-method指定的方法</bean></p>
+<h3 id="2、Bean级生命周期接口方法："><a href="#2、Bean级生命周期接口方法：" class="headerlink" title="2、Bean级生命周期接口方法："></a>2、Bean级生命周期接口方法：</h3><p>这个包括了BeanNameAware、BeanFactoryAware、InitializingBean和DiposableBean这些接口的方法</p>
+<h3 id="3、容器级生命周期接口方法："><a href="#3、容器级生命周期接口方法：" class="headerlink" title="3、容器级生命周期接口方法："></a>3、容器级生命周期接口方法：</h3><p>这个包括了InstantiationAwareBeanPostProcessor 和 BeanPostProcessor 这两个接口实现，一般称它们的实现类为“后处理器”。</p>
+<h3 id="4、工厂后处理器接口方法："><a href="#4、工厂后处理器接口方法：" class="headerlink" title="4、工厂后处理器接口方法：　　"></a>4、工厂后处理器接口方法：　　</h3><p>这个包括了AspectJWeavingEnabler,ConfigurationClassPostProcessor,CustomAutowireConfigurer等等非常有用的工厂后处理器接口的方法。工厂后处理器也是容器级的。在应用上下文装配配置文件之后立即调用。</p>
+<h2 id="三、演示"><a href="#三、演示" class="headerlink" title="三、演示"></a>三、演示</h2><p>我们用一个简单的Spring Bean来演示一下Spring Bean的生命周期。</p>
+<h3 id="1、首先是一个简单的SpringBean，调用Bean自身的方法和Bean级生命周期接口方法"><a href="#1、首先是一个简单的SpringBean，调用Bean自身的方法和Bean级生命周期接口方法" class="headerlink" title="1、首先是一个简单的SpringBean，调用Bean自身的方法和Bean级生命周期接口方法"></a>1、首先是一个简单的SpringBean，调用Bean自身的方法和Bean级生命周期接口方法</h3><p>为了方便演示，它实现了BeanNameAware、BeanFactoryAware、InitializingBean和DiposableBean这4个接口，同时有2个方法，对应配置文件中<bean>的init-method和destroy-method。如下：</bean></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> springBeanTest;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.springframework.beans.BeansException;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.BeanFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.BeanFactoryAware;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.BeanNameAware;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.DisposableBean;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.InitializingBean;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@author</span> qsk</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> <span class="keyword">implements</span> <span class="title">BeanFactoryAware</span>, <span class="title">BeanNameAware</span>,</span></div><div class="line">        <span class="title">InitializingBean</span>, <span class="title">DisposableBean</span> &#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> String address;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> phone;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> BeanFactory beanFactory;</div><div class="line">    <span class="keyword">private</span> String beanName;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【构造器】调用Person的构造器实例化"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【注入属性】注入属性name"</span>);</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getAddress</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> address;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAddress</span><span class="params">(String address)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【注入属性】注入属性address"</span>);</div><div class="line">        <span class="keyword">this</span>.address = address;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getPhone</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> phone;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPhone</span><span class="params">(<span class="keyword">int</span> phone)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【注入属性】注入属性phone"</span>);</div><div class="line">        <span class="keyword">this</span>.phone = phone;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"Person [address="</span> + address + <span class="string">", name="</span> + name + <span class="string">", phone="</span></div><div class="line">                + phone + <span class="string">"]"</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 这是BeanFactoryAware接口方法</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBeanFactory</span><span class="params">(BeanFactory arg0)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        System.out</div><div class="line">                .println(<span class="string">"【BeanFactoryAware接口】调用BeanFactoryAware.setBeanFactory()"</span>);</div><div class="line">        <span class="keyword">this</span>.beanFactory = arg0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 这是BeanNameAware接口方法</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBeanName</span><span class="params">(String arg0)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【BeanNameAware接口】调用BeanNameAware.setBeanName()"</span>);</div><div class="line">        <span class="keyword">this</span>.beanName = arg0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 这是InitializingBean接口方法</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        System.out</div><div class="line">                .println(<span class="string">"【InitializingBean接口】调用InitializingBean.afterPropertiesSet()"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 这是DiposibleBean接口方法</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【DiposibleBean接口】调用DiposibleBean.destory()"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 通过&lt;bean&gt;的init-method属性指定的初始化方法</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">myInit</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【init-method】调用&lt;bean&gt;的init-method属性指定的初始化方法"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 通过&lt;bean&gt;的destroy-method属性指定的初始化方法</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">myDestory</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"【destroy-method】调用&lt;bean&gt;的destroy-method属性指定的初始化方法"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="2、接下来是演示BeanPostProcessor接口的方法，如下："><a href="#2、接下来是演示BeanPostProcessor接口的方法，如下：" class="headerlink" title="2、接下来是演示BeanPostProcessor接口的方法，如下："></a>2、接下来是演示BeanPostProcessor接口的方法，如下：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> springBeanTest;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.springframework.beans.BeansException;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.config.BeanPostProcessor;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBeanPostProcessor</span> <span class="keyword">implements</span> <span class="title">BeanPostProcessor</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBeanPostProcessor</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>();</div><div class="line">        System.out.println(<span class="string">"这是BeanPostProcessor实现类构造器！！"</span>);</div><div class="line">        <span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessAfterInitialization</span><span class="params">(Object arg0, String arg1)</span></span></div><div class="line">            <span class="keyword">throws</span> BeansException &#123;</div><div class="line">        System.out</div><div class="line">        .println(<span class="string">"BeanPostProcessor接口方法postProcessAfterInitialization对属性进行更改！"</span>);</div><div class="line">        <span class="keyword">return</span> arg0;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInitialization</span><span class="params">(Object arg0, String arg1)</span></span></div><div class="line">            <span class="keyword">throws</span> BeansException &#123;</div><div class="line">        System.out</div><div class="line">        .println(<span class="string">"BeanPostProcessor接口方法postProcessBeforeInitialization对属性进行更改！"</span>);</div><div class="line">        <span class="keyword">return</span> arg0;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如上，BeanPostProcessor接口包括2个方法postProcessAfterInitialization和postProcessBeforeInitialization，这两个方法的第一个参数都是要处理的Bean对象，第二个参数都是Bean的name。返回值也都是要处理的Bean对象。这里要注意。</p>
+<h3 id="3、InstantiationAwareBeanPostProcessor-接口本质是BeanPostProcessor的子接口"><a href="#3、InstantiationAwareBeanPostProcessor-接口本质是BeanPostProcessor的子接口" class="headerlink" title="3、InstantiationAwareBeanPostProcessor 接口本质是BeanPostProcessor的子接口"></a>3、InstantiationAwareBeanPostProcessor 接口本质是BeanPostProcessor的子接口</h3><p>，一般我们继承Spring为其提供的适配器类InstantiationAwareBeanPostProcessor Adapter来使用它，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> springBeanTest;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.beans.PropertyDescriptor;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.springframework.beans.BeansException;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.PropertyValues;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInstantiationAwareBeanPostProcessor</span> <span class="keyword">extends</span></span></div><div class="line">        <span class="title">InstantiationAwareBeanPostProcessorAdapter</span> &#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyInstantiationAwareBeanPostProcessor</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>();</div><div class="line">        System.out</div><div class="line">                .println(<span class="string">"这是InstantiationAwareBeanPostProcessorAdapter实现类构造器！！"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 接口方法、实例化Bean之前调用</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInstantiation</span><span class="params">(Class beanClass,</span></span></div><div class="line">            String beanName) <span class="keyword">throws</span> BeansException &#123;</div><div class="line">        System.out</div><div class="line">                .println(<span class="string">"InstantiationAwareBeanPostProcessor调用postProcessBeforeInstantiation方法"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 接口方法、实例化Bean之后调用</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessAfterInitialization</span><span class="params">(Object bean, String beanName)</span></span></div><div class="line">            <span class="keyword">throws</span> BeansException &#123;</div><div class="line">        System.out</div><div class="line">                .println(<span class="string">"InstantiationAwareBeanPostProcessor调用postProcessAfterInitialization方法"</span>);</div><div class="line">        <span class="keyword">return</span> bean;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 接口方法、设置某个属性时调用</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> PropertyValues <span class="title">postProcessPropertyValues</span><span class="params">(PropertyValues pvs,</span></span></div><div class="line">            PropertyDescriptor[] pds, Object bean, String beanName)</div><div class="line">            <span class="keyword">throws</span> BeansException &#123;</div><div class="line">        System.out</div><div class="line">                .println(<span class="string">"InstantiationAwareBeanPostProcessor调用postProcessPropertyValues方法"</span>);</div><div class="line">        <span class="keyword">return</span> pvs;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个有3个方法，其中第二个方法postProcessAfterInitialization就是重写了BeanPostProcessor的方法。第三个方法postProcessPropertyValues用来操作属性，返回值也应该是PropertyValues对象。</p>
+<h3 id="4、演示工厂后处理器接口方法，如下："><a href="#4、演示工厂后处理器接口方法，如下：" class="headerlink" title="4、演示工厂后处理器接口方法，如下："></a>4、演示工厂后处理器接口方法，如下：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> springBeanTest;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.springframework.beans.BeansException;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.config.BeanDefinition;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.config.BeanFactoryPostProcessor;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.config.ConfigurableListableBeanFactory;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBeanFactoryPostProcessor</span> <span class="keyword">implements</span> <span class="title">BeanFactoryPostProcessor</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBeanFactoryPostProcessor</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>();</div><div class="line">        System.out.println(<span class="string">"这是BeanFactoryPostProcessor实现类构造器！！"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory arg0)</span></span></div><div class="line">            <span class="keyword">throws</span> BeansException &#123;</div><div class="line">        System.out</div><div class="line">                .println(<span class="string">"BeanFactoryPostProcessor调用postProcessBeanFactory方法"</span>);</div><div class="line">        BeanDefinition bd = arg0.getBeanDefinition(<span class="string">"person"</span>);</div><div class="line">        bd.getPropertyValues().addPropertyValue(<span class="string">"phone"</span>, <span class="string">"110"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="5、配置文件如下beans-xml，很简单，使用ApplicationContext-处理器不用手动注册："><a href="#5、配置文件如下beans-xml，很简单，使用ApplicationContext-处理器不用手动注册：" class="headerlink" title="5、配置文件如下beans.xml，很简单，使用ApplicationContext,处理器不用手动注册："></a>5、配置文件如下beans.xml，很简单，使用ApplicationContext,处理器不用手动注册：</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></div><div class="line">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="attr">xmlns:p</span>=<span class="string">"http://www.springframework.org/schema/p"</span></div><div class="line">    <span class="attr">xmlns:aop</span>=<span class="string">"http://www.springframework.org/schema/aop"</span> <span class="attr">xmlns:tx</span>=<span class="string">"http://www.springframework.org/schema/tx"</span></div><div class="line">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></div><div class="line">            http://www.springframework.org/schema/beans </div><div class="line">            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"&gt;</div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"beanPostProcessor"</span> <span class="attr">class</span>=<span class="string">"springBeanTest.MyBeanPostProcessor"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"instantiationAwareBeanPostProcessor"</span> <span class="attr">class</span>=<span class="string">"springBeanTest.MyInstantiationAwareBeanPostProcessor"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"beanFactoryPostProcessor"</span> <span class="attr">class</span>=<span class="string">"springBeanTest.MyBeanFactoryPostProcessor"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line">    </div><div class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"person"</span> <span class="attr">class</span>=<span class="string">"springBeanTest.Person"</span> <span class="attr">init-method</span>=<span class="string">"myInit"</span></span></div><div class="line">        <span class="attr">destroy-method</span>=<span class="string">"myDestory"</span> <span class="attr">scope</span>=<span class="string">"singleton"</span> <span class="attr">p:name</span>=<span class="string">"张三"</span> <span class="attr">p:address</span>=<span class="string">"广州"</span></div><div class="line">        <span class="attr">p:phone</span>=<span class="string">"15900000000"</span> /&gt;</div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="6、下面测试一下："><a href="#6、下面测试一下：" class="headerlink" title="6、下面测试一下："></a>6、下面测试一下：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> springBeanTest;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</div><div class="line"><span class="keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanLifeCycle</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"></div><div class="line">        System.out.println(<span class="string">"现在开始初始化容器"</span>);</div><div class="line">        </div><div class="line">        ApplicationContext factory = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"springBeanTest/beans.xml"</span>);</div><div class="line">        System.out.println(<span class="string">"容器初始化成功"</span>);    </div><div class="line">        <span class="comment">//得到Preson，并使用</span></div><div class="line">        Person person = factory.getBean(<span class="string">"person"</span>,Person.class);</div><div class="line">        System.out.println(person);</div><div class="line">        </div><div class="line">        System.out.println(<span class="string">"现在开始关闭容器！"</span>);</div><div class="line">        ((ClassPathXmlApplicationContext)factory).registerShutdownHook();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="关闭容器使用的是实际是AbstractApplicationContext的钩子方法。"><a href="#关闭容器使用的是实际是AbstractApplicationContext的钩子方法。" class="headerlink" title="关闭容器使用的是实际是AbstractApplicationContext的钩子方法。"></a>关闭容器使用的是实际是AbstractApplicationContext的钩子方法。</h3><p>我们来看一下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">现在开始初始化容器</div><div class="line">2014-5-18 15:46:20 org.springframework.context.support.AbstractApplicationContext prepareRefresh</div><div class="line">信息: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@19a0c7c: startup date [Sun May 18 15:46:20 CST 2014]; root of context hierarchy</div><div class="line">2014-5-18 15:46:20 org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions</div><div class="line">信息: Loading XML bean definitions from class path resource [springBeanTest/beans.xml]</div><div class="line">这是BeanFactoryPostProcessor实现类构造器！！</div><div class="line">BeanFactoryPostProcessor调用postProcessBeanFactory方法</div><div class="line">这是BeanPostProcessor实现类构造器！！</div><div class="line">这是InstantiationAwareBeanPostProcessorAdapter实现类构造器！！</div><div class="line">2014-5-18 15:46:20 org.springframework.beans.factory.support.DefaultListableBeanFactory preInstantiateSingletons</div><div class="line">信息: Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@9934d4: defining beans [beanPostProcessor,instantiationAwareBeanPostProcessor,beanFactoryPostProcessor,person]; root of factory hierarchy</div><div class="line">InstantiationAwareBeanPostProcessor调用postProcessBeforeInstantiation方法</div><div class="line">【构造器】调用Person的构造器实例化</div><div class="line">InstantiationAwareBeanPostProcessor调用postProcessPropertyValues方法</div><div class="line">【注入属性】注入属性address</div><div class="line">【注入属性】注入属性name</div><div class="line">【注入属性】注入属性phone</div><div class="line">【BeanNameAware接口】调用BeanNameAware.setBeanName()</div><div class="line">【BeanFactoryAware接口】调用BeanFactoryAware.setBeanFactory()</div><div class="line">BeanPostProcessor接口方法postProcessBeforeInitialization对属性进行更改！</div><div class="line">【InitializingBean接口】调用InitializingBean.afterPropertiesSet()</div><div class="line">【init-method】调用&lt;bean&gt;的init-method属性指定的初始化方法</div><div class="line">BeanPostProcessor接口方法postProcessAfterInitialization对属性进行更改！</div><div class="line">InstantiationAwareBeanPostProcessor调用postProcessAfterInitialization方法</div><div class="line">容器初始化成功</div><div class="line">Person [address=广州, name=张三, phone=110]</div><div class="line">现在开始关闭容器！</div><div class="line">【DiposibleBean接口】调用DiposibleBean.destory()</div><div class="line">【destroy-method】调用&lt;bean&gt;的destroy-method属性指定的初始化方法</div></pre></td></tr></table></figure>
+<p>/**</p>
+<ul>
+<li>————————如果觉得本博文还行，别忘了推荐一下哦，谢谢！</li>
+<li>作者：钱书康</li>
+<li>欢迎转载，请保留此段声明。</li>
+<li>出处：<a href="http://www.cnblogs.com/zrtqsk/" target="_blank" rel="external">http://www.cnblogs.com/zrtqsk/</a><br>*/</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;spring-bean-的生命周期&quot;&gt;&lt;a href=&quot;#spring-bean-的生命周期&quot; class=&quot;headerlink&quot; title=&quot;spring bean 的生命周期&quot;&gt;&lt;/a&gt;spring bean 的生命周期&lt;/h1&gt;&lt;p&gt;Spring作为当前
+    
+    </summary>
+    
+      <category term="spring" scheme="http://dingran.tk/categories/spring/"/>
+    
+    
+      <category term="spring" scheme="http://dingran.tk/tags/spring/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>mysql中的if使用</title>
+    <link href="http://dingran.tk/2017/04/19/mysql%E4%B8%AD%E7%9A%84if%E4%BD%BF%E7%94%A8/"/>
+    <id>http://dingran.tk/2017/04/19/mysql中的if使用/</id>
+    <published>2017-04-19T06:05:22.000Z</published>
+    <updated>2017-04-19T06:11:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>mysql中的if用法：</p>
+<ul>
+<li>一种是我们经常使用的case when</li>
+<li>还有一种是mysql本身自带函数 if(exp1,exp2,exp3)</li>
+</ul>
+<p>用法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">select</span> <span class="keyword">if</span>(<span class="keyword">max</span>(<span class="keyword">id</span>) <span class="keyword">is</span> <span class="literal">null</span>,<span class="number">1</span>,<span class="keyword">max</span>(<span class="keyword">id</span>)+<span class="number">1</span>) <span class="keyword">from</span> <span class="keyword">table</span></div><div class="line">#描述为如果<span class="keyword">id</span>最大值是<span class="literal">null</span>，就为<span class="number">1</span>，如果最大<span class="keyword">id</span>不为<span class="literal">null</span>，就将最大<span class="keyword">id</span>加<span class="number">1</span></div></pre></td></tr></table></figure>
+<p>可以用来进行一些简单的转换<br>mybatis推荐使用typehandler</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;mysql中的if用法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一种是我们经常使用的case when&lt;/li&gt;
+&lt;li&gt;还有一种是mysql本身自带函数 if(exp1,exp2,exp3)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用法如下：&lt;/p&gt;
+&lt;figure class=&quot;highlig
+    
+    </summary>
+    
+      <category term="数据库" scheme="http://dingran.tk/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+      <category term="mysql" scheme="http://dingran.tk/tags/mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>伪共享，并发编程无声的性能杀手</title>
+    <link href="http://dingran.tk/2017/04/19/%E4%BC%AA%E5%85%B1%E4%BA%AB%EF%BC%8C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E6%97%A0%E5%A3%B0%E7%9A%84%E6%80%A7%E8%83%BD%E6%9D%80%E6%89%8B/"/>
+    <id>http://dingran.tk/2017/04/19/伪共享，并发编程无声的性能杀手/</id>
+    <published>2017-04-19T03:43:03.000Z</published>
+    <updated>2017-04-19T03:52:03.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>伪共享，并发编程无声的性能杀手</p>
+</blockquote>
+<p>原文链接：<a href="http://www.cnblogs.com/cyfonly/p/5800758.html" target="_blank" rel="external">伪共享，并发编程无声的性能杀手</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;伪共享，并发编程无声的性能杀手&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;原文链接：&lt;a href=&quot;http://www.cnblogs.com/cyfonly/p/5800758.html&quot; target=&quot;_blank&quot; rel=&quot;exter
+    
+    </summary>
+    
+      <category term="并发" scheme="http://dingran.tk/categories/%E5%B9%B6%E5%8F%91/"/>
+    
+    
+      <category term="并发" scheme="http://dingran.tk/tags/%E5%B9%B6%E5%8F%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>树</title>
+    <link href="http://dingran.tk/2017/04/17/%E6%A0%91/"/>
+    <id>http://dingran.tk/2017/04/17/树/</id>
+    <published>2017-04-17T08:02:07.000Z</published>
+    <updated>2017-04-17T10:20:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h1><p>二叉树是每个结点最多有两个子树的有序树。通常子树的根被称作“左子树”（left subtree）和“右子树”（right subtree）。二叉树常被用作二叉查找树和二叉堆。二叉树的每个结点至多只有二棵子树(不存在度大于2的结点)，二叉树的子树有左右之分，次序不能颠倒。二叉树的第i层至多有2的（i-1）次方个结点；深度为k的二叉树至多有2的k次 − 1个结点；对任何一棵二叉树T，如果其终端结点数为n0，度为2的结点数为n2，则n0 = n2 + 1。</p>
+<h2 id="两个重要的概念："><a href="#两个重要的概念：" class="headerlink" title="两个重要的概念："></a>两个重要的概念：</h2><p>(1)完全二叉树——只有最下面的两层结点度小于2，并且最下面一层的结点都集中在该层最左边的若干位置的二叉树；</p>
+<p>(2)满二叉树——除了叶结点外每一个结点都有左右子叶且叶结点都处在最底层的二叉树,。</p>
+<h2 id="二叉树的性质"><a href="#二叉树的性质" class="headerlink" title="二叉树的性质"></a>二叉树的性质</h2><p>(1) 在二叉树中，第i层的结点总数不超过2^(i-1)；</p>
+<p>(2) 深度为h的二叉树最多有2^h-1个结点(h&gt;=1)，最少有h个结点；</p>
+<p>(3) 对于任意一棵二叉树，如果其叶结点数为N0，而度数为2的结点总数为N2，</p>
+<p>则N0=N2+1；</p>
+<p>(4) 具有n个结点的完全二叉树的深度为int（log2n）+1</p>
+<p>(5)有N个结点的完全二叉树各结点如果用顺序方式存储，则结点之间有如下关系：</p>
+<p>若I为结点编号则 如果I&lt;&gt;1，则其父结点的编号为I/2；</p>
+<p>如果2<em>I&lt;=N，则其左儿子（即左子树的根结点）的编号为2</em>I；若2*I&gt;N，则无左儿子；</p>
+<p>如果2<em>I+1&lt;=N，则其右儿子的结点编号为2</em>I+1；若2*I+1&gt;N，则无右儿子。</p>
+<p>(6)给定N个节点，能构成h(N)种不同的二叉树。</p>
+<p>h(N)为卡特兰数的第N项。h(n)=C(n,2*n)/(n+1)。</p>
+<h2 id="二叉树的遍历"><a href="#二叉树的遍历" class="headerlink" title="二叉树的遍历"></a>二叉树的遍历</h2><p>前序遍历：根节点-&gt;左子树-&gt;右子树<br>中序遍历：左子树-&gt;根节点-&gt;右子树<br>后序遍历：左子树-&gt;右子树-&gt;根节点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> tree;  </div><div class="line">  </div><div class="line"><span class="keyword">import</span> java.util.LinkedList;  </div><div class="line"><span class="keyword">import</span> java.util.List;  </div><div class="line">  </div><div class="line"><span class="comment">/** </span></div><div class="line"> * 功能：把一个数组的值存入二叉树中，然后进行3种方式的遍历 </div><div class="line"> *  </div><div class="line"> * 参考资料0:数据结构(C语言版)严蔚敏 </div><div class="line"> *  </div><div class="line"> * 参考资料1：http://zhidao.baidu.com/question/81938912.html </div><div class="line"> *  </div><div class="line"> * 参考资料2：http://cslibrary.stanford.edu/110/BinaryTrees.html#java </div><div class="line"> *  </div><div class="line"> * <span class="doctag">@author</span> ocaicai@yeah.net <span class="doctag">@date</span>: 2011-5-17 </div><div class="line"> *  </div><div class="line"> */  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BinTreeTraverse2</span> </span>&#123;  </div><div class="line">  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[] array = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span> &#125;;  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;Node&gt; nodeList = <span class="keyword">null</span>;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 内部类：节点 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@author</span> ocaicai@yeah.net <span class="doctag">@date</span>: 2011-5-17 </div><div class="line">     *  </div><div class="line">     */  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;  </div><div class="line">        Node leftChild;  </div><div class="line">        Node rightChild;  </div><div class="line">        <span class="keyword">int</span> data;  </div><div class="line">  </div><div class="line">        Node(<span class="keyword">int</span> newData) &#123;  </div><div class="line">            leftChild = <span class="keyword">null</span>;  </div><div class="line">            rightChild = <span class="keyword">null</span>;  </div><div class="line">            data = newData;  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createBinTree</span><span class="params">()</span> </span>&#123;  </div><div class="line">        nodeList = <span class="keyword">new</span> LinkedList&lt;Node&gt;();  </div><div class="line">        <span class="comment">// 将一个数组的值依次转换为Node节点  </span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> nodeIndex = <span class="number">0</span>; nodeIndex &lt; array.length; nodeIndex++) &#123;  </div><div class="line">            nodeList.add(<span class="keyword">new</span> Node(array[nodeIndex]));  </div><div class="line">        &#125;  </div><div class="line">        <span class="comment">// 对前lastParentIndex-1个父节点按照父节点与孩子节点的数字关系建立二叉树  </span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> parentIndex = <span class="number">0</span>; parentIndex &lt; array.length / <span class="number">2</span> - <span class="number">1</span>; parentIndex++) &#123;  </div><div class="line">            <span class="comment">// 左孩子  </span></div><div class="line">            nodeList.get(parentIndex).leftChild = nodeList  </div><div class="line">                    .get(parentIndex * <span class="number">2</span> + <span class="number">1</span>);  </div><div class="line">            <span class="comment">// 右孩子  </span></div><div class="line">            nodeList.get(parentIndex).rightChild = nodeList  </div><div class="line">                    .get(parentIndex * <span class="number">2</span> + <span class="number">2</span>);  </div><div class="line">        &#125;  </div><div class="line">        <span class="comment">// 最后一个父节点:因为最后一个父节点可能没有右孩子，所以单独拿出来处理  </span></div><div class="line">        <span class="keyword">int</span> lastParentIndex = array.length / <span class="number">2</span> - <span class="number">1</span>;  </div><div class="line">        <span class="comment">// 左孩子  </span></div><div class="line">        nodeList.get(lastParentIndex).leftChild = nodeList  </div><div class="line">                .get(lastParentIndex * <span class="number">2</span> + <span class="number">1</span>);  </div><div class="line">        <span class="comment">// 右孩子,如果数组的长度为奇数才建立右孩子  </span></div><div class="line">        <span class="keyword">if</span> (array.length % <span class="number">2</span> == <span class="number">1</span>) &#123;  </div><div class="line">            nodeList.get(lastParentIndex).rightChild = nodeList  </div><div class="line">                    .get(lastParentIndex * <span class="number">2</span> + <span class="number">2</span>);  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 先序遍历 </div><div class="line">     *  </div><div class="line">     * 这三种不同的遍历结构都是一样的，只是先后顺序不一样而已 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> node </div><div class="line">     *            遍历的节点 </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">preOrderTraverse</span><span class="params">(Node node)</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span> (node == <span class="keyword">null</span>)  </div><div class="line">            <span class="keyword">return</span>;  </div><div class="line">        System.out.print(node.data + <span class="string">" "</span>);  </div><div class="line">        preOrderTraverse(node.leftChild);  </div><div class="line">        preOrderTraverse(node.rightChild);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 中序遍历 </div><div class="line">     *  </div><div class="line">     * 这三种不同的遍历结构都是一样的，只是先后顺序不一样而已 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> node </div><div class="line">     *            遍历的节点 </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">inOrderTraverse</span><span class="params">(Node node)</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span> (node == <span class="keyword">null</span>)  </div><div class="line">            <span class="keyword">return</span>;  </div><div class="line">        inOrderTraverse(node.leftChild);  </div><div class="line">        System.out.print(node.data + <span class="string">" "</span>);  </div><div class="line">        inOrderTraverse(node.rightChild);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="comment">/** </span></div><div class="line">     * 后序遍历 </div><div class="line">     *  </div><div class="line">     * 这三种不同的遍历结构都是一样的，只是先后顺序不一样而已 </div><div class="line">     *  </div><div class="line">     * <span class="doctag">@param</span> node </div><div class="line">     *            遍历的节点 </div><div class="line">     */  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">postOrderTraverse</span><span class="params">(Node node)</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span> (node == <span class="keyword">null</span>)  </div><div class="line">            <span class="keyword">return</span>;  </div><div class="line">        postOrderTraverse(node.leftChild);  </div><div class="line">        postOrderTraverse(node.rightChild);  </div><div class="line">        System.out.print(node.data + <span class="string">" "</span>);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </div><div class="line">        BinTreeTraverse2 binTree = <span class="keyword">new</span> BinTreeTraverse2();  </div><div class="line">        binTree.createBinTree();  </div><div class="line">        <span class="comment">// nodeList中第0个索引处的值即为根节点  </span></div><div class="line">        Node root = nodeList.get(<span class="number">0</span>);  </div><div class="line">  </div><div class="line">        System.out.println(<span class="string">"先序遍历："</span>);  </div><div class="line">        preOrderTraverse(root);  </div><div class="line">        System.out.println();  </div><div class="line">  </div><div class="line">        System.out.println(<span class="string">"中序遍历："</span>);  </div><div class="line">        inOrderTraverse(root);  </div><div class="line">        System.out.println();  </div><div class="line">  </div><div class="line">        System.out.println(<span class="string">"后序遍历："</span>);  </div><div class="line">        postOrderTraverse(root);  </div><div class="line">    &#125;  </div><div class="line">  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>result:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">先序遍历：  </div><div class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">4</span> <span class="number">8</span> <span class="number">9</span> <span class="number">5</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>   </div><div class="line">中序遍历：  </div><div class="line"><span class="number">8</span> <span class="number">4</span> <span class="number">9</span> <span class="number">2</span> <span class="number">5</span> <span class="number">1</span> <span class="number">6</span> <span class="number">3</span> <span class="number">7</span>   </div><div class="line">后序遍历：  </div><div class="line"><span class="number">8</span> <span class="number">9</span> <span class="number">4</span> <span class="number">5</span> <span class="number">2</span> <span class="number">6</span> <span class="number">7</span> <span class="number">3</span> <span class="number">1</span></div></pre></td></tr></table></figure>
+<h1 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h1><p>平衡二叉树，又称AVL树。它或者是一棵空树，或者是具有下列性质的二叉树：它的左子树和右子树都是平衡二叉树，且左子树和右子树的高度之差之差的绝对值不超过1.。</p>
+<p>常用算法有：红黑树、AVL树、Treap等。</p>
+<h2 id="平衡二叉树的调整方法"><a href="#平衡二叉树的调整方法" class="headerlink" title="平衡二叉树的调整方法"></a>平衡二叉树的调整方法</h2><p>平衡二叉树是在构造二叉排序树的过程中，每当插入一个新结点时，首先检查是否因插入新结点而破坏了二叉排序树的平衡性，若是，则找出其中的最小不平衡子树，在保持二叉排序树特性的前提下，调整最小不平衡子树中各结点之间的链接关系，进行相应的旋转，使之成为新的平衡子树。具体步骤如下：</p>
+<p>⑴ 每当插入一个新结点，从该结点开始向上计算各结点的平衡因子，即计算该结点的祖先结点的平衡因子，若该结点的祖先结点的平衡因子的绝对值均不超过1，则平衡二叉树没有失去平衡，继续插入结点；</p>
+<p>⑵ 若插入结点的某祖先结点的平衡因子的绝对值大于1，则找出其中最小不平衡子树的根结点；</p>
+<p>⑶ 判断新插入的结点与最小不平衡子树的根结点的关系，确定是哪种类型的调整；</p>
+<p>⑷ 如果是LL型或RR型，只需应用扁担原理旋转一次，在旋转过程中，如果出现冲突，应用旋转优先原则调整冲突；如果是LR型或LR型，则需应用扁担原理旋转两次，第一次最小不平衡子树的根结点先不动，调整插入结点所在子树，第二次再调整最小不平衡子树，在旋转过程中，如果出现冲突，应用旋转优先原则调整冲突；</p>
+<p>⑸ 计算调整后的平衡二叉树中各结点的平衡因子，检验是否因为旋转而破坏其他结点的平衡因子，以及调整后的平衡二叉树中是否存在平衡因子大于1的结点。</p>
+<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/hytdsky/609806/o_2008111712242127.jpg" alt=""></p>
+<p>（b）左边的图 左子数的高度为3，右子树的高度为1，相差超过1</p>
+<p>（b）右边的图 -2的左子树高度为0  右子树的高度为2，相差超过1</p>
+<h1 id="完全二叉树-Complete-Binary-Tree"><a href="#完全二叉树-Complete-Binary-Tree" class="headerlink" title="完全二叉树(Complete Binary Tree)"></a>完全二叉树(Complete Binary Tree)</h1><p>若设二叉树的高度为h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层从右向左连续缺若干结点，这就是完全二叉树。</p>
+<h2 id="完全二叉树特点"><a href="#完全二叉树特点" class="headerlink" title="完全二叉树特点"></a>完全二叉树特点</h2><p>一、叶子结点只可能在最大的两层上出现,对任意结点，若其右分支下的子孙最大层次为L，则其左分支下的子孙的最大层次必为L 或 L+1；</p>
+<p>二、出于简便起见,完全二叉树通常采用数组而不是链表存储,其存储结构如下:</p>
+<p>var tree:array[1..n]of longint;{n:integer;n&gt;=1}</p>
+<p>对于tree[i]，有如下特点：</p>
+<p>（1）若i为奇数且i&gt;1，那么tree[i]的左兄弟为tree[i-1]；</p>
+<p>（2）若i为偶数且i&lt;n，那么tree[i]的右兄弟为tree[i+1]；</p>
+<p>（3）若i&gt;1，tree[i]的双亲为tree[i div 2]；</p>
+<p>（4）若2<em>i&lt;=n，那么tree[i]的左孩子为tree[2</em>i]；若2<em>i+1&lt;=n，那么tree[i]的右孩子为tree[2</em>i+1]；</p>
+<p>（5）若i&gt;n div 2,那么tree[i]为叶子结点（对应于（3））；</p>
+<p>（6）若i&lt;(n-1) div 2.那么tree[i]必有两个孩子（对应于（4））。</p>
+<p>特别地：满二叉树一定是完全二叉树，完全二叉树不一定是满二叉树</p>
+<h2 id="完全二叉树叶子节点的算法"><a href="#完全二叉树叶子节点的算法" class="headerlink" title="完全二叉树叶子节点的算法"></a>完全二叉树叶子节点的算法</h2><p>如果一棵具有n个结点的深度为k的二叉树，它的每一个结点都与深度为k的满二叉树中编号为1~n的结点一一对应，这棵二叉树称为完全二叉树。</p>
+<p>可以根据公式进行推导，假设n0是度为0的结点总数（即叶子结点数），n1是度为1的结点总数，n2是度为2的结点总数，由二叉树的性质可知：n0＝n2＋1，则n= n0＋n1＋n2（其中n为完全二叉树的结点总数），由上述公式把n2消去得：n= 2n0+n1－1，由于完全二叉树中度为1的结点数只有两种可能0或1，由此得到n0＝（n＋1）/2或n0＝n/2，合并成一个公式：n0＝（n＋1）/2 ，就可根据完全二叉树的结点总数计算出叶子结点数。</p>
+<h1 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h1><p>一棵深度为k，且有2的(k)次方－1个节点的二叉树 特点：每一层上的结点数都是最大结点数</p>
+<h2 id="完全二叉树的定义："><a href="#完全二叉树的定义：" class="headerlink" title="完全二叉树的定义："></a>完全二叉树的定义：</h2><p>深度为k，有n个结点的二叉树当且仅当其每一个结点都与深度为k的满二叉树中编号从1至n的结点一一对应时，称为完全二叉树。 特点：叶子结点只可能在层次最大的两层上出现；对任一结点，若其右分支下子孙的最大层次为l，则其左分支下子孙的最大层次必为l 或l+1 满二叉树：一棵深度为k，且有2的(k)次方－1个节点的二叉树 特点：每一层上的结点数都是最大结点数 满二叉树肯定是完全二叉树完全二叉树不一定是满二叉树</p>
+<h1 id="哈夫曼树"><a href="#哈夫曼树" class="headerlink" title="哈夫曼树"></a>哈夫曼树</h1><p>哈夫曼树又称最优二叉树，是一类带权路径长度最短的树</p>
+<h2 id="最优二叉树的构造算法步骤："><a href="#最优二叉树的构造算法步骤：" class="headerlink" title="最优二叉树的构造算法步骤："></a>最优二叉树的构造算法步骤：</h2><p>(1)根据给定的n个权值w1,w2,…,wn构成n棵二叉树森林F={T1,T2,…,Tn}，其中每一棵二叉树Ti中都只有一个权为wi的根结点，其左、右子树为空。</p>
+<p>(2)在森林F中选出两棵根结点权值最小的树作为一棵新二叉树的左、右子树，新二叉树的根结点的权值为其左、右子树根结点的权值之和。</p>
+<p>(3)从F中删除这两棵二叉树，同时把新二叉树加入到F中。</p>
+<p>(4)重复步骤(2)、(3),直到F中只含有一棵树为止，此树便为最优二叉树。</p>
+<p>哈夫曼树的构造过程示意图如下：</p>
+<p><img src="http://img.blog.csdn.net/20160408000126221?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<h2 id="哈夫曼编码"><a href="#哈夫曼编码" class="headerlink" title="哈夫曼编码"></a>哈夫曼编码</h2><p>哈夫曼编码是一种变长编码。其定义如下：<br>对于给定的字符集D={d1,d2,…,dn}及其频率分布F={w1,w2,…,wn}，用d1,d2,…,dn作为叶结点，w1,w2,…,wn作为结点的权，利用哈夫曼算法构造一棵最优二叉树，将树中每个分支结点的左分支标上”0”；右分支标上”1”，把从根到每个叶子的路径符号(“0”或”1”)连接起来，作为该叶子的编码。<br>哈夫曼编码是在哈夫曼树的基础上求出来的，其基本思想是：从叶子结点di(0&lt;=i&lt;n)出发，向上回溯至根结点，依次求出每个字符的编码。<br>示例：对于字符集D={A，B，C，D}，其频率(单位：千次)分布为F={12，6，2，18}，下图给出D的哈夫曼编码图</p>
+<p><img src="http://img.blog.csdn.net/20160408235453592?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<h2 id="哈夫曼编码的回溯步骤如下："><a href="#哈夫曼编码的回溯步骤如下：" class="headerlink" title="哈夫曼编码的回溯步骤如下："></a>哈夫曼编码的回溯步骤如下：</h2><p>(1)选出哈夫曼树的某一个叶子结点。</p>
+<p>(2)利用其双亲指针parent找到其双亲结点。</p>
+<p>(3)利用找到的双亲结点的指针域中的lchild和rchild，判断该结点是双亲的左孩子还是右孩子。若该结点是其双亲结点的左孩子，则生成代码0；若该结点是其双亲结点的右孩子，则生成代码1。</p>
+<p>(4)由于生成的编码与要求的编码反序，将所生成的编码反序。</p>
+<p>(5)重复步骤(1)~(4)，直到所有结点都回溯完。</p>
+<p>反序方法：首先将生成的编码从后向前依次存放在一个临时的一维数组中，并设一个指针start指示编码在该一维数组中的起始位置。当某个叶子结点的编码完成时，从临时的一维数组的start处将编码复制到该字符对应的bits中即可。</p>
+<h2 id="哈夫曼解码"><a href="#哈夫曼解码" class="headerlink" title="哈夫曼解码"></a>哈夫曼解码</h2><p>哈夫曼解码过程:从哈夫曼树的根结点出发，依次识别电文的中的二进制编码，如果为0，则走向左孩子，否则走向右孩子，走到叶结点时，就可以得到相应的解码字符。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">void CharSetHuffmanDecoding(HuffmanTree T, char* cd, int n)  </div><div class="line">  &#123;  </div><div class="line">       int p=2*n-2;      //从根结点开始  </div><div class="line">       int i=0;  </div><div class="line">       //当要解码的字符串没有结束时  </div><div class="line">       while(cd[i]!='/0')  </div><div class="line">       &#123;  </div><div class="line">            //当还没有到达哈夫曼树的叶子并且要解码的字符串没有结束时  </div><div class="line">           while((T[p].lchild!=0 &amp;&amp; T[p].rchild != 0) &amp;&amp; cd[i] != '\0')  </div><div class="line">            &#123;  </div><div class="line">                 if(cd[i] == '0')  </div><div class="line">                 &#123;  </div><div class="line">                    //如果是0，则叶子在左子树  </div><div class="line">                    p=T[p].lchild;  </div><div class="line">                 &#125;  </div><div class="line">                 else  </div><div class="line">                 &#123;  </div><div class="line">                    //如果是1，则叶子在左子树  </div><div class="line">                    p=T[p].rchild;  </div><div class="line">                 &#125;  </div><div class="line">                 i++;  </div><div class="line">      &#125;  </div><div class="line">      //如果到达哈夫曼树的叶子时  </div><div class="line">       if(T[p].lchild == 0 &amp;&amp; T[p].rchild == 0)  </div><div class="line">       &#123;  </div><div class="line">           printf("%c", T[p].ch);  </div><div class="line">           p = 2*n-1;  </div><div class="line">        &#125;  </div><div class="line">       else      //如果编号为p的结点不是叶子，那么编码有错  </div><div class="line">        &#123;  </div><div class="line">             printf("\n解码出错! \n");  </div><div class="line">            return;  </div><div class="line">         &#125;  </div><div class="line">   &#125;  </div><div class="line">    printf("\n");  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h1><p> 即二叉搜索树：</p>
+<p>  1.所有非叶子结点至多拥有两个儿子（Left和Right）；</p>
+<p>  2.所有结点存储一个关键字；</p>
+<p>  3.非叶子结点的左指针指向小于其关键字的子树，右指针指向大于其关键字的子树；</p>
+<p> 如：</p>
+<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/1.JPG" alt=""></p>
+<p>B树的搜索，从根结点开始，如果查询的关键字与结点的关键字相等，那么就命中；</p>
+<p>否则，如果查询关键字比结点关键字小，就进入左儿子；如果比结点关键字大，就进入</p>
+<p>右儿子；如果左儿子或右儿子的指针为空，则报告找不到相应的关键字；</p>
+<p>如果B树的所有非叶子结点的左右子树的结点数目均保持差不多（平衡），那么B树</p>
+<p>的搜索性能逼近二分查找；但它比连续内存空间的二分查找的优点是，改变B树结构</p>
+<p>（插入与删除结点）不需要移动大段的内存数据，甚至通常是常数开销；</p>
+<p> 如：<br><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/2.JPG" alt=""></p>
+<p>但B树在经过多次插入与删除后，有可能导致不同的结构：</p>
+<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/31.JPG" alt=""></p>
+<p>右边也是一个B树，但它的搜索性能已经是线性的了；同样的关键字集合有可能导致不同的</p>
+<p>树结构索引；所以，使用B树还要考虑尽可能让B树保持左图的结构，和避免右图的结构，也就</p>
+<p>是所谓的“平衡”问题；      </p>
+<p>实际使用的B树都是在原B树的基础上加上平衡算法，即“平衡二叉树”；如何保持B树</p>
+<p>结点分布均匀的平衡算法是平衡二叉树的关键；平衡算法是一种在B树中插入和删除结点的</p>
+<p>策略；</p>
+<h1 id="B-树"><a href="#B-树" class="headerlink" title="B-树"></a>B-树</h1><p>是一种多路搜索树（并不是二叉的）：</p>
+<p>1.定义任意非叶子结点最多只有M个儿子；且M&gt;2；</p>
+<p>2.根结点的儿子数为[2, M]；</p>
+<p>3.除根结点以外的非叶子结点的儿子数为[M/2, M]；</p>
+<p>4.每个结点存放至少M/2-1（取上整）和至多M-1个关键字；（至少2个关键字）</p>
+<p>5.非叶子结点的关键字个数=指向儿子的指针个数-1；</p>
+<p>6.非叶子结点的关键字：K[1], K[2], …, K[M-1]；且K[i] &lt; K[i+1]；</p>
+<p>7.非叶子结点的指针：P[1], P[2], …, P[M]；其中P[1]指向关键字小于K[1]的</p>
+<p>子树，P[M]指向关键字大于K[M-1]的子树，其它P[i]指向关键字属于(K[i-1], K[i])的子树；</p>
+<p>8.所有叶子结点位于同一层；</p>
+<p>如：（M=3）</p>
+<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/4.JPG" alt=""></p>
+<p>B-树的搜索，从根结点开始，对结点内的关键字（有序）序列进行二分查找，如果</p>
+<p>命中则结束，否则进入查询关键字所属范围的儿子结点；重复，直到所对应的儿子指针为</p>
+<p>空，或已经是叶子结点；</p>
+<h2 id="B-树的特性："><a href="#B-树的特性：" class="headerlink" title="B-树的特性："></a>B-树的特性：</h2><p>1.关键字集合分布在整颗树中；</p>
+<p>2.任何一个关键字出现且只出现在一个结点中；</p>
+<p>3.搜索有可能在非叶子结点结束；</p>
+<p>4.其搜索性能等价于在关键字全集内做一次二分查找；</p>
+<p>5.自动层次控制；</p>
+<p>由于限制了除根结点以外的非叶子结点，至少含有M/2个儿子，确保了结点的至少</p>
+<p>利用率，其最底搜索性能为：</p>
+<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/0.JPG" alt=""></p>
+<p>其中，M为设定的非叶子结点最多子树个数，N为关键字总数；</p>
+<p>所以B-树的性能总是等价于二分查找（与M值无关），也就没有B树平衡的问题；</p>
+<p>由于M/2的限制，在插入结点时，如果结点已满，需要将结点分裂为两个各占</p>
+<p>M/2的结点；删除结点时，需将两个不足M/2的兄弟结点合并；</p>
+<h1 id="B-树-1"><a href="#B-树-1" class="headerlink" title="B+树"></a>B+树</h1><p>B+树是B-树的变体，也是一种多路搜索树：</p>
+<p>1.其定义基本与B-树同，除了：</p>
+<p>2.非叶子结点的子树指针与关键字个数相同；</p>
+<p>3.非叶子结点的子树指针P[i]，指向关键字值属于[K[i], K[i+1])的子树</p>
+<p>（B-树是开区间）；</p>
+<p>5.为所有叶子结点增加一个链指针；</p>
+<p>6.所有关键字都在叶子结点出现；</p>
+<p>如：（M=3）<br><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/5.JPG" alt=""></p>
+<p>B+的搜索与B-树也基本相同，区别是B+树只有达到叶子结点才命中（B-树可以在</p>
+<p>非叶子结点命中），其性能也等价于在关键字全集做一次二分查找；</p>
+<h2 id="B-的特性："><a href="#B-的特性：" class="headerlink" title="B+的特性："></a>B+的特性：</h2><p>1.所有关键字都出现在叶子结点的链表中（稠密索引），且链表中的关键字恰好</p>
+<p>是有序的；</p>
+<p>2.不可能在非叶子结点命中；</p>
+<p>3.非叶子结点相当于是叶子结点的索引（稀疏索引），叶子结点相当于是存储</p>
+<p>（关键字）数据的数据层；</p>
+<p>4.更适合文件索引系统；</p>
+<h1 id="B-树-2"><a href="#B-树-2" class="headerlink" title="B*树"></a>B*树</h1><p>是B+树的变体，在B+树的非根和非叶子结点再增加指向兄弟的指针；</p>
+<p><img src="http://p.blog.csdn.net/images/p_blog_csdn_net/manesking/6.JPG" alt=""></p>
+<p>B<em>树定义了非叶子结点关键字个数至少为(2/3)</em>M，即块的最低使用率为2/3</p>
+<p>（代替B+树的1/2）；</p>
+<p>B+树的分裂：当一个结点满时，分配一个新的结点，并将原结点中1/2的数据</p>
+<p>复制到新结点，最后在父结点中增加新结点的指针；B+树的分裂只影响原结点和父</p>
+<p>结点，而不会影响兄弟结点，所以它不需要指向兄弟的指针；</p>
+<p>B*树的分裂：当一个结点满时，如果它的下一个兄弟结点未满，那么将一部分</p>
+<p>数据移到兄弟结点中，再在原结点插入关键字，最后修改父结点中兄弟结点的关键字</p>
+<p>（因为兄弟结点的关键字范围改变了）；如果兄弟也满了，则在原结点与兄弟结点之</p>
+<p>间增加新结点，并各复制1/3的数据到新结点，最后在父结点增加新结点的指针；</p>
+<p>所以，B*树分配新结点的概率比B+树要低，空间使用率更高；</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><ul>
+<li><p>B树：二叉树，每个结点只存储一个关键字，等于则命中，小于走左结点，大于<br>走右结点；</p>
+</li>
+<li><p>B-树：多路搜索树，每个结点存储M/2到M个关键字，非叶子结点存储指向关键<br>字范围的子结点；<br>所有关键字在整颗树中出现，且只出现一次，非叶子结点可以命中；</p>
+</li>
+<li><p>B+树：在B-树基础上，为叶子结点增加链表指针，所有关键字都在叶子结点<br>中出现，非叶子结点作为叶子结点的索引；B+树总是到叶子结点才命中；</p>
+</li>
+<li><p>B*树：在B+树基础上，为非叶子结点也增加链表指针，将结点的最低利用率<br>从1/2提高到2/3；</p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;二叉树&quot;&gt;&lt;a href=&quot;#二叉树&quot; class=&quot;headerlink&quot; title=&quot;二叉树&quot;&gt;&lt;/a&gt;二叉树&lt;/h1&gt;&lt;p&gt;二叉树是每个结点最多有两个子树的有序树。通常子树的根被称作“左子树”（left subtree）和“右子树”（right subtr
+    
+    </summary>
+    
+      <category term="算法" scheme="http://dingran.tk/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+      <category term="算法" scheme="http://dingran.tk/tags/%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>分布式系统的事务处理</title>
+    <link href="http://dingran.tk/2017/04/09/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/"/>
+    <id>http://dingran.tk/2017/04/09/分布式系统的事务处理/</id>
+    <published>2017-04-09T15:18:30.000Z</published>
+    <updated>2017-04-09T15:20:38.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="这是一篇关于分布式事务的文章，写的很好"><a href="#这是一篇关于分布式事务的文章，写的很好" class="headerlink" title="这是一篇关于分布式事务的文章，写的很好"></a>这是一篇关于分布式事务的文章，写的很好</h1><p>原文地址<a href="http://coolshell.cn/articles/10910.html" target="_blank" rel="external">http://coolshell.cn/articles/10910.html</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;这是一篇关于分布式事务的文章，写的很好&quot;&gt;&lt;a href=&quot;#这是一篇关于分布式事务的文章，写的很好&quot; class=&quot;headerlink&quot; title=&quot;这是一篇关于分布式事务的文章，写的很好&quot;&gt;&lt;/a&gt;这是一篇关于分布式事务的文章，写的很好&lt;/h1&gt;&lt;p&gt;原文
+    
+    </summary>
+    
+      <category term="事务" scheme="http://dingran.tk/categories/%E4%BA%8B%E5%8A%A1/"/>
+    
+    
+      <category term="事务" scheme="http://dingran.tk/tags/%E4%BA%8B%E5%8A%A1/"/>
+    
+      <category term="分布式" scheme="http://dingran.tk/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>post图片测试</title>
+    <link href="http://dingran.tk/2017/03/31/post%E5%9B%BE%E7%89%87%E6%B5%8B%E8%AF%95/"/>
+    <id>http://dingran.tk/2017/03/31/post图片测试/</id>
+    <published>2017-03-31T05:59:31.000Z</published>
+    <updated>2017-03-31T06:03:26.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="/post图片测试/default_avatar.png" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;/post图片测试/default_avatar.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>分布式系统唯一ID生成方案</title>
+    <link href="http://dingran.tk/2017/03/31/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/"/>
+    <id>http://dingran.tk/2017/03/31/分布式系统唯一ID生成方案/</id>
+    <published>2017-03-31T03:46:29.000Z</published>
+    <updated>2017-03-31T05:37:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="分布式系统唯一ID生成方案"><a href="#分布式系统唯一ID生成方案" class="headerlink" title="分布式系统唯一ID生成方案"></a>分布式系统唯一ID生成方案</h1><p>强烈建议阅读原文：<a href="http://www.cnblogs.com/haoxinyue/p/5208136.html" target="_blank" rel="external">http://www.cnblogs.com/haoxinyue/p/5208136.html</a></p>
+<p>系统唯一ID是我们在设计一个系统的时候常常会遇见的问题，也常常为这个问题而纠结。生成ID的方法有很多，适应不同的场景、需求以及性能要求。所以有些比较复杂的系统会有多个ID生成的策略。下面就介绍一些常见的ID生成策略。</p>
+<h2 id="1-数据库自增长序列或字段"><a href="#1-数据库自增长序列或字段" class="headerlink" title="1. 数据库自增长序列或字段"></a>1. 数据库自增长序列或字段</h2><p>最常见的方式。利用数据库，全数据库唯一。</p>
+<h3 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h3><p>1）简单，代码方便，性能可以接受。</p>
+<p>2）数字ID天然排序，对分页或者需要排序的结果很有帮助。</p>
+<h3 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h3><p>1）不同数据库语法和实现不同，数据库迁移的时候或多数据库版本支持的时候需要处理。</p>
+<p>2）在单个数据库或读写分离或一主多从的情况下，只有一个主库可以生成。有单点故障的风险。</p>
+<p>3）在性能达不到要求的情况下，比较难于扩展。</p>
+<p>4）如果遇见多个系统需要合并或者涉及到数据迁移会相当痛苦。</p>
+<p>5）分表分库的时候会有麻烦。</p>
+<h3 id="优化方案："><a href="#优化方案：" class="headerlink" title="优化方案："></a>优化方案：</h3><p>1）针对主库单点，如果有多个Master库，则每个Master库设置的起始数字不一样，步长一样，可以是Master的个数。比如：Master1 生成的是 1，4，7，10，Master2生成的是2,5,8,11 Master3生成的是 3,6,9,12。这样就可以有效生成集群中的唯一ID，也可以大大降低ID生成数据库操作的负载。</p>
+<h2 id="2-UUID"><a href="#2-UUID" class="headerlink" title="2. UUID"></a>2. UUID</h2><p>常见的方式。可以利用数据库也可以利用程序生成，一般来说全球唯一。</p>
+<h3 id="优点：-1"><a href="#优点：-1" class="headerlink" title="优点："></a>优点：</h3><p>1）简单，代码方便。</p>
+<p>2）生成ID性能非常好，基本不会有性能问题。</p>
+<p>3）全球唯一，在遇见数据迁移，系统数据合并，或者数据库变更等情况下，可以从容应对。</p>
+<h3 id="缺点：-1"><a href="#缺点：-1" class="headerlink" title="缺点："></a>缺点：</h3><p>1）没有排序，无法保证趋势递增。</p>
+<p>2）UUID往往是使用字符串存储，查询的效率比较低。</p>
+<p>3）存储空间比较大，如果是海量数据库，就需要考虑存储量的问题。</p>
+<p>4）传输数据量大</p>
+<p>5）不可读。</p>
+<h2 id="3-UUID的变种"><a href="#3-UUID的变种" class="headerlink" title="3. UUID的变种"></a>3. UUID的变种</h2><p>1）为了解决UUID不可读，可以使用UUID to Int64的方法。及</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// &lt;summary&gt;</span></div><div class="line"><span class="comment">/// 根据GUID获取唯一数字序列</span></div><div class="line"><span class="comment">/// &lt;/summary&gt;</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">GuidToInt64</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">byte</span>[] bytes = Guid.NewGuid().ToByteArray();</div><div class="line">    <span class="keyword">return</span> BitConverter.ToInt64(bytes, <span class="number">0</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>2）为了解决UUID无序的问题，NHibernate在其主键生成方式中提供了Comb算法（combined guid/timestamp）。保留GUID的10个字节，用另6个字节表示GUID生成的时间（DateTime）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// &lt;summary&gt; </span></div><div class="line"><span class="comment">/// Generate a new &lt;see cref="Guid"/&gt; using the comb algorithm. </span></div><div class="line"><span class="comment">/// &lt;/summary&gt; </span></div><div class="line"><span class="function"><span class="keyword">private</span> Guid <span class="title">GenerateComb</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">byte</span>[] guidArray = Guid.NewGuid().ToByteArray();</div><div class="line"> </div><div class="line">    DateTime baseDate = <span class="keyword">new</span> DateTime(<span class="number">1900</span>, <span class="number">1</span>, <span class="number">1</span>);</div><div class="line">    DateTime now = DateTime.Now;</div><div class="line"> </div><div class="line">    <span class="comment">// Get the days and milliseconds which will be used to build    </span></div><div class="line">    <span class="comment">//the byte string    </span></div><div class="line">    TimeSpan days = <span class="keyword">new</span> TimeSpan(now.Ticks - baseDate.Ticks);</div><div class="line">    TimeSpan msecs = now.TimeOfDay;</div><div class="line"> </div><div class="line">    <span class="comment">// Convert to a byte array        </span></div><div class="line">    <span class="comment">// Note that SQL Server is accurate to 1/300th of a    </span></div><div class="line">    <span class="comment">// millisecond so we divide by 3.333333    </span></div><div class="line">    <span class="keyword">byte</span>[] daysArray = BitConverter.GetBytes(days.Days);</div><div class="line">    <span class="keyword">byte</span>[] msecsArray = BitConverter.GetBytes((<span class="keyword">long</span>)</div><div class="line">      (msecs.TotalMilliseconds / <span class="number">3.333333</span>));</div><div class="line"> </div><div class="line">    <span class="comment">// Reverse the bytes to match SQL Servers ordering    </span></div><div class="line">    Array.Reverse(daysArray);</div><div class="line">    Array.Reverse(msecsArray);</div><div class="line"> </div><div class="line">    <span class="comment">// Copy the bytes into the guid    </span></div><div class="line">    Array.Copy(daysArray, daysArray.Length - <span class="number">2</span>, guidArray,</div><div class="line">      guidArray.Length - <span class="number">6</span>, <span class="number">2</span>);</div><div class="line">    Array.Copy(msecsArray, msecsArray.Length - <span class="number">4</span>, guidArray,</div><div class="line">      guidArray.Length - <span class="number">4</span>, <span class="number">4</span>);</div><div class="line"> </div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Guid(guidArray);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>用上面的算法测试一下，得到如下的结果：作为比较，前面3个是使用COMB算法得出的结果，最后12个字符串是时间序（统一毫秒生成的3个UUID），过段时间如果再次生成，则12个字符串会比图示的要大。后面3个是直接生成的GUID。</p>
+<p><img src="http://images2015.cnblogs.com/blog/15700/201602/15700-20160227213048721-177386520.png" alt="http://images2015.cnblogs.com/blog/15700/201602/15700-20160227213048721-177386520.png"></p>
+<p>如果想把时间序放在前面，可以生成后改变12个字符串的位置，也可以修改算法类的最后两个Array.Copy。</p>
+<h2 id="4-Redis生成ID"><a href="#4-Redis生成ID" class="headerlink" title="4. Redis生成ID"></a>4. Redis生成ID</h2><p>当使用数据库来生成ID性能不够要求的时候，我们可以尝试使用Redis来生成ID。这主要依赖于Redis是单线程的，所以也可以用生成全局唯一的ID。可以用Redis的原子操作 INCR和INCRBY来实现。</p>
+<p>可以使用Redis集群来获取更高的吞吐量。假如一个集群中有5台Redis。可以初始化每台Redis的值分别是1,2,3,4,5，然后步长都是5。各个Redis生成的ID为：</p>
+<p>A：1,6,11,16,21</p>
+<p>B：2,7,12,17,22</p>
+<p>C：3,8,13,18,23</p>
+<p>D：4,9,14,19,24</p>
+<p>E：5,10,15,20,25</p>
+<p>这个，随便负载到哪个机确定好，未来很难做修改。但是3-5台服务器基本能够满足器上，都可以获得不同的ID。但是步长和初始值一定需要事先需要了。使用Redis集群也可以方式单点故障的问题。</p>
+<p>另外，比较适合使用Redis来生成每天从0开始的流水号。比如订单号=日期+当日自增长号。可以每天在Redis中生成一个Key，使用INCR进行累加。</p>
+<h3 id="优点：-2"><a href="#优点：-2" class="headerlink" title="优点："></a>优点：</h3><p>1）不依赖于数据库，灵活方便，且性能优于数据库。</p>
+<p>2）数字ID天然排序，对分页或者需要排序的结果很有帮助。</p>
+<h3 id="缺点：-2"><a href="#缺点：-2" class="headerlink" title="缺点："></a>缺点：</h3><p>1）如果系统中没有Redis，还需要引入新的组件，增加系统复杂度。</p>
+<p>2）需要编码和配置的工作量比较大。</p>
+<h2 id="5-Twitter的snowflake算法"><a href="#5-Twitter的snowflake算法" class="headerlink" title="5. Twitter的snowflake算法"></a>5. Twitter的snowflake算法</h2><p>snowflake是Twitter开源的分布式ID生成算法，结果是一个long型的ID。其核心思想是：使用41bit作为毫秒数，10bit作为机器的ID（5个bit是数据中心，5个bit的机器ID），12bit作为毫秒内的流水号（意味着每个节点在每毫秒可以产生 4096 个 ID），最后还有一个符号位，永远是0。具体实现的代码可以参看<a href="https://github.com/twitter/snowflake。" target="_blank" rel="external">https://github.com/twitter/snowflake。</a></p>
+<p>C#代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div></pre></td><td class="code"><pre><div class="line">/// &lt;summary&gt;</div><div class="line">    /// From: https://github.com/twitter/snowflake</div><div class="line">    /// An object that generates IDs.</div><div class="line">    /// This is broken into a separate class in case</div><div class="line">    /// we ever want to support multiple worker threads</div><div class="line">    /// per process</div><div class="line">    /// &lt;/summary&gt;</div><div class="line">    public class IdWorker</div><div class="line">    &#123;</div><div class="line">        private long workerId;</div><div class="line">        private long datacenterId;</div><div class="line">        private long sequence = 0L;</div><div class="line"></div><div class="line">        private static long twepoch = 1288834974657L;</div><div class="line"></div><div class="line">        private static long workerIdBits = 5L;</div><div class="line">        private static long datacenterIdBits = 5L;</div><div class="line">        private static long maxWorkerId = -1L ^ (-1L &lt;&lt; (int)workerIdBits);</div><div class="line">        private static long maxDatacenterId = -1L ^ (-1L &lt;&lt; (int)datacenterIdBits);</div><div class="line">        private static long sequenceBits = 12L;</div><div class="line"></div><div class="line">        private long workerIdShift = sequenceBits;</div><div class="line">        private long datacenterIdShift = sequenceBits + workerIdBits;</div><div class="line">        private long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;</div><div class="line">        private long sequenceMask = -1L ^ (-1L &lt;&lt; (int)sequenceBits);</div><div class="line"></div><div class="line">        private long lastTimestamp = -1L;</div><div class="line">        private static object syncRoot = new object();</div><div class="line"></div><div class="line">        public IdWorker(long workerId, long datacenterId)</div><div class="line">        &#123;</div><div class="line"></div><div class="line">            // sanity check for workerId</div><div class="line">            if (workerId &gt; maxWorkerId || workerId &lt; 0)</div><div class="line">            &#123;</div><div class="line">                throw new ArgumentException(string.Format(&quot;worker Id can&apos;t be greater than %d or less than 0&quot;, maxWorkerId));</div><div class="line">            &#125;</div><div class="line">            if (datacenterId &gt; maxDatacenterId || datacenterId &lt; 0)</div><div class="line">            &#123;</div><div class="line">                throw new ArgumentException(string.Format(&quot;datacenter Id can&apos;t be greater than %d or less than 0&quot;, maxDatacenterId));</div><div class="line">            &#125;</div><div class="line">            this.workerId = workerId;</div><div class="line">            this.datacenterId = datacenterId;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public long nextId()</div><div class="line">        &#123;</div><div class="line">            lock (syncRoot)</div><div class="line">            &#123;</div><div class="line">                long timestamp = timeGen();</div><div class="line"></div><div class="line">                if (timestamp &lt; lastTimestamp)</div><div class="line">                &#123;</div><div class="line">                    throw new ApplicationException(string.Format(&quot;Clock moved backwards.  Refusing to generate id for %d milliseconds&quot;, lastTimestamp - timestamp));</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                if (lastTimestamp == timestamp)</div><div class="line">                &#123;</div><div class="line">                    sequence = (sequence + 1) &amp; sequenceMask;</div><div class="line">                    if (sequence == 0)</div><div class="line">                    &#123;</div><div class="line">                        timestamp = tilNextMillis(lastTimestamp);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                else</div><div class="line">                &#123;</div><div class="line">                    sequence = 0L;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                lastTimestamp = timestamp;</div><div class="line"></div><div class="line">                return ((timestamp - twepoch) &lt;&lt; (int)timestampLeftShift) | (datacenterId &lt;&lt; (int)datacenterIdShift) | (workerId &lt;&lt; (int)workerIdShift) | sequence;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected long tilNextMillis(long lastTimestamp)</div><div class="line">        &#123;</div><div class="line">            long timestamp = timeGen();</div><div class="line">            while (timestamp &lt;= lastTimestamp)</div><div class="line">            &#123;</div><div class="line">                timestamp = timeGen();</div><div class="line">            &#125;</div><div class="line">            return timestamp;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected long timeGen()</div><div class="line">        &#123;</div><div class="line">            return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>测试代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">private static void TestIdWorker()</div><div class="line">        &#123;</div><div class="line">            HashSet&lt;long&gt; set = new HashSet&lt;long&gt;();</div><div class="line">            IdWorker idWorker1 = new IdWorker(0, 0);</div><div class="line">            IdWorker idWorker2 = new IdWorker(1, 0);</div><div class="line">            Thread t1 = new Thread(() =&gt; DoTestIdWoker(idWorker1, set));</div><div class="line">            Thread t2 = new Thread(() =&gt; DoTestIdWoker(idWorker2, set));</div><div class="line">            t1.IsBackground = true;</div><div class="line">            t2.IsBackground = true;</div><div class="line"></div><div class="line">            t1.Start();</div><div class="line">            t2.Start();</div><div class="line">            try</div><div class="line">            &#123;</div><div class="line">                Thread.Sleep(30000);</div><div class="line">                t1.Abort();</div><div class="line">                t2.Abort();</div><div class="line">            &#125;</div><div class="line">            catch (Exception e)</div><div class="line">            &#123;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            Console.WriteLine(&quot;done&quot;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        private static void DoTestIdWoker(IdWorker idWorker, HashSet&lt;long&gt; set)</div><div class="line">        &#123;</div><div class="line">            while (true)</div><div class="line">            &#123;</div><div class="line">                long id = idWorker.nextId();</div><div class="line">                if (!set.Add(id))</div><div class="line">                &#123;</div><div class="line">                    Console.WriteLine(&quot;duplicate:&quot; + id);</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                Thread.Sleep(1);</div><div class="line">            &#125;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p>snowflake算法可以根据自身项目的需要进行一定的修改。比如估算未来的数据中心个数，每个数据中心的机器数以及统一毫秒可以能的并发数来调整在算法中所需要的bit数。</p>
+<h3 id="优点：-3"><a href="#优点：-3" class="headerlink" title="优点："></a>优点：</h3><p>1）不依赖于数据库，灵活方便，且性能优于数据库。</p>
+<p>2）ID按照时间在单机上是递增的。</p>
+<h3 id="缺点：-3"><a href="#缺点：-3" class="headerlink" title="缺点："></a>缺点：</h3><p>1）在单机上是递增的，但是由于涉及到分布式环境，每台机器上的时钟不可能完全同步，也许有时候也会出现不是全局递增的情况。</p>
+<h2 id="6-利用zookeeper生成唯一ID"><a href="#6-利用zookeeper生成唯一ID" class="headerlink" title="6. 利用zookeeper生成唯一ID"></a>6. 利用zookeeper生成唯一ID</h2><p>zookeeper主要通过其znode数据版本来生成序列号，可以生成32位和64位的数据版本号，客户端可以使用这个版本号来作为唯一的序列号。<br>很少会使用zookeeper来生成唯一ID。主要是由于需要依赖zookeeper，并且是多步调用API，如果在竞争较大的情况下，需要考虑使用分布式锁。因此，性能在高并发的分布式环境下，也不甚理想。</p>
+<h2 id="7-MongoDB的ObjectId"><a href="#7-MongoDB的ObjectId" class="headerlink" title="7. MongoDB的ObjectId"></a>7. MongoDB的ObjectId</h2><p>MongoDB的ObjectId和snowflake算法类似。它设计成轻量型的，不同的机器都能用全局唯一的同种方法方便地生成它。MongoDB 从一开始就设计用来作为分布式数据库，处理多个节点是一个核心要求。使其在分片环境中要容易生成得多。</p>
+<p>其格式如下：</p>
+<p><img src="http://images.blogjava.net/blogjava_net/dongbule/46046/o_111.PNG?_=5208136" alt="http://images.blogjava.net/blogjava_net/dongbule/46046/o_111.PNG?_=5208136"></p>
+<p>前4 个字节是从标准纪元开始的时间戳，单位为秒。时间戳，与随后的5 个字节组合起来，提供了秒级别的唯一性。由于时间戳在前，这意味着ObjectId 大致会按照插入的顺序排列。这对于某些方面很有用，如将其作为索引提高效率。这4 个字节也隐含了文档创建的时间。绝大多数客户端类库都会公开一个方法从ObjectId 获取这个信息。<br>接下来的3 字节是所在主机的唯一标识符。通常是机器主机名的散列值。这样就可以确保不同主机生成不同的ObjectId，不产生冲突。<br>为了确保在同一台机器上并发的多个进程产生的ObjectId 是唯一的，接下来的两字节来自产生ObjectId 的进程标识符（PID）。<br>前9 字节保证了同一秒钟不同机器不同进程产生的ObjectId 是唯一的。后3 字节就是一个自动增加的计数器，确保相同进程同一秒产生的ObjectId 也是不一样的。同一秒钟最多允许每个进程拥有2563（16 777 216）个不同的ObjectId。</p>
+<p>实现的源码可以到MongoDB官方网站下载。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;分布式系统唯一ID生成方案&quot;&gt;&lt;a href=&quot;#分布式系统唯一ID生成方案&quot; class=&quot;headerlink&quot; title=&quot;分布式系统唯一ID生成方案&quot;&gt;&lt;/a&gt;分布式系统唯一ID生成方案&lt;/h1&gt;&lt;p&gt;强烈建议阅读原文：&lt;a href=&quot;http://w
+    
+    </summary>
+    
+      <category term="分布式" scheme="http://dingran.tk/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    
+      <category term="分布式" scheme="http://dingran.tk/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+      <category term="流水号" scheme="http://dingran.tk/tags/%E6%B5%81%E6%B0%B4%E5%8F%B7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>数据库索引index介绍</title>
+    <link href="http://dingran.tk/2017/03/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95index%E4%BB%8B%E7%BB%8D/"/>
+    <id>http://dingran.tk/2017/03/28/数据库索引index介绍/</id>
+    <published>2017-03-28T07:43:17.000Z</published>
+    <updated>2017-03-28T07:44:32.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="数据库索引index介绍"><a href="#数据库索引index介绍" class="headerlink" title="数据库索引index介绍"></a>数据库索引index介绍</h1><p>强烈建议阅读原文：<a href="http://www.nowamagic.net/database/db_Index.php" target="_blank" rel="external">http://www.nowamagic.net/database/db_Index.php</a></p>
+<p>对数据库索引的关注从未淡出我的们的讨论，那么数据库索引是什么样的？聚集索引与非聚集索引有什么不同？希望本文对各位同仁有一定的帮助。有不少存疑的地方，诚心希望各位不吝赐教指正，共同进步。</p>
+<h2 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h2><p>我们常见的数据库系统，其索引使用的数据结构多是B-Tree或者B+Tree。例如，MsSql使用的是B+Tree，Oracle及Sysbase使用的是B-Tree。所以在最开始，简单地介绍一下B-Tree。<br>B-Tree不同于Binary Tree（二叉树，最多有两个子树），一棵M阶的B-Tree满足以下条件：</p>
+<ul>
+<li>每个结点至多有M个孩子；</li>
+<li>除根结点和叶结点外，其它每个结点至少有M/2个孩子；</li>
+<li>根结点至少有两个孩子（除非该树仅包含一个结点）；</li>
+<li>所有叶结点在同一层，叶结点不包含任何关键字信息；</li>
+<li>有K个关键字的非叶结点恰好包含K+1个孩子；</li>
+</ul>
+<p>另外，对于一个结点，其内部的关键字是从小到大排序的。以下是B-Tree（M=4）的样例：<br><img src="http://www.nowamagic.net/database/images/b-tree.png" alt="http://www.nowamagic.net/database/images/b-tree.png"></p>
+<p>对于每个结点，主要包含一个关键字数组Key[]，一个指针数组（指向儿子）Son[]。在B-Tree内，查找的流程是：使用顺序查找（数组长度较短时）或折半查找方法查找Key[]数组，若找到关键字K，则返回该结点的地址及K在Key[]中的位置；否则，可确定K在某个Key[i]和Key[i+1]之间，则从Son[i]所指的子结点继续查找，直到在某结点中查找成功；或直至找到叶结点且叶结点中的查找仍不成功时，查找过程失败。<br>接着，我们使用以下图片演示如何生成B-Tree（M=4，依次插入1~6）：</p>
+<p>从图可见，当我们插入关键字4时，由于原结点已经满了，故进行分裂，基本按一半的原则进行分裂，然后取出中间的关键字2，升级（这里是成为根结点）。其它的依类推，就是这样一个大概的过程。</p>
+<p><img src="http://www.nowamagic.net/database/images/b-tree2.png" alt=""></p>
+<h2 id="数据库索引"><a href="#数据库索引" class="headerlink" title="数据库索引"></a>数据库索引</h2><p>在数据库中，索引的含义与日常意义上的“索引”一词并无多大区别（想想小时候查字典），它是用于提高数据库表数据访问速度的数据库对象。</p>
+<ul>
+<li>索引可以避免全表扫描。多数查询可以仅扫描少量索引页及数据页，而不是遍历所有数据页。</li>
+<li>对于非聚集索引，有些查询甚至可以不访问数据页。</li>
+<li>聚集索引可以避免数据插入操作集中于表的最后一个数据页。</li>
+<li>一些情况下，索引还可用于避免排序操作。</li>
+</ul>
+<p>当然，众所周知，虽然索引可以提高查询速度，但是它们也会导致数据库系统更新数据的性能下降，因为大部分数据更新需要同时更新索引。<br>一条索引记录中包含的基本信息包括：键值（即你定义索引时指定的所有字段的值）+逻辑指针（指向数据页或者另一索引页）。</p>
+<p><img src="http://www.nowamagic.net/database/images/index.png" alt=""></p>
+<p>当你为一张空表创建索引时，数据库系统将为你分配一个索引页，该索引页在你插入数据前一直是空的。此页此时既是根结点，也是叶结点。每当你往表中插入一行数据，数据库系统即向此根结点中插入一行索引记录。当根结点满时，数据库系统大抵按以下步骤进行分裂：</p>
+<ul>
+<li>创建两个儿子结点</li>
+<li>将原根结点中的数据近似地拆成两半，分别写入新的两个儿子结点</li>
+<li>根结点中加上指向两个儿子结点的指针</li>
+</ul>
+<p>通常状况下，由于索引记录仅包含索引字段值（以及4-9字节的指针），索引实体比真实的数据行要小许多，索引页相较数据页来说要密集许多。一个索引页可以存储数量更多的索引记录，这意味着在索引中查找时在I/O上占很大的优势，理解这一点有助于从本质上了解使用索引的优势。</p>
+<p>索引的类型分为以下两个：</p>
+<ul>
+<li>聚集索引，表数据按照索引的顺序来存储的。对于聚集索引，叶子结点即存储了真实的数据行，不再有另外单独的数据页。</li>
+<li>非聚集索引，表数据存储顺序与索引顺序无关。对于非聚集索引，叶结点包含索引字段值及指向数据页数据行的逻辑指针，该层紧邻数据页，其行数量与数据表行数据量一致。</li>
+</ul>
+<p>在一张表上只能创建一个聚集索引，因为真实数据的物理顺序只可能是一种。如果一张表没有聚集索引，那么它被称为“堆集”（Heap）。这样的表中的数据行没有特定的顺序，所有的新行将被添加的表的末尾位置。</p>
+<h2 id="聚集索引"><a href="#聚集索引" class="headerlink" title="聚集索引"></a>聚集索引</h2><p>在聚集索引中，叶结点也即数据结点，所有数据行的存储顺序与索引的存储顺序一致。</p>
+<p><img src="http://www.nowamagic.net/database/images/index2.png" alt=""></p>
+<h2 id="聚集索引与查询操作"><a href="#聚集索引与查询操作" class="headerlink" title="聚集索引与查询操作"></a>聚集索引与查询操作</h2><p>如上图，我们在名字字段上建立聚集索引，当需要在根据此字段查找特定的记录时，数据库系统会根据特定的系统表查找的此索引的根，然后根据指针查找下一个，直到找到。例如我们要查询“Green”，由于它介于[Bennet,Karsen]，据此我们找到了索引页1007，在该页中“Green”介于[Greane, Hunter]间，据此我们找到叶结点1133（也即数据结点），并最终在此页中找以了目标数据行。</p>
+<p>此次查询的IO包括3个索引页的查询（其中最后一次实际上是在数据页中查询）。这里的查找可能是从磁盘读取(Physical Read)或是从缓存中读取(Logical Read)，如果此表访问频率较高，那么索引树中较高层的索引很可能在缓存中被找到。所以真正的IO可能小于上面的情况。</p>
+<h2 id="聚集索引与插入操作"><a href="#聚集索引与插入操作" class="headerlink" title="聚集索引与插入操作"></a>聚集索引与插入操作</h2><p>最简单的情况下，插入操作根据索引找到对应的数据页，然后通过挪动已有的记录为新数据腾出空间，最后插入数据。</p>
+<p>如果数据页已满，则需要拆分数据页（页拆分是一种耗费资源的操作，一般数据库系统中会有相应的机制要尽量减少页拆分的次数，通常是通过为每页预留空间来实现）：</p>
+<ul>
+<li>在该使用的数据段（extent）上分配新的数据页，如果数据段已满，则需要分配新段。</li>
+<li>调整索引指针，这需要将相应的索引页读入内存并加锁。</li>
+<li>大约有一半的数据行被归入新的数据页中。</li>
+<li>如果表还有非聚集索引，则需要更新这些索引指向新的数据页。</li>
+</ul>
+<p>特殊情况：</p>
+<ul>
+<li>如果新插入的一条记录包含很大的数据，可能会分配两个新数据页，其中之一用来存储新记录，另一存储从原页中拆分出来的数据。</li>
+<li>通常数据库系统中会将重复的数据记录存储于相同的页中。</li>
+<li>类似于自增列为聚集索引的，数据库系统可能并不拆分数据页，页只是简单的新添数据页。</li>
+</ul>
+<h2 id="聚集索引与删除操作"><a href="#聚集索引与删除操作" class="headerlink" title="聚集索引与删除操作"></a>聚集索引与删除操作</h2><p>删除行将导致其下方的数据行向上移动以填充删除记录造成的空白。</p>
+<p>如果删除的行是该数据页中的最后一行，那么该数据页将被回收，相应的索引页中的记录将被删除。如果回收的数据页位于跟该表的其它数据页相同的段上，那么它可能在随后的时间内被利用。如果该数据页是该段的唯一一个数据页，则该段也被回收。</p>
+<p>对于数据的删除操作，可能导致索引页中仅有一条记录，这时，该记录可能会被移至邻近的索引页中，原索引页将被回收，即所谓的“索引合并”。</p>
+<h2 id="非聚集索引"><a href="#非聚集索引" class="headerlink" title="非聚集索引"></a>非聚集索引</h2><p>非聚集索引与聚集索引相比：</p>
+<ul>
+<li>叶子结点并非数据结点</li>
+<li>叶子结点为每一真正的数据行存储一个“键-指针”对</li>
+<li>叶子结点中还存储了一个指针偏移量，根据页指针及指针偏移量可以定位到具体的数据行。</li>
+<li>类似的，在除叶结点外的其它索引结点，存储的也是类似的内容，只不过它是指向下一级的索引页的。</li>
+</ul>
+<p>聚集索引是一种稀疏索引，数据页上一级的索引页存储的是页指针，而不是行指针。而对于非聚集索引，则是密集索引，在数据页的上一级索引页它为每一个数据行存储一条索引记录。<br>对于根与中间级的索引记录，它的结构包括：</p>
+<ul>
+<li>索引字段值</li>
+<li>RowId（即对应数据页的页指针+指针偏移量）。在高层的索引页中包含RowId是为了当索引允许重复值时，当更改数据时精确定位数据行。</li>
+<li>下一级索引页的指针</li>
+</ul>
+<p>对于叶子层的索引对象，它的结构包括：</p>
+<ul>
+<li>索引字段值</li>
+<li>RowId</li>
+</ul>
+<p><img src="http://www.nowamagic.net/database/images/index3.png" alt=""></p>
+<h3 id="非聚集索引与查询操作"><a href="#非聚集索引与查询操作" class="headerlink" title="非聚集索引与查询操作"></a>非聚集索引与查询操作</h3><p>针对上图，如果我们同样查找“Green”，那么一次查询操作将包含以下IO：3个索引页的读取+1个数据页的读取。同样，由于缓存的关系，真实的IO实际可能要小于上面列出的。</p>
+<h3 id="非聚集索引与插入操作"><a href="#非聚集索引与插入操作" class="headerlink" title="非聚集索引与插入操作"></a>非聚集索引与插入操作</h3><p>如果一张表包含一个非聚集索引但没有聚集索引，则新的数据将被插入到最末一个数据页中，然后非聚集索引将被更新。如果也包含聚集索引，该聚集索引将被用于查找新行将要处于什么位置，随后，聚集索引、以及非聚集索引将被更新。</p>
+<h3 id="非聚集索引与删除操作"><a href="#非聚集索引与删除操作" class="headerlink" title="非聚集索引与删除操作"></a>非聚集索引与删除操作</h3><p>如果在删除命令的Where子句中包含的列上，建有非聚集索引，那么该非聚集索引将被用于查找数据行的位置，数据删除之后，位于索引叶子上的对应记录也将被删除。如果该表上有其它非聚集索引，则它们叶子结点上的相应数据也要删除。</p>
+<p>如果删除的数据是该数所页中的唯一一条，则该页也被回收，同时需要更新各个索引树上的指针。</p>
+<p>由于没有自动的合并功能，如果应用程序中有频繁的随机删除操作，最后可能导致表包含多个数据页，但每个页中只有少量数据。</p>
+<h2 id="索引覆盖"><a href="#索引覆盖" class="headerlink" title="索引覆盖"></a>索引覆盖</h2><p>索引覆盖是这样一种索引策略：当某一查询中包含的所需字段皆包含于一个索引中，此时索引将大大提高查询性能。</p>
+<p>包含多个字段的索引，称为复合索引。索引最多可以包含31个字段，索引记录最大长度为600B。如果你在若干个字段上创建了一个复合的非聚集索引，且你的查询中所需Select字段及Where,Order By,Group By,Having子句中所涉及的字段都包含在索引中，则只搜索索引页即可满足查询，而不需要访问数据页。由于非聚集索引的叶结点包含所有数据行中的索引列值，使用这些结点即可返回真正的数据，这种情况称之为“索引覆盖”。</p>
+<p>在索引覆盖的情况下，包含两种索引扫描：</p>
+<ul>
+<li>匹配索引扫描</li>
+<li>非匹配索引扫描</li>
+</ul>
+<h3 id="匹配索引扫描"><a href="#匹配索引扫描" class="headerlink" title="匹配索引扫描"></a>匹配索引扫描</h3><p>此类索引扫描可以让我们省去访问数据页的步骤，当查询仅返回一行数据时，性能提高是有限的，但在范围查询的情况下，性能提高将随结果集数量的增长而增长。<br>针对此类扫描，索引必须包含查询中涉及的的所有字段，另外，还需要满足：Where子句中包含索引中的“引导列”（Leading Column），例如一个复合索引包含A,B,C,D四列，则A为“引导列”。如果Where子句中所包含列是BCD或者BD等情况，则只能使用非匹配索引扫描。</p>
+<h3 id="非配置索引扫描"><a href="#非配置索引扫描" class="headerlink" title="非配置索引扫描"></a>非配置索引扫描</h3><p>正如上述，如果Where子句中不包含索引的导引列，那么将使用非配置索引扫描。这最终导致扫描索引树上的所有叶子结点，当然，它的性能通常仍强于扫描所有的数据页。</p>
+<p>注：如需转载本文，请注明出处（原文链接），谢谢。更多精彩内容，请进入简明现代魔法首页。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;数据库索引index介绍&quot;&gt;&lt;a href=&quot;#数据库索引index介绍&quot; class=&quot;headerlink&quot; title=&quot;数据库索引index介绍&quot;&gt;&lt;/a&gt;数据库索引index介绍&lt;/h1&gt;&lt;p&gt;强烈建议阅读原文：&lt;a href=&quot;http://www.n
+    
+    </summary>
+    
+      <category term="数据库" scheme="http://dingran.tk/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+      <category term="索引" scheme="http://dingran.tk/tags/%E7%B4%A2%E5%BC%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JDK8对并发的新支持</title>
+    <link href="http://dingran.tk/2017/03/27/JDK8%E5%AF%B9%E5%B9%B6%E5%8F%91%E7%9A%84%E6%96%B0%E6%94%AF%E6%8C%81/"/>
+    <id>http://dingran.tk/2017/03/27/JDK8对并发的新支持/</id>
+    <published>2017-03-27T08:16:56.000Z</published>
+    <updated>2017-03-27T08:18:27.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="JDK8对并发的新支持"><a href="#JDK8对并发的新支持" class="headerlink" title="JDK8对并发的新支持"></a>JDK8对并发的新支持</h1><p>原文：<a href="https://my.oschina.net/hosee/blog/615927" target="_blank" rel="external">JDK8对并发的新支持</a></p>
+<h2 id="1-LongAdder"><a href="#1-LongAdder" class="headerlink" title="1. LongAdder"></a>1. LongAdder</h2><p>和AtomicLong类似的使用方式，但是性能比AtomicLong更好。</p>
+<p>LongAdder与AtomicLong都是使用了原子操作来提高性能。但是LongAdder在AtomicLong的基础上进行了热点分离，热点分离类似于有锁操作中的减小锁粒度，将一个锁分离成若干个锁来提高性能。在无锁中，也可以用类似的方式来增加CAS的成功率，从而提高性能。</p>
+<p>LongAdder原理图：</p>
+<p><img src="http://static.oschina.net/uploads/space/2016/0216/210139_yA05_2243330.png" alt="http://static.oschina.net/uploads/space/2016/0216/210139_yA05_2243330.png"></p>
+<p>AtomicLong的实现方式是内部有个value 变量，当多线程并发自增，自减时，均通过CAS 指令从机器指令级别操作保证并发的原子性。唯一会制约AtomicLong高效的原因是高并发，高并发意味着CAS的失败几率更高， 重试次数更多，越多线程重试，CAS失败几率又越高，变成恶性循环，AtomicLong效率降低。</p>
+<p>而LongAdder将把一个value拆分成若干cell，把所有cell加起来，就是value。所以对LongAdder进行加减操作，只需要对不同的cell来操作，不同的线程对不同的cell进行CAS操作，CAS的成功率当然高了（试想一下3+2+1=6，一个线程3+1，另一个线程2+1，最后是8，LongAdder没有乘法除法的API）。</p>
+<p>可是在并发数不是很高的情况，拆分成若干的cell，还需要维护cell和求和，效率不如AtomicLong的实现。LongAdder用了巧妙的办法来解决了这个问题。</p>
+<p>初始情况，LongAdder与AtomicLong是相同的，只有在CAS失败时，才会将value拆分成cell，每失败一次，都会增加cell的数量，这样在低并发时，同样高效，在高并发时，这种“自适应”的处理方式，达到一定cell数量后，CAS将不会失败，效率大大提高。</p>
+<p>LongAdder是一种以空间换时间的策略。</p>
+<h2 id="CompletableFuture"><a href="#CompletableFuture" class="headerlink" title="CompletableFuture"></a>CompletableFuture</h2><p>实现CompletionStage接口（40余个方法），大多数方法多数应用在函数式编程中。并且支持流式调用 </p>
+<p>CompletableFuture是Java 8中对Future的增强版 </p>
+<p>简单实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.concurrent.CompletableFuture;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AskThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line">    CompletableFuture&lt;Integer&gt; re = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">AskThread</span><span class="params">(CompletableFuture&lt;Integer&gt; re)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.re = re;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> myRe = <span class="number">0</span>;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			myRe = re.get() * re.get();</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">		&#125;</div><div class="line">		System.out.println(myRe);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">		<span class="keyword">final</span> CompletableFuture&lt;Integer&gt; future = <span class="keyword">new</span> CompletableFuture&lt;Integer&gt;();</div><div class="line">		<span class="keyword">new</span> Thread(<span class="keyword">new</span> AskThread(future)).start();</div><div class="line">		<span class="comment">// 模拟长时间的计算过程</span></div><div class="line">		Thread.sleep(<span class="number">1000</span>);</div><div class="line">		<span class="comment">// 告知完成结果</span></div><div class="line">		future.complete(<span class="number">60</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Future最令人诟病的就是要等待，要自己去检查任务是否完成了，在Future中，任务完成的时间是不可控的。而 CompletableFuture的最大改进在于，任务完成的时间也开放了出来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">future.complete(<span class="number">60</span>);</div></pre></td></tr></table></figure>
+<p>用来设置完成时间。<br>CompletableFuture的异步执行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">calc</span><span class="params">(Integer para)</span> </span>&#123;</div><div class="line">    	<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// 模拟一个长时间的执行</span></div><div class="line">			Thread.sleep(<span class="number">1000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> para * para;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException,</span></div><div class="line">			ExecutionException &#123;</div><div class="line">		<span class="keyword">final</span> CompletableFuture&lt;Integer&gt; future = CompletableFuture</div><div class="line">				.supplyAsync(() -&gt; calc(<span class="number">50</span>));</div><div class="line">		System.out.println(future.get());</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>CompletableFuture的流式调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">calc</span><span class="params">(Integer para)</span> </span>&#123;</div><div class="line">    	<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// 模拟一个长时间的执行</span></div><div class="line">			Thread.sleep(<span class="number">1000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> para * para;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException,</span></div><div class="line">			ExecutionException &#123;</div><div class="line">		CompletableFuture&lt;Void&gt; fu = CompletableFuture</div><div class="line">				.supplyAsync(() -&gt; calc(<span class="number">50</span>))</div><div class="line">				.thenApply((i) -&gt; Integer.toString(i))</div><div class="line">				.thenApply((str) -&gt; <span class="string">"\""</span> + str + <span class="string">"\""</span>)</div><div class="line">				.thenAccept(System.out::println);</div><div class="line">		fu.get();</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>组合多个CompletableFuture：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">calc</span><span class="params">(Integer para)</span> </span>&#123;</div><div class="line">    	<span class="keyword">return</span> para / <span class="number">2</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException,</span></div><div class="line">			ExecutionException &#123;</div><div class="line">		CompletableFuture&lt;Void&gt; fu = CompletableFuture</div><div class="line">				.supplyAsync(() -&gt; calc(<span class="number">50</span>))</div><div class="line">				.thenCompose(</div><div class="line">						(i) -&gt; CompletableFuture.supplyAsync(() -&gt; calc(i)))</div><div class="line">				.thenApply((str) -&gt; <span class="string">"\""</span> + str + <span class="string">"\""</span>)</div><div class="line">				.thenAccept(System.out::println);</div><div class="line">		fu.get();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>这几个例子更多是侧重Java8的一些新特性，这里就简单举下例子来说明特性，就不深究了。<br>CompletableFuture跟性能上关系不大，更多的是为了支持函数式编程，在功能上的增强。当然开放了完成时间的设置是一大亮点。</p>
+<h2 id="3-StampedLock"><a href="#3-StampedLock" class="headerlink" title="3. StampedLock"></a>3. StampedLock</h2><p>在上一篇中刚刚提到了锁分离，而锁分离的重要的实现就是ReadWriteLock。而StampedLock则是ReadWriteLock的一个改进。StampedLock与ReadWriteLock的区别在于，StampedLock认为读不应阻塞写，StampedLock认为当读写互斥的时候，读应该是重读，而不是不让写线程写。这样的设计解决了读多写少时，使用ReadWriteLock会产生写线程饥饿现象。</p>
+<p>所以StampedLock是一种偏向于写线程的改进。</p>
+<p>StampedLock示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.concurrent.locks.StampedLock;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">double</span> x, y;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> StampedLock sl = <span class="keyword">new</span> StampedLock();</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">move</span><span class="params">(<span class="keyword">double</span> deltaX, <span class="keyword">double</span> deltaY)</span> </span>&#123; <span class="comment">// an exclusively locked method</span></div><div class="line">		<span class="keyword">long</span> stamp = sl.writeLock();</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			x += deltaX;</div><div class="line">			y += deltaY;</div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			sl.unlockWrite(stamp);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">double</span> <span class="title">distanceFromOrigin</span><span class="params">()</span> </span>&#123; <span class="comment">// A read-only method</span></div><div class="line">		<span class="keyword">long</span> stamp = sl.tryOptimisticRead();</div><div class="line">		<span class="keyword">double</span> currentX = x, currentY = y;</div><div class="line">		<span class="keyword">if</span> (!sl.validate(stamp)) &#123;</div><div class="line">			stamp = sl.readLock();</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				currentX = x;</div><div class="line">				currentY = y;</div><div class="line">			&#125; <span class="keyword">finally</span> &#123;</div><div class="line">				sl.unlockRead(stamp);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> Math.sqrt(currentX * currentX + currentY * currentY);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述代码模拟了写线程和读线程， StampedLock根据stamp来查看是否互斥，写一次stamp变增加某个值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tryOptimisticRead()</div></pre></td></tr></table></figure>
+<p>就是刚刚所说的读写不互斥的情况。<br>每次读线程要读时，会先判断</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!sl.validate(stamp))</div></pre></td></tr></table></figure>
+<p>validate中会先查看是否有写线程在写，然后再判断输入的值和当前的 stamp是否相同，即判断是否读线程将读到最新的数据。如果有写线程在写，或者 stamp数值不同，则返回失败。<br>如果判断失败，当然可以重复的尝试去读，在示例代码中，并没有让其重复尝试读，而采用的是将乐观锁退化成普通的读锁去读，这种情况就是一种悲观的读法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">stamp = sl.readLock();</div><div class="line">StampedLock的实现思想：</div></pre></td></tr></table></figure>
+<p>CLH自旋锁：当锁申请失败时，不会立即将读线程挂起，在锁当中会维护一个等待线程队列，所有申请锁，但是没有成功的线程都记录在这个队列中。每一个节点（一个节点代表一个线程），保存一个标记位（locked），用于判断当前线程是否已经释放锁。当一个线程试图获得锁时，取得当前等待队列的尾部节点作为其前序节点。并使用类似如下代码判断前序节点是否已经成功释放锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> (pred.locked) &#123;   </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个循环就是不断等前面那个结点释放锁，这样的自旋使得当前线程不会被操作系统挂起，从而提高了性能。<br>当然不会进行无休止的自旋，会在若干次自旋后挂起线程。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;JDK8对并发的新支持&quot;&gt;&lt;a href=&quot;#JDK8对并发的新支持&quot; class=&quot;headerlink&quot; title=&quot;JDK8对并发的新支持&quot;&gt;&lt;/a&gt;JDK8对并发的新支持&lt;/h1&gt;&lt;p&gt;原文：&lt;a href=&quot;https://my.oschina.net
+    
+    </summary>
+    
+      <category term="java" scheme="http://dingran.tk/categories/java/"/>
+    
+    
+      <category term="java" scheme="http://dingran.tk/tags/java/"/>
+    
+  </entry>
+  
+</feed>
