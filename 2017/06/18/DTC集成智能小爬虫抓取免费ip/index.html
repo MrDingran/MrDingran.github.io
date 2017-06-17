@@ -1,0 +1,745 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="途牛," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="6.18，年中了，自己马上就要在途牛干了将近1年了，回头望来感慨万千。哎，华奥司机是不是走的有点早啊，再呆上3个月，可能比你之前呆的那一年经历的坑还多呢。
+已经是深夜，今天还是父亲节，今天早上起来得给父亲打个电话，谁让我是个大孝子呢，哎没办法。没事写写博客回忆今天做的事情也是蛮快乐的事情呀。
+这两天是京东618的日子，每个组都需要有个人值班，虽说我不是这个值班的人，但是我还是本着“工（赚）作（加）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DTC集成智能小爬虫抓取免费ip">
+<meta property="og:url" content="http://dingran.tk/2017/06/18/DTC集成智能小爬虫抓取免费ip/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="6.18，年中了，自己马上就要在途牛干了将近1年了，回头望来感慨万千。哎，华奥司机是不是走的有点早啊，再呆上3个月，可能比你之前呆的那一年经历的坑还多呢。
+已经是深夜，今天还是父亲节，今天早上起来得给父亲打个电话，谁让我是个大孝子呢，哎没办法。没事写写博客回忆今天做的事情也是蛮快乐的事情呀。
+这两天是京东618的日子，每个组都需要有个人值班，虽说我不是这个值班的人，但是我还是本着“工（赚）作（加）">
+<meta property="og:updated_time" content="2017-06-17T17:09:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DTC集成智能小爬虫抓取免费ip">
+<meta name="twitter:description" content="6.18，年中了，自己马上就要在途牛干了将近1年了，回头望来感慨万千。哎，华奥司机是不是走的有点早啊，再呆上3个月，可能比你之前呆的那一年经历的坑还多呢。
+已经是深夜，今天还是父亲节，今天早上起来得给父亲打个电话，谁让我是个大孝子呢，哎没办法。没事写写博客回忆今天做的事情也是蛮快乐的事情呀。
+这两天是京东618的日子，每个组都需要有个人值班，虽说我不是这个值班的人，但是我还是本着“工（赚）作（加）">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> DTC集成智能小爬虫抓取免费ip | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?1fd05566bad2ab43a347777c12adcffd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              DTC集成智能小爬虫抓取免费ip
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-06-18T00:40:05+08:00" content="2017-06-18">
+            2017-06-18
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2017/06/18/DTC集成智能小爬虫抓取免费ip/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/06/18/DTC集成智能小爬虫抓取免费ip/" itemprop="commentsCount"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>6.18，年中了，自己马上就要在途牛干了将近1年了，回头望来感慨万千。哎，华奥司机是不是走的有点早啊，再呆上3个月，可能比你之前呆的那一年经历的坑还多呢。</p>
+<p>已经是深夜，今天还是父亲节，今天早上起来得给父亲打个电话，谁让我是个大孝子呢，哎没办法。没事写写博客回忆今天做的事情也是蛮快乐的事情呀。</p>
+<p>这两天是京东618的日子，每个组都需要有个人值班，虽说我不是这个值班的人，但是我还是本着“工（赚）作（加）至（班）上（费）”的原则还是不请自来了，既然来了也要必须做点事情呀，谁让我的价值观这么高呢。扯远了开始正题：</p>
+<p>我先在自己的机器上搭建了一个小java工程，这个工程主要是用来爬取网上的免费代理ip，这一段时间以来12306几乎把我们所有的代理ip全部封掉了，即使买一些新的上去，最多几分钟就挂了，所以我需要一些炮灰来帮我刷新一些数据。由于代理ip不够用了，幸亏之前上了APP反刷（不是火车票列表反刷），之前不看好的功能现在居然成了主力，如果这个功能不上的话，也许数据中心真就直接倒闭了。但是由于查询量太大，app反刷也有些扛不住了，不得已走缓存了，所以数据准确性还真的有待提升。但是这只是个临时的策略，代理ip还是必须得上，否则数据的准确度绝对达不到的。</p>
+<p>我把代理的逻辑仔细排查了一下（都看了860遍了，谁写破B玩应），发现了代理ip耗时最多的地方就是价格抓取和经停站的抓取，一次简单的查询，到了后面异步抓取了N多数据，所以代理ip消耗很大，所以有了我之前写的小智能爬虫。</p>
+<p>这个爬虫很简单，就是不停的分析页面，抓取有效的信息，不能抓取的过快，否则也有会被封的危险。我在本机上跑的时候很短时间轻松抓取3~5w的代理ip，量很大，但是都需要check，check是最费时的，这么多抓来的ip靠线程池check真是太慢了，我在本机上起了2000+线程直接报错不能在创建线程了，虽然check的慢，但是还是有很多可以用的，中午有一阵居然可以获取2000+的有效代理ip，平时的话也就500左右。</p>
+<p>我当初想在本地跑程序，将check后的代理ip放给线上，后来发现本地check太慢，而且不够灵活，我需要随时能够抓取发往线上，线上消耗这个代理ip的速度太惊人了，几乎放上去瞬间就被用光了，所以我还是决定将这个spider集成到dtg里面，作为一个独立的模块，添加定时任务，跑的时候，将没有check的ip用redis队列push进去，由于线上有很多实例，所以我在每个实例上进行监听这个队列，有数据在pop出来，pop500到本地，然后不够500在pop，本地就check数据，这样通过集群的话，check代理ip效率会更高，否则抓取的这么多的代理ip check不完就浪费了。check的时候用线程池，这个都会想到，但是check这个代理ip可能会花费很长时间，什么意思呢？就是线程池会满，如果到了下次触发抓取的时候，继续check这么下去，线程池不崩溃才怪呢。所以我尝试了好多方法，终于找到了一种每次触发都重新创建线程池，之前没处理的线程池直接shutdown掉，给后来的让位置，加上使用单例模式跑起来几乎没有什么问题。我在本地测试，启动在190个线程左右，开始check的时候线程飙到400左右，shutdown后落回200左右，然后定时再触发，再次回到400，这样往复，没错虽然可能会消耗很多资源，但是总起评价来还是值得的。</p>
+<p>今天算是把代理集成起来，争取下周上线，后面再把统计抓取免费代理ip数量，check后的数量，真正使用的数量每隔半个小时统计出来，发到我的邮箱。这样可以给黄甲看看当初他看不起的免费代理ip到底支起了多大的天空。</p>
+<p>困了，不早了，就到这里。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/途牛/" rel="tag">#途牛</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/11/12306app抓包/" rel="next">12306app抓包</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="bdsharebuttonbox">
+	<a href="#" class="bds_more" data-cmd="more"></a>
+	<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+	<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+	<a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div id="disqus_thread">
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+              </div>
+             
+
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="D.R" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">D.R</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">97</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">27</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">68</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">D.R</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/gavincloud">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+    
+
+    <script type="text/javascript">
+   
+      var disqus_shortname = 'dingran';
+      var disqus_identifier = '2017/06/18/DTC集成智能小爬虫抓取免费ip/';
+      var disqus_title = 'DTC集成智能小爬虫抓取免费ip';
+      var disqus_url = 'http://dingran.tk/2017/06/18/DTC集成智能小爬虫抓取免费ip/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
