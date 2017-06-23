@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2017-06-17T17:09:53.000Z</updated>
+  <updated>2017-06-23T07:29:21.000Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>集成爬虫到DTC系统以及相关问题总结</title>
+    <link href="http://dingran.tk/2017/06/23/%E9%9B%86%E6%88%90%E7%88%AC%E8%99%AB%E5%88%B0DTC%E7%B3%BB%E7%BB%9F%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/"/>
+    <id>http://dingran.tk/2017/06/23/集成爬虫到DTC系统以及相关问题总结/</id>
+    <published>2017-06-23T07:16:58.000Z</published>
+    <updated>2017-06-23T07:29:21.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人员瞬间我知道自己出现的问题在哪了。</p>
+<p>在代码里面，我使用brpop命令来进行监听某个redis队列是否有数据，类似java的blockingqueue，我之前满心欢喜，这个功能真的好用，但是到了线上就完犊子了，原因是我们线上的redis使用的twemproxy这个twitter的redis代理来进行redis的管理。这个twemproxy可以自动剔除坏掉的节点，比较好用，但是它也有它的缺点就是它不支持一些redis的命令，brpop是其中一个，还有订阅发布等都不支持。有点沮丧，没办法，只能自己去实现这功能了。</p>
+<p>昨天6.22号又紧急上线了，我是搭车上线主要是修复一些小问题，顺便把redis这个brpop这个修改了。然后再次发布，到线上后一切正常，然后到了今天早上，我来的时候突然发现dtc系统不提供服务了，经过visualvm链接线上的jvm查看，看见线程活跃说已经达到2800+了，我知道是自己在代码里面创建了一个线程池频繁销毁启动造成的，还好自己做了开关，我将开关关闭，将每台服务器都启动了一遍，多有实例都可以提供服务，没有问题。再看代码再将销毁线程池的地方再次修改，等待下次上线日。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
   
   <entry>
     <title>DTC集成智能小爬虫抓取免费ip</title>
@@ -784,85 +809,6 @@
     
     </summary>
     
-    
-  </entry>
-  
-  <entry>
-    <title>分布式系统唯一ID生成方案</title>
-    <link href="http://dingran.tk/2017/03/31/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/"/>
-    <id>http://dingran.tk/2017/03/31/分布式系统唯一ID生成方案/</id>
-    <published>2017-03-31T03:46:29.000Z</published>
-    <updated>2017-03-31T05:37:48.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="分布式系统唯一ID生成方案"><a href="#分布式系统唯一ID生成方案" class="headerlink" title="分布式系统唯一ID生成方案"></a>分布式系统唯一ID生成方案</h1><p>强烈建议阅读原文：<a href="http://www.cnblogs.com/haoxinyue/p/5208136.html" target="_blank" rel="external">http://www.cnblogs.com/haoxinyue/p/5208136.html</a></p>
-<p>系统唯一ID是我们在设计一个系统的时候常常会遇见的问题，也常常为这个问题而纠结。生成ID的方法有很多，适应不同的场景、需求以及性能要求。所以有些比较复杂的系统会有多个ID生成的策略。下面就介绍一些常见的ID生成策略。</p>
-<h2 id="1-数据库自增长序列或字段"><a href="#1-数据库自增长序列或字段" class="headerlink" title="1. 数据库自增长序列或字段"></a>1. 数据库自增长序列或字段</h2><p>最常见的方式。利用数据库，全数据库唯一。</p>
-<h3 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h3><p>1）简单，代码方便，性能可以接受。</p>
-<p>2）数字ID天然排序，对分页或者需要排序的结果很有帮助。</p>
-<h3 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h3><p>1）不同数据库语法和实现不同，数据库迁移的时候或多数据库版本支持的时候需要处理。</p>
-<p>2）在单个数据库或读写分离或一主多从的情况下，只有一个主库可以生成。有单点故障的风险。</p>
-<p>3）在性能达不到要求的情况下，比较难于扩展。</p>
-<p>4）如果遇见多个系统需要合并或者涉及到数据迁移会相当痛苦。</p>
-<p>5）分表分库的时候会有麻烦。</p>
-<h3 id="优化方案："><a href="#优化方案：" class="headerlink" title="优化方案："></a>优化方案：</h3><p>1）针对主库单点，如果有多个Master库，则每个Master库设置的起始数字不一样，步长一样，可以是Master的个数。比如：Master1 生成的是 1，4，7，10，Master2生成的是2,5,8,11 Master3生成的是 3,6,9,12。这样就可以有效生成集群中的唯一ID，也可以大大降低ID生成数据库操作的负载。</p>
-<h2 id="2-UUID"><a href="#2-UUID" class="headerlink" title="2. UUID"></a>2. UUID</h2><p>常见的方式。可以利用数据库也可以利用程序生成，一般来说全球唯一。</p>
-<h3 id="优点：-1"><a href="#优点：-1" class="headerlink" title="优点："></a>优点：</h3><p>1）简单，代码方便。</p>
-<p>2）生成ID性能非常好，基本不会有性能问题。</p>
-<p>3）全球唯一，在遇见数据迁移，系统数据合并，或者数据库变更等情况下，可以从容应对。</p>
-<h3 id="缺点：-1"><a href="#缺点：-1" class="headerlink" title="缺点："></a>缺点：</h3><p>1）没有排序，无法保证趋势递增。</p>
-<p>2）UUID往往是使用字符串存储，查询的效率比较低。</p>
-<p>3）存储空间比较大，如果是海量数据库，就需要考虑存储量的问题。</p>
-<p>4）传输数据量大</p>
-<p>5）不可读。</p>
-<h2 id="3-UUID的变种"><a href="#3-UUID的变种" class="headerlink" title="3. UUID的变种"></a>3. UUID的变种</h2><p>1）为了解决UUID不可读，可以使用UUID to Int64的方法。及</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// &lt;summary&gt;</span></div><div class="line"><span class="comment">/// 根据GUID获取唯一数字序列</span></div><div class="line"><span class="comment">/// &lt;/summary&gt;</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">GuidToInt64</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">byte</span>[] bytes = Guid.NewGuid().ToByteArray();</div><div class="line">    <span class="keyword">return</span> BitConverter.ToInt64(bytes, <span class="number">0</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>2）为了解决UUID无序的问题，NHibernate在其主键生成方式中提供了Comb算法（combined guid/timestamp）。保留GUID的10个字节，用另6个字节表示GUID生成的时间（DateTime）。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// &lt;summary&gt; </span></div><div class="line"><span class="comment">/// Generate a new &lt;see cref="Guid"/&gt; using the comb algorithm. </span></div><div class="line"><span class="comment">/// &lt;/summary&gt; </span></div><div class="line"><span class="function"><span class="keyword">private</span> Guid <span class="title">GenerateComb</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">byte</span>[] guidArray = Guid.NewGuid().ToByteArray();</div><div class="line"> </div><div class="line">    DateTime baseDate = <span class="keyword">new</span> DateTime(<span class="number">1900</span>, <span class="number">1</span>, <span class="number">1</span>);</div><div class="line">    DateTime now = DateTime.Now;</div><div class="line"> </div><div class="line">    <span class="comment">// Get the days and milliseconds which will be used to build    </span></div><div class="line">    <span class="comment">//the byte string    </span></div><div class="line">    TimeSpan days = <span class="keyword">new</span> TimeSpan(now.Ticks - baseDate.Ticks);</div><div class="line">    TimeSpan msecs = now.TimeOfDay;</div><div class="line"> </div><div class="line">    <span class="comment">// Convert to a byte array        </span></div><div class="line">    <span class="comment">// Note that SQL Server is accurate to 1/300th of a    </span></div><div class="line">    <span class="comment">// millisecond so we divide by 3.333333    </span></div><div class="line">    <span class="keyword">byte</span>[] daysArray = BitConverter.GetBytes(days.Days);</div><div class="line">    <span class="keyword">byte</span>[] msecsArray = BitConverter.GetBytes((<span class="keyword">long</span>)</div><div class="line">      (msecs.TotalMilliseconds / <span class="number">3.333333</span>));</div><div class="line"> </div><div class="line">    <span class="comment">// Reverse the bytes to match SQL Servers ordering    </span></div><div class="line">    Array.Reverse(daysArray);</div><div class="line">    Array.Reverse(msecsArray);</div><div class="line"> </div><div class="line">    <span class="comment">// Copy the bytes into the guid    </span></div><div class="line">    Array.Copy(daysArray, daysArray.Length - <span class="number">2</span>, guidArray,</div><div class="line">      guidArray.Length - <span class="number">6</span>, <span class="number">2</span>);</div><div class="line">    Array.Copy(msecsArray, msecsArray.Length - <span class="number">4</span>, guidArray,</div><div class="line">      guidArray.Length - <span class="number">4</span>, <span class="number">4</span>);</div><div class="line"> </div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Guid(guidArray);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>用上面的算法测试一下，得到如下的结果：作为比较，前面3个是使用COMB算法得出的结果，最后12个字符串是时间序（统一毫秒生成的3个UUID），过段时间如果再次生成，则12个字符串会比图示的要大。后面3个是直接生成的GUID。</p>
-<p><img src="http://images2015.cnblogs.com/blog/15700/201602/15700-20160227213048721-177386520.png" alt="http://images2015.cnblogs.com/blog/15700/201602/15700-20160227213048721-177386520.png"></p>
-<p>如果想把时间序放在前面，可以生成后改变12个字符串的位置，也可以修改算法类的最后两个Array.Copy。</p>
-<h2 id="4-Redis生成ID"><a href="#4-Redis生成ID" class="headerlink" title="4. Redis生成ID"></a>4. Redis生成ID</h2><p>当使用数据库来生成ID性能不够要求的时候，我们可以尝试使用Redis来生成ID。这主要依赖于Redis是单线程的，所以也可以用生成全局唯一的ID。可以用Redis的原子操作 INCR和INCRBY来实现。</p>
-<p>可以使用Redis集群来获取更高的吞吐量。假如一个集群中有5台Redis。可以初始化每台Redis的值分别是1,2,3,4,5，然后步长都是5。各个Redis生成的ID为：</p>
-<p>A：1,6,11,16,21</p>
-<p>B：2,7,12,17,22</p>
-<p>C：3,8,13,18,23</p>
-<p>D：4,9,14,19,24</p>
-<p>E：5,10,15,20,25</p>
-<p>这个，随便负载到哪个机确定好，未来很难做修改。但是3-5台服务器基本能够满足器上，都可以获得不同的ID。但是步长和初始值一定需要事先需要了。使用Redis集群也可以方式单点故障的问题。</p>
-<p>另外，比较适合使用Redis来生成每天从0开始的流水号。比如订单号=日期+当日自增长号。可以每天在Redis中生成一个Key，使用INCR进行累加。</p>
-<h3 id="优点：-2"><a href="#优点：-2" class="headerlink" title="优点："></a>优点：</h3><p>1）不依赖于数据库，灵活方便，且性能优于数据库。</p>
-<p>2）数字ID天然排序，对分页或者需要排序的结果很有帮助。</p>
-<h3 id="缺点：-2"><a href="#缺点：-2" class="headerlink" title="缺点："></a>缺点：</h3><p>1）如果系统中没有Redis，还需要引入新的组件，增加系统复杂度。</p>
-<p>2）需要编码和配置的工作量比较大。</p>
-<h2 id="5-Twitter的snowflake算法"><a href="#5-Twitter的snowflake算法" class="headerlink" title="5. Twitter的snowflake算法"></a>5. Twitter的snowflake算法</h2><p>snowflake是Twitter开源的分布式ID生成算法，结果是一个long型的ID。其核心思想是：使用41bit作为毫秒数，10bit作为机器的ID（5个bit是数据中心，5个bit的机器ID），12bit作为毫秒内的流水号（意味着每个节点在每毫秒可以产生 4096 个 ID），最后还有一个符号位，永远是0。具体实现的代码可以参看<a href="https://github.com/twitter/snowflake。" target="_blank" rel="external">https://github.com/twitter/snowflake。</a></p>
-<p>C#代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div></pre></td><td class="code"><pre><div class="line">/// &lt;summary&gt;</div><div class="line">    /// From: https://github.com/twitter/snowflake</div><div class="line">    /// An object that generates IDs.</div><div class="line">    /// This is broken into a separate class in case</div><div class="line">    /// we ever want to support multiple worker threads</div><div class="line">    /// per process</div><div class="line">    /// &lt;/summary&gt;</div><div class="line">    public class IdWorker</div><div class="line">    &#123;</div><div class="line">        private long workerId;</div><div class="line">        private long datacenterId;</div><div class="line">        private long sequence = 0L;</div><div class="line"></div><div class="line">        private static long twepoch = 1288834974657L;</div><div class="line"></div><div class="line">        private static long workerIdBits = 5L;</div><div class="line">        private static long datacenterIdBits = 5L;</div><div class="line">        private static long maxWorkerId = -1L ^ (-1L &lt;&lt; (int)workerIdBits);</div><div class="line">        private static long maxDatacenterId = -1L ^ (-1L &lt;&lt; (int)datacenterIdBits);</div><div class="line">        private static long sequenceBits = 12L;</div><div class="line"></div><div class="line">        private long workerIdShift = sequenceBits;</div><div class="line">        private long datacenterIdShift = sequenceBits + workerIdBits;</div><div class="line">        private long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;</div><div class="line">        private long sequenceMask = -1L ^ (-1L &lt;&lt; (int)sequenceBits);</div><div class="line"></div><div class="line">        private long lastTimestamp = -1L;</div><div class="line">        private static object syncRoot = new object();</div><div class="line"></div><div class="line">        public IdWorker(long workerId, long datacenterId)</div><div class="line">        &#123;</div><div class="line"></div><div class="line">            // sanity check for workerId</div><div class="line">            if (workerId &gt; maxWorkerId || workerId &lt; 0)</div><div class="line">            &#123;</div><div class="line">                throw new ArgumentException(string.Format(&quot;worker Id can&apos;t be greater than %d or less than 0&quot;, maxWorkerId));</div><div class="line">            &#125;</div><div class="line">            if (datacenterId &gt; maxDatacenterId || datacenterId &lt; 0)</div><div class="line">            &#123;</div><div class="line">                throw new ArgumentException(string.Format(&quot;datacenter Id can&apos;t be greater than %d or less than 0&quot;, maxDatacenterId));</div><div class="line">            &#125;</div><div class="line">            this.workerId = workerId;</div><div class="line">            this.datacenterId = datacenterId;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public long nextId()</div><div class="line">        &#123;</div><div class="line">            lock (syncRoot)</div><div class="line">            &#123;</div><div class="line">                long timestamp = timeGen();</div><div class="line"></div><div class="line">                if (timestamp &lt; lastTimestamp)</div><div class="line">                &#123;</div><div class="line">                    throw new ApplicationException(string.Format(&quot;Clock moved backwards.  Refusing to generate id for %d milliseconds&quot;, lastTimestamp - timestamp));</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                if (lastTimestamp == timestamp)</div><div class="line">                &#123;</div><div class="line">                    sequence = (sequence + 1) &amp; sequenceMask;</div><div class="line">                    if (sequence == 0)</div><div class="line">                    &#123;</div><div class="line">                        timestamp = tilNextMillis(lastTimestamp);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                else</div><div class="line">                &#123;</div><div class="line">                    sequence = 0L;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                lastTimestamp = timestamp;</div><div class="line"></div><div class="line">                return ((timestamp - twepoch) &lt;&lt; (int)timestampLeftShift) | (datacenterId &lt;&lt; (int)datacenterIdShift) | (workerId &lt;&lt; (int)workerIdShift) | sequence;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected long tilNextMillis(long lastTimestamp)</div><div class="line">        &#123;</div><div class="line">            long timestamp = timeGen();</div><div class="line">            while (timestamp &lt;= lastTimestamp)</div><div class="line">            &#123;</div><div class="line">                timestamp = timeGen();</div><div class="line">            &#125;</div><div class="line">            return timestamp;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        protected long timeGen()</div><div class="line">        &#123;</div><div class="line">            return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>测试代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">private static void TestIdWorker()</div><div class="line">        &#123;</div><div class="line">            HashSet&lt;long&gt; set = new HashSet&lt;long&gt;();</div><div class="line">            IdWorker idWorker1 = new IdWorker(0, 0);</div><div class="line">            IdWorker idWorker2 = new IdWorker(1, 0);</div><div class="line">            Thread t1 = new Thread(() =&gt; DoTestIdWoker(idWorker1, set));</div><div class="line">            Thread t2 = new Thread(() =&gt; DoTestIdWoker(idWorker2, set));</div><div class="line">            t1.IsBackground = true;</div><div class="line">            t2.IsBackground = true;</div><div class="line"></div><div class="line">            t1.Start();</div><div class="line">            t2.Start();</div><div class="line">            try</div><div class="line">            &#123;</div><div class="line">                Thread.Sleep(30000);</div><div class="line">                t1.Abort();</div><div class="line">                t2.Abort();</div><div class="line">            &#125;</div><div class="line">            catch (Exception e)</div><div class="line">            &#123;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            Console.WriteLine(&quot;done&quot;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        private static void DoTestIdWoker(IdWorker idWorker, HashSet&lt;long&gt; set)</div><div class="line">        &#123;</div><div class="line">            while (true)</div><div class="line">            &#123;</div><div class="line">                long id = idWorker.nextId();</div><div class="line">                if (!set.Add(id))</div><div class="line">                &#123;</div><div class="line">                    Console.WriteLine(&quot;duplicate:&quot; + id);</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                Thread.Sleep(1);</div><div class="line">            &#125;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
-<p>snowflake算法可以根据自身项目的需要进行一定的修改。比如估算未来的数据中心个数，每个数据中心的机器数以及统一毫秒可以能的并发数来调整在算法中所需要的bit数。</p>
-<h3 id="优点：-3"><a href="#优点：-3" class="headerlink" title="优点："></a>优点：</h3><p>1）不依赖于数据库，灵活方便，且性能优于数据库。</p>
-<p>2）ID按照时间在单机上是递增的。</p>
-<h3 id="缺点：-3"><a href="#缺点：-3" class="headerlink" title="缺点："></a>缺点：</h3><p>1）在单机上是递增的，但是由于涉及到分布式环境，每台机器上的时钟不可能完全同步，也许有时候也会出现不是全局递增的情况。</p>
-<h2 id="6-利用zookeeper生成唯一ID"><a href="#6-利用zookeeper生成唯一ID" class="headerlink" title="6. 利用zookeeper生成唯一ID"></a>6. 利用zookeeper生成唯一ID</h2><p>zookeeper主要通过其znode数据版本来生成序列号，可以生成32位和64位的数据版本号，客户端可以使用这个版本号来作为唯一的序列号。<br>很少会使用zookeeper来生成唯一ID。主要是由于需要依赖zookeeper，并且是多步调用API，如果在竞争较大的情况下，需要考虑使用分布式锁。因此，性能在高并发的分布式环境下，也不甚理想。</p>
-<h2 id="7-MongoDB的ObjectId"><a href="#7-MongoDB的ObjectId" class="headerlink" title="7. MongoDB的ObjectId"></a>7. MongoDB的ObjectId</h2><p>MongoDB的ObjectId和snowflake算法类似。它设计成轻量型的，不同的机器都能用全局唯一的同种方法方便地生成它。MongoDB 从一开始就设计用来作为分布式数据库，处理多个节点是一个核心要求。使其在分片环境中要容易生成得多。</p>
-<p>其格式如下：</p>
-<p><img src="http://images.blogjava.net/blogjava_net/dongbule/46046/o_111.PNG?_=5208136" alt="http://images.blogjava.net/blogjava_net/dongbule/46046/o_111.PNG?_=5208136"></p>
-<p>前4 个字节是从标准纪元开始的时间戳，单位为秒。时间戳，与随后的5 个字节组合起来，提供了秒级别的唯一性。由于时间戳在前，这意味着ObjectId 大致会按照插入的顺序排列。这对于某些方面很有用，如将其作为索引提高效率。这4 个字节也隐含了文档创建的时间。绝大多数客户端类库都会公开一个方法从ObjectId 获取这个信息。<br>接下来的3 字节是所在主机的唯一标识符。通常是机器主机名的散列值。这样就可以确保不同主机生成不同的ObjectId，不产生冲突。<br>为了确保在同一台机器上并发的多个进程产生的ObjectId 是唯一的，接下来的两字节来自产生ObjectId 的进程标识符（PID）。<br>前9 字节保证了同一秒钟不同机器不同进程产生的ObjectId 是唯一的。后3 字节就是一个自动增加的计数器，确保相同进程同一秒产生的ObjectId 也是不一样的。同一秒钟最多允许每个进程拥有2563（16 777 216）个不同的ObjectId。</p>
-<p>实现的源码可以到MongoDB官方网站下载。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;分布式系统唯一ID生成方案&quot;&gt;&lt;a href=&quot;#分布式系统唯一ID生成方案&quot; class=&quot;headerlink&quot; title=&quot;分布式系统唯一ID生成方案&quot;&gt;&lt;/a&gt;分布式系统唯一ID生成方案&lt;/h1&gt;&lt;p&gt;强烈建议阅读原文：&lt;a href=&quot;http://w
-    
-    </summary>
-    
-      <category term="分布式" scheme="http://dingran.tk/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
-    
-    
-      <category term="流水号" scheme="http://dingran.tk/tags/%E6%B5%81%E6%B0%B4%E5%8F%B7/"/>
-    
-      <category term="分布式" scheme="http://dingran.tk/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
     
   </entry>
   

@@ -28,7 +28,7 @@
 
 <meta name="baidu-site-verification" content="xSJDurVHbh" />
 
-  <meta name="keywords" content="oracle," />
+  <meta name="keywords" content="途牛," />
 
 
 
@@ -40,19 +40,19 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="最近使用jdbc连接oracle时报错：ORA-12505, TNS:listener does not currently know of SID given in connect descriptor The Connection descriptor used by the client was:10.12.162.84:1521:xxxx 
-登陆oracle数据发现在network/ad">
+<meta name="description" content="6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人员瞬间我知道自己出现的问题在哪了。
+在代码里面，我使用brpop命令来进行监听某个redis队列是否有数据，类似java的bl">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jdbc连接数据库使用sid和service_name的区别">
-<meta property="og:url" content="http://dingran.tk/2016/04/25/jdbc连接数据库使用sid和service_name的区别/index.html">
+<meta property="og:title" content="集成爬虫到DTC系统以及相关问题总结">
+<meta property="og:url" content="http://dingran.tk/2017/06/23/集成爬虫到DTC系统以及相关问题总结/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
-<meta property="og:description" content="最近使用jdbc连接oracle时报错：ORA-12505, TNS:listener does not currently know of SID given in connect descriptor The Connection descriptor used by the client was:10.12.162.84:1521:xxxx 
-登陆oracle数据发现在network/ad">
-<meta property="og:updated_time" content="2016-04-25T14:29:38.000Z">
+<meta property="og:description" content="6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人员瞬间我知道自己出现的问题在哪了。
+在代码里面，我使用brpop命令来进行监听某个redis队列是否有数据，类似java的bl">
+<meta property="og:updated_time" content="2017-06-23T07:29:21.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jdbc连接数据库使用sid和service_name的区别">
-<meta name="twitter:description" content="最近使用jdbc连接oracle时报错：ORA-12505, TNS:listener does not currently know of SID given in connect descriptor The Connection descriptor used by the client was:10.12.162.84:1521:xxxx 
-登陆oracle数据发现在network/ad">
+<meta name="twitter:title" content="集成爬虫到DTC系统以及相关问题总结">
+<meta name="twitter:description" content="6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人员瞬间我知道自己出现的问题在哪了。
+在代码里面，我使用brpop命令来进行监听某个redis队列是否有数据，类似java的bl">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -62,7 +62,7 @@
   };
 </script>
 
-  <title> jdbc连接数据库使用sid和service_name的区别 | 崎岖的路,走出自己的脚步 </title>
+  <title> 集成爬虫到DTC系统以及相关问题总结 | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -218,7 +218,7 @@
           
           
             
-              jdbc连接数据库使用sid和service_name的区别
+              集成爬虫到DTC系统以及相关问题总结
             
           
         </h1>
@@ -227,8 +227,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-04-25T20:56:41+08:00" content="2016-04-25">
-            2016-04-25
+          <time itemprop="dateCreated" datetime="2017-06-23T15:16:58+08:00" content="2017-06-23">
+            2017-06-23
           </time>
         </span>
 
@@ -237,8 +237,8 @@
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/wiki/" itemprop="url" rel="index">
-                  <span itemprop="name">wiki</span>
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
                 </a>
               </span>
 
@@ -253,8 +253,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2016/04/25/jdbc连接数据库使用sid和service_name的区别/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/04/25/jdbc连接数据库使用sid和service_name的区别/" itemprop="commentsCount"></span>
+            <a href="/2017/06/23/集成爬虫到DTC系统以及相关问题总结/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/06/23/集成爬虫到DTC系统以及相关问题总结/" itemprop="commentsCount"></span>
             </a>
           </span>
           
@@ -268,16 +268,9 @@
       
 
       
-        <span itemprop="articleBody"><hr>
-<p>最近使用jdbc连接oracle时报错：<br>ORA-12505, TNS:listener does not currently know of SID given in connect descriptor The Connection descriptor used by the client was:<br>10.12.162.84:1521:xxxx </p>
-<p>登陆oracle数据发现在network/admin/文件夹下的tnsnames.ora中配置的是：SERVICE_NAME =xxxx。经过查询发现，是jdbc中的连接串使用的不正确。Java JDBC Thin Driver 连接 Oracle有三种方法，如下： </p>
-<p>格式一: Oracle JDBC Thin using a ServiceName:<br>jdbc:oracle:thin:@//   &lt; host&gt;: &lt;port&gt;/&lt;service_name&gt;<br>Example: jdbc:oracle:thin:@//192.168.2.1:1521/XE<br>注意这里的格式，@后面有//, 这是与使用SID的主要区别。<br>这种格式是Oracle 推荐的格式，因为对于集群来说，每个节点的SID 是不一样的，但是SERVICE_NAME 确可以包含所有节点。 </p>
-<p>格式二: Oracle JDBC Thin using an SID:<br>jdbc:oracle:thin:@&lt;host&gt;:&lt;port&gt;:&lt;SID&gt;<br>Example: jdbc:oracle:thin:@192.168.2.1:1521:X01A<br>Note:<br>Support for SID is being phased out. Oracle recommends that users switch over to usingservice names. </p>
-<p>格式三：Oracle JDBC Thin using a TNSName:<br>jdbc:oracle:thin:@&lt;TNSName&gt;<br>Example: jdbc:oracle:thin:@GL<br>Note:<br>Support for TNSNames was added in the driver release 10.2.0.1 </p>
-<p>linux下查询sid的方法：<br>在配置oracle环境变量的情况可以使用 echo $ORACLE_SID,如果没有可以使用ps -ef |grep oracle 来查询：<br>oracle    2548     1  0 Aug17 ?        00:00:00 ora_pmon_xxxx<br>后面的xxxx就是对应的sid。 </p>
-<p>在windows环境下,oracle是以后台服务的方式被管理的,所以看”控制面板-&gt;管理工具-&gt;服务 里面的名称:”OracleServiceORCL”,则ORCL就是sid; </p>
-<p>service_name 和sid的区别：<br>Service_name：该参数是由oracle8i引进的。在8i以前，使用SID来表示标识数据库的一个实例，但是在Oracle的并行环境中，一个数据库对应多个实例，这样就需要多个网络服务名，设置繁琐。为了方便并行环境中的设置，引进了Service_name参数，该参数对应一个数据库，而不是一个实例，而且该参数有许多其它的好处。该参数的缺省值为Db_name. Db_domain，即等于Global_name。一个数据库可以对应多个Service_name，以便实现更灵活的配置。该参数与SID没有直接关系，即不必Service name 必须与SID一样<br>sid是数据库实例的名字，每个实例各不相同.</p>
-<hr>
+        <span itemprop="articleBody"><p>6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人员瞬间我知道自己出现的问题在哪了。</p>
+<p>在代码里面，我使用brpop命令来进行监听某个redis队列是否有数据，类似java的blockingqueue，我之前满心欢喜，这个功能真的好用，但是到了线上就完犊子了，原因是我们线上的redis使用的twemproxy这个twitter的redis代理来进行redis的管理。这个twemproxy可以自动剔除坏掉的节点，比较好用，但是它也有它的缺点就是它不支持一些redis的命令，brpop是其中一个，还有订阅发布等都不支持。有点沮丧，没办法，只能自己去实现这功能了。</p>
+<p>昨天6.22号又紧急上线了，我是搭车上线主要是修复一些小问题，顺便把redis这个brpop这个修改了。然后再次发布，到线上后一切正常，然后到了今天早上，我来的时候突然发现dtc系统不提供服务了，经过visualvm链接线上的jvm查看，看见线程活跃说已经达到2800+了，我知道是自己在代码里面创建了一个线程池频繁销毁启动造成的，还好自己做了开关，我将开关关闭，将每台服务器都启动了一遍，多有实例都可以提供服务，没有问题。再看代码再将销毁线程池的地方再次修改，等待下次上线日。</p>
 </span>
       
     </div>
@@ -286,7 +279,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/oracle/" rel="tag">#oracle</a>
+            <a href="/tags/途牛/" rel="tag">#途牛</a>
           
         </div>
       
@@ -295,11 +288,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/04/25/Spring中的Quartz的配置/" rel="prev">Spring中的Quartz的配置</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/18/DTC集成智能小爬虫抓取免费ip/" rel="next">DTC集成智能小爬虫抓取免费ip</a>
             
           </div>
         </div>
@@ -512,9 +505,9 @@
     <script type="text/javascript">
    
       var disqus_shortname = 'dingran';
-      var disqus_identifier = '2016/04/25/jdbc连接数据库使用sid和service_name的区别/';
-      var disqus_title = 'jdbc连接数据库使用sid和service_name的区别';
-      var disqus_url = 'http://dingran.tk/2016/04/25/jdbc连接数据库使用sid和service_name的区别/';
+      var disqus_identifier = '2017/06/23/集成爬虫到DTC系统以及相关问题总结/';
+      var disqus_title = '集成爬虫到DTC系统以及相关问题总结';
+      var disqus_url = 'http://dingran.tk/2017/06/23/集成爬虫到DTC系统以及相关问题总结/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
