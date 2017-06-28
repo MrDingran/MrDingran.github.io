@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2017-06-23T07:29:21.000Z</updated>
+  <updated>2017-06-28T03:26:53.000Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>免费代理集成dtc使用明细</title>
+    <link href="http://dingran.tk/2017/06/28/%E5%85%8D%E8%B4%B9%E4%BB%A3%E7%90%86%E9%9B%86%E6%88%90dtc%E4%BD%BF%E7%94%A8%E6%98%8E%E7%BB%86/"/>
+    <id>http://dingran.tk/2017/06/28/免费代理集成dtc使用明细/</id>
+    <published>2017-06-28T03:14:06.000Z</published>
+    <updated>2017-06-28T03:26:53.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>经历种种问题，终于将免费代理ip集成到DTC系统当中，之前由于各种问题，被我暂停，6.26号上线后，正式被我打开，打开后，在6.27号跑了一天后，我可以统计代理ip和免费代理ip的使用信息，其中代理ip使用了近150W次，而成功爬取数据成功的只有一半，再看免费代理ip总共抓去了近百万的ip其中不免有一些是重复的，没关系，只要为我所用即可，最终代替代理ip抓取数据并且成功的数量在130w左右，说明了什么？免费代理ip几乎帮助dtc系统顶了将近一半的查询12306的数据。</p>
+<p>免费代理ip质量参差不齐，所以用它们去抓取价格、抓取经停站简直是绝配了，这两天我将代理ip和免费代理ip的使用明细全部统计出来，余位接口、抢票接口、价格接口、经停站接口等使用了多少，失败了多少，各个角度去统计ip使用率，为后面更好统计我们使用代理ip的数量提供了更好的数据支持（可恶的黄甲天天催）。</p>
+<p>这只是第一天的数据量，但是今天的统计开来，免费代理ip的有效率占ip使用总数的40%左右，有所下降，这也是情理之中的，以为随着时间的增长，代理ip的有效率肯定会下降的，但是自然也会有新鲜的ip加进来，所以最终我初步断定免费代理ip能够使用的量占代理ip的30%~40左右。这是一个挺不错的数字。什么意思?如果我们之前使用1000个代理ip我们就可以少买400个代理ip，一个代理ip80块，就是3.2w，一个月就可以少花3.2W的money，这要是能够打到我的卡上，那不是好极了。</p>
+<p>再接再厉，提高抓取爬虫的有效率。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;经历种种问题，终于将免费代理ip集成到DTC系统当中，之前由于各种问题，被我暂停，6.26号上线后，正式被我打开，打开后，在6.27号跑了一天后，我可以统计代理ip和免费代理ip的使用信息，其中代理ip使用了近150W次，而成功爬取数据成功的只有一半，再看免费代理ip总共抓
+    
+    </summary>
+    
+      <category term="日记月累" scheme="http://dingran.tk/categories/%E6%97%A5%E8%AE%B0%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
   
   <entry>
     <title>集成爬虫到DTC系统以及相关问题总结</title>
@@ -789,26 +815,6 @@
       <category term="事务" scheme="http://dingran.tk/tags/%E4%BA%8B%E5%8A%A1/"/>
     
       <category term="分布式" scheme="http://dingran.tk/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>post图片测试</title>
-    <link href="http://dingran.tk/2017/03/31/post%E5%9B%BE%E7%89%87%E6%B5%8B%E8%AF%95/"/>
-    <id>http://dingran.tk/2017/03/31/post图片测试/</id>
-    <published>2017-03-31T05:59:31.000Z</published>
-    <updated>2017-03-31T06:03:26.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/post图片测试/default_avatar.png" alt=""></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;img src=&quot;/post图片测试/default_avatar.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-
-    
-    </summary>
-    
     
   </entry>
   
