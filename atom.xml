@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2017-06-28T10:10:32.000Z</updated>
+  <updated>2017-06-30T06:54:13.000Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,43 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux下配置squid+账号密码认证+高匿</title>
+    <link href="http://dingran.tk/2017/06/30/Linux%E4%B8%8B%E9%85%8D%E7%BD%AEsquid-%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81%E8%AE%A4%E8%AF%81-%E9%AB%98%E5%8C%BF/"/>
+    <id>http://dingran.tk/2017/06/30/Linux下配置squid-账号密码认证-高匿/</id>
+    <published>2017-06-30T06:22:56.000Z</published>
+    <updated>2017-06-30T06:54:13.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="squid-搭建过程"><a href="#squid-搭建过程" class="headerlink" title="squid 搭建过程"></a>squid 搭建过程</h1><p>由于我们之前使用的阿里云的代理ip配置的代理服务器，由于领导要我们使用亚马逊云配置代理服务器，所以交给我任务去配置代理服务器，还得兼容以前的形式，也就说账号+密码的形式登录代理，访问网站。</p>
+<p>我觉得很简单，网上有很多配置的信息，结果搜下来有很多都是大家相互复制的垃圾文章，要不就是虎头蛇尾，要不就是没头没尾，弄得我脑袋都大了，经过昨天晚上的资料筛选，今天我开启了AWS的配置，创建了个实例就不说了直接跳入配置过程：</p>
+<h2 id="首先先判断是否安装squid："><a href="#首先先判断是否安装squid：" class="headerlink" title="首先先判断是否安装squid："></a>首先先判断是否安装squid：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpm -q squid</div></pre></td></tr></table></figure>
+<h2 id="如果安装了不行就卸载了吧"><a href="#如果安装了不行就卸载了吧" class="headerlink" title="如果安装了不行就卸载了吧"></a>如果安装了不行就卸载了吧</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">rpm -e squid</div></pre></td></tr></table></figure>
+<h2 id="再进行下载squid"><a href="#再进行下载squid" class="headerlink" title="再进行下载squid"></a>再进行下载squid</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">yum install squid</div></pre></td></tr></table></figure>
+<h2 id="下载httpd-为后面进行认证做准备"><a href="#下载httpd-为后面进行认证做准备" class="headerlink" title="下载httpd 为后面进行认证做准备"></a>下载httpd 为后面进行认证做准备</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install httpd</div></pre></td></tr></table></figure>
+<h2 id="下载好了后，配置-etc-squid-squid-conf-这个比较重要"><a href="#下载好了后，配置-etc-squid-squid-conf-这个比较重要" class="headerlink" title="下载好了后，配置/etc/squid/squid.conf 这个比较重要"></a>下载好了后，配置/etc/squid/squid.conf 这个比较重要</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#</div><div class="line"># INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS</div><div class="line"># =======================</div><div class="line"></div><div class="line"># 禁止缓存任何内容，纯代理</div><div class="line">cache deny all</div><div class="line"></div><div class="line"># 禁用access_log</div><div class="line">access_log none</div><div class="line"></div><div class="line"># 禁用cache_store log</div><div class="line">cache_store_log none</div><div class="line"></div><div class="line"># 禁用cache log</div><div class="line">cache_log /dev/null </div><div class="line"></div><div class="line"># 使用basic_nsca_auth认证</div><div class="line">auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/passwd</div><div class="line">auth_param basic children 5</div><div class="line">auth_param basic credentialsttl 2 hours</div><div class="line">auth_param basic realm Do you have rights to access?</div><div class="line">auth_param basic casesensitive off</div><div class="line">acl ncsa_users proxy_auth REQUIRED</div><div class="line">http_access allow localnet</div><div class="line">http_access allow localhost</div><div class="line">http_access allow ncsa_users</div><div class="line">http_port 8888</div><div class="line"></div><div class="line">#以上配置部分要在http_access deny all语句之前。</div><div class="line"></div><div class="line"># 这部分可以放在配置文件末尾，避免被网站检测到你在使用proxy</div><div class="line"># =======================</div><div class="line">via off</div><div class="line">forwarded_for off</div><div class="line">request_header_access Allow allow all </div><div class="line">request_header_access Authorization allow all </div><div class="line">request_header_access WWW-Authenticate allow all </div><div class="line">request_header_access Proxy-Authorization allow all </div><div class="line">request_header_access Proxy-Authenticate allow all </div><div class="line">request_header_access Cache-Control allow all </div><div class="line">request_header_access Content-Encoding allow all </div><div class="line">request_header_access Content-Length allow all </div><div class="line">request_header_access Content-Type allow all </div><div class="line">request_header_access Date allow all </div><div class="line">request_header_access Expires allow all </div><div class="line">request_header_access Host allow all </div><div class="line">request_header_access If-Modified-Since allow all </div><div class="line">request_header_access Last-Modified allow all </div><div class="line">request_header_access Location allow all </div><div class="line">request_header_access Pragma allow all </div><div class="line">request_header_access Accept allow all </div><div class="line">request_header_access Accept-Charset allow all </div><div class="line">request_header_access Accept-Encoding allow all </div><div class="line">request_header_access Accept-Language allow all </div><div class="line">request_header_access Content-Language allow all </div><div class="line">request_header_access Mime-Version allow all </div><div class="line">request_header_access Retry-After allow all </div><div class="line">request_header_access Title allow all </div><div class="line">request_header_access Connection allow all </div><div class="line">request_header_access Proxy-Connection allow all </div><div class="line">request_header_access User-Agent allow all </div><div class="line">request_header_access Cookie allow all </div><div class="line">request_header_access All deny all</div><div class="line"># =======================</div></pre></td></tr></table></figure>
+<p>squid.conf配置里面还有很多其他的配置，网上有很多详细的配置说明，这里不多介绍。在squid.conf开头我配置auth进行账号密码认证后才能访问。</p>
+<h2 id="账号密码配置过程"><a href="#账号密码配置过程" class="headerlink" title="账号密码配置过程"></a>账号密码配置过程</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">htpasswd -c /etc/squid/passwd gavin</div><div class="line">#这里会让你设置密码</div><div class="line">##在确认一下密码</div><div class="line">###设置完成</div></pre></td></tr></table></figure>
+<h2 id="校验配置文件配置"><a href="#校验配置文件配置" class="headerlink" title="校验配置文件配置"></a>校验配置文件配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">squid -z</div><div class="line">#如果squid 没有配置环境变量，到/usr/sbin下面执行squid</div></pre></td></tr></table></figure>
+<p>执行完后会有一些信息，如果配置文件信息错误会有相关提示，更改就好</p>
+<h2 id="最后启动squid"><a href="#最后启动squid" class="headerlink" title="最后启动squid"></a>最后启动squid</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">squid start</div></pre></td></tr></table></figure>
+<h2 id="查看端口状况"><a href="#查看端口状况" class="headerlink" title="查看端口状况"></a>查看端口状况</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">netstat -anp|grep 8888</div></pre></td></tr></table></figure>
+<p>最后退出云服务器，在本地浏览器配置代理使用服务器公网ip+端口号，打开百度后会有显示让你输入账号密码就成功了，输入账号密码就可以登录浏览网页了</p>
+<p>完。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;squid-搭建过程&quot;&gt;&lt;a href=&quot;#squid-搭建过程&quot; class=&quot;headerlink&quot; title=&quot;squid 搭建过程&quot;&gt;&lt;/a&gt;squid 搭建过程&lt;/h1&gt;&lt;p&gt;由于我们之前使用的阿里云的代理ip配置的代理服务器，由于领导要我们使用亚马逊
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
   
   <entry>
     <title>免费代理集成dtc使用明细</title>
@@ -790,31 +827,6 @@
     
     
       <category term="算法" scheme="http://dingran.tk/tags/%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>分布式系统的事务处理</title>
-    <link href="http://dingran.tk/2017/04/09/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/"/>
-    <id>http://dingran.tk/2017/04/09/分布式系统的事务处理/</id>
-    <published>2017-04-09T15:18:30.000Z</published>
-    <updated>2017-04-09T15:20:38.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="这是一篇关于分布式事务的文章，写的很好"><a href="#这是一篇关于分布式事务的文章，写的很好" class="headerlink" title="这是一篇关于分布式事务的文章，写的很好"></a>这是一篇关于分布式事务的文章，写的很好</h1><p>原文地址<a href="http://coolshell.cn/articles/10910.html" target="_blank" rel="external">http://coolshell.cn/articles/10910.html</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;这是一篇关于分布式事务的文章，写的很好&quot;&gt;&lt;a href=&quot;#这是一篇关于分布式事务的文章，写的很好&quot; class=&quot;headerlink&quot; title=&quot;这是一篇关于分布式事务的文章，写的很好&quot;&gt;&lt;/a&gt;这是一篇关于分布式事务的文章，写的很好&lt;/h1&gt;&lt;p&gt;原文
-    
-    </summary>
-    
-      <category term="事务" scheme="http://dingran.tk/categories/%E4%BA%8B%E5%8A%A1/"/>
-    
-    
-      <category term="事务" scheme="http://dingran.tk/tags/%E4%BA%8B%E5%8A%A1/"/>
-    
-      <category term="分布式" scheme="http://dingran.tk/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
     
   </entry>
   

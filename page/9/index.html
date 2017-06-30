@@ -240,6 +240,104 @@
           
           
             
+              <a class="post-title-link" href="/2016/05/12/Spring 中JDKProxy和CGlibProxy的区别/" itemprop="url">
+                Spring 中JDKProxy和CGlibProxy的区别
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-05-12T23:37:04+08:00" content="2016-05-12">
+            2016-05-12
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/spring/" itemprop="url" rel="index">
+                  <span itemprop="name">spring</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2016/05/12/Spring 中JDKProxy和CGlibProxy的区别/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/12/Spring 中JDKProxy和CGlibProxy的区别/" itemprop="commentsCount"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody">
+            
+            
+如果目标对象实现了接口，默认情况下会采用JDK的动态代理实现AOP
+如果目标对象实现了接口，可以强制使用CGLIB实现AOP
+如果目标对象没有实现了接口，必须采用CGLIB库，spring会自动在JDK动态代理和CGLIB之间转换
+
+如何强制使用CGLIB实现AOP？
+添加CGLIB库，SPRIN
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/05/12/Spring 中JDKProxy和CGlibProxy的区别/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/05/12/Spring事务的传播行为和隔离级别/" itemprop="url">
                 Spring事务的传播行为和隔离级别
               </a>
@@ -1079,99 +1177,6 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/04/27/增大TOMCAT内存/" itemprop="url">
-                增大TOMCAT内存
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-04-27T23:37:04+08:00" content="2016-04-27">
-            2016-04-27
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/tomcat/" itemprop="url" rel="index">
-                  <span itemprop="name">tomcat</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2016/04/27/增大TOMCAT内存/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/04/27/增大TOMCAT内存/" itemprop="commentsCount"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-            ##设置环境变量
-解决方法：手动设置Heap size修改TOMCAT_HOME/bin/catalina.shset JAVA_OPTS= -Xms32m -Xmx512m可以根据自己机器的内存进行更改。java -Xms32m -Xmx800m className就是在执行JAVA类文件时加上这
-            ...
-          </span>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/04/27/增大TOMCAT内存/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1210,7 +1215,7 @@ JSON字符串转换为JSON对象要使用上面的str1，必须使用下面的�
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">99</span>
+              <span class="site-state-item-count">100</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
