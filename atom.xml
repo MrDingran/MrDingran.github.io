@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2017-07-19T08:32:19.000Z</updated>
+  <updated>2017-07-23T08:11:53.000Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>7.22~7.23双休工作总结</title>
+    <link href="http://dingran.tk/2017/07/23/7-22-7-23%E5%8F%8C%E4%BC%91%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+    <id>http://dingran.tk/2017/07/23/7-22-7-23双休工作总结/</id>
+    <published>2017-07-23T07:37:35.000Z</published>
+    <updated>2017-07-23T08:11:53.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>这一阵主要的工作重点是忙在DTC的系统改造，上周主要是在DTC的余位查询抓取12306结果，分析构造结果、merge价格数据等单独重写了几个类。原来的人写的代码实在是不能进行扩展，我知道这不符合开闭原则，但是现在系统问题太多，不改实在不行了。</p>
+<p>我将余位查询改为自己封装的httpUtil，这个类很简单，之前搞了很多回调方法，再添加动态USER-AGENT的时候就特别麻烦。自己写了一个，其实网上有很多例子，拿下来修改修改，就可以为自己所用了。然后是12306余位分析，这个之前改完了，后面有个价格merge的过程，这个我改为生产者消费者模式，因为抓取价格和经停站全部用免费代理ip去抓，速度上很慢，所以我创建blockingqueue，不停往里面放数据，后面有两个消费者去消费，如果放入的数据超过queue的最大值（有界限），停止放入数据，这样可以保护系统不内存溢出。</p>
+<p>上面的都是我抽出类，在diamond的动态配置里面可以随便切过来切过去。上周一，我上线了一般，切到新逻辑，表现还不错，周三我改了一版，再次上线，这次就有问题了，每次都是这样上线一段时间后，系统的数据就不再更新了。我知道是哪个地方又出现了瓶颈了，及时让性能小组去压测，也压不出来问题到底在哪，我大概分析了一下应该是哪个线程池发生了堆积，造成请求堆积进而不发生数据更新。</p>
+<p>于是我写了个线下接口，将所有线程池的数据全部打印出来，这个及时是用jvisualvm也是看不出来的，我发布到测试环境，写了个小程序用10个线程并发去压测，果然，过了一段时间，请求数据不再更新。我调用线程池接口发现在开始出发抓取12306的线程池的queue里面已经堆积了上百的数据，也就是说，新过来的请求已经不能够及时出发抓取，这就尴尬了，排查一遍代码，修改了一下，再次发布，这个瓶颈已经解决了，按照去年的一天3000W访问量，我将今年的单日最大设置为6000W的访问，平均到每秒大概为27个请求左右，也就是说一台实例每秒接收27个左右的请求，那我就拿这个频率去压测系统，没过多久，分析12306数据和merge数据的线程池也到达瓶颈，采用责任链模式，做完一道工序交给下个工序这样去处理，平滑度过这个高峰期，防止在一个节点上发生堆积，然后再次发布测试，在进行压测，过了20分钟再次查看线程池状况，一切都在coresize的范围内运行，很顺畅，但是最后merge缓存和发送mq的时候发生堆积了，还是如上，我将两个分开，由于这两步操作数据量非常大，还是采用生产者消费者模式进行写缓存和发送mq，这期间我发现发送mq比写缓存的速度还要慢很多，我将发送ma单独创建线程池去操作，这样用了7.22~23号两天，我将系统做了不小的改动，23号我主要进行的是系统的压测。以25个每秒左右的访问量进行压测，系统表现的很稳定，但是价格的问题还是卡了很多，还有发送的mq卡的问题其他的线程池表现的正常。价格问题后面我准备用分布式+MQ去处理，因为一个实例处理起来实在是太慢了，将线上所有的服务器全部用起来提升抓取效率，而不是让一台累死，其他的都闲着蛋疼。</p>
+<p>本次改造还有就是对抢票接口和余位接口的缓存进行相互更新。抢票接口就是没有价格的接口，余位是包含价格的，但是抢票接口的刷取频繁度是要高于余位接口的，这两个接口的缓存不是同一套，但是现实余位的数据却是一样的，这里面有我的问题，当初是自己没有将这两个接口搞清楚，其实完全可以用一个接口就搞定了，搞出两个其实也并不是没什么用，也算是自己搞了一套自己的代码出来，但是爬取效率还是很高的。这样两个接口相互更新缓存就可以节省一批代理ip消耗，留给有需要的站站对使用。</p>
+<p>问题还在，坑还很多，还有更多的路要走。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;这一阵主要的工作重点是忙在DTC的系统改造，上周主要是在DTC的余位查询抓取12306结果，分析构造结果、merge价格数据等单独重写了几个类。原来的人写的代码实在是不能进行扩展，我知道这不符合开闭原则，但是现在系统问题太多，不改实在不行了。&lt;/p&gt;
+&lt;p&gt;我将余位查询改为
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
   
   <entry>
     <title>总结最近一段时间工作</title>
@@ -648,42 +677,6 @@
     
     
       <category term="spring" scheme="http://dingran.tk/tags/spring/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>mysql中的if使用</title>
-    <link href="http://dingran.tk/2017/04/19/mysql%E4%B8%AD%E7%9A%84if%E4%BD%BF%E7%94%A8/"/>
-    <id>http://dingran.tk/2017/04/19/mysql中的if使用/</id>
-    <published>2017-04-19T06:05:22.000Z</published>
-    <updated>2017-04-19T06:11:52.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>mysql中的if用法：</p>
-<ul>
-<li>一种是我们经常使用的case when</li>
-<li>还有一种是mysql本身自带函数 if(exp1,exp2,exp3)</li>
-</ul>
-<p>用法如下：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">select</span> <span class="keyword">if</span>(<span class="keyword">max</span>(<span class="keyword">id</span>) <span class="keyword">is</span> <span class="literal">null</span>,<span class="number">1</span>,<span class="keyword">max</span>(<span class="keyword">id</span>)+<span class="number">1</span>) <span class="keyword">from</span> <span class="keyword">table</span></div><div class="line">#描述为如果<span class="keyword">id</span>最大值是<span class="literal">null</span>，就为<span class="number">1</span>，如果最大<span class="keyword">id</span>不为<span class="literal">null</span>，就将最大<span class="keyword">id</span>加<span class="number">1</span></div></pre></td></tr></table></figure>
-<p>可以用来进行一些简单的转换<br>mybatis推荐使用typehandler</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;mysql中的if用法：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;一种是我们经常使用的case when&lt;/li&gt;
-&lt;li&gt;还有一种是mysql本身自带函数 if(exp1,exp2,exp3)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;用法如下：&lt;/p&gt;
-&lt;figure class=&quot;highlig
-    
-    </summary>
-    
-      <category term="数据库" scheme="http://dingran.tk/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-    
-      <category term="mysql" scheme="http://dingran.tk/tags/mysql/"/>
     
   </entry>
   
