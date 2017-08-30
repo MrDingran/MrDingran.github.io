@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2017-08-22T06:56:36.000Z</updated>
+  <updated>2017-08-30T06:36:01.000Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,50 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>spring事务失效原因之一</title>
+    <link href="http://dingran.tk/2017/08/30/spring%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E5%8E%9F%E5%9B%A0%E4%B9%8B%E4%B8%80/"/>
+    <id>http://dingran.tk/2017/08/30/spring事务失效原因之一/</id>
+    <published>2017-08-30T06:28:58.000Z</published>
+    <updated>2017-08-30T06:36:01.000Z</updated>
+    
+    <content type="html"><![CDATA[<ol>
+<li>有一种情况会导致spring的aop事务失效：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AService</span> </span>&#123;  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span></span>;  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">b</span><span class="params">()</span></span>;  </div><div class="line">&#125;  </div><div class="line">   </div><div class="line"><span class="meta">@Service</span>()  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AServiceImpl1</span> <span class="keyword">implements</span> <span class="title">AService</span></span>&#123;  </div><div class="line">    <span class="meta">@Transactional</span>(propagation = Propagation.REQUIRED)  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span>&#123;  </div><div class="line">        <span class="keyword">this</span>.b();  </div><div class="line">    &#125;  </div><div class="line">    <span class="meta">@Transactional</span>(propagation = Propagation.REQUIRES_NEW)  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">b</span><span class="params">()</span> </span>&#123;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>在this.b()调用b方法中，b的事务是不会生效的原因是这种调用方式无法实现aop的增强方式<br><img src="http://dl.iteye.com/upload/attachment/0066/6247/d33ee177-cf3f-39cc-befe-533306b0715f.jpg" alt="http://dl.iteye.com/upload/attachment/0066/6247/d33ee177-cf3f-39cc-befe-533306b0715f.jpg"></li>
+</ol>
+<p>3、解决方案<br>此处a方法中调用b方法时，只要通过AOP代理调用b方法即可走事务切面，即可以进行事务增强，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span>&#123;  </div><div class="line">aopProxy.b();<span class="comment">//即调用AOP代理对象的b方法即可执行事务切面进行事务增强  </span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>判断一个Bean是否是AOP代理对象可以使用如下三种方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">AopUtils.isAopProxy(bean)        ： 是否是代理对象；</div><div class="line">AopUtils.isCglibProxy(bean)       ： 是否是CGLIB方式的代理对象；</div><div class="line">AopUtils.isJdkDynamicProxy(bean) ： 是否是JDK动态代理方式的代理对象；</div></pre></td></tr></table></figure>
+<p>3.1、通过ThreadLocal暴露Aop代理对象</p>
+<p>1、开启暴露Aop代理到ThreadLocal支持（如下配置方式从spring3开始支持）</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">aop:aspectj-autoproxy</span> <span class="attr">expose-proxy</span>=<span class="string">"true"</span>/&gt;</span><span class="tag">&lt;<span class="name">!—注解风格支持--</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">aop:config</span> <span class="attr">expose-proxy</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;<span class="name">!—xml风格支持--</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>2、修改我们的业务实现类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">this</span>.b();-----------修改为---------&gt;((AService) AopContext.currentProxy()).b();</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;ol&gt;
+&lt;li&gt;有一种情况会导致spring的aop事务失效：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div 
+    
+    </summary>
+    
+      <category term="spring" scheme="http://dingran.tk/categories/spring/"/>
+    
+    
+      <category term="spring" scheme="http://dingran.tk/tags/spring/"/>
+    
+      <category term="事务" scheme="http://dingran.tk/tags/%E4%BA%8B%E5%8A%A1/"/>
+    
+  </entry>
   
   <entry>
     <title>Spring循环依赖的三种方式</title>
@@ -604,34 +648,6 @@
     <summary type="html">
     
       &lt;p&gt;5.16号，是途牛的会员日，搭上前端组的紧急上线“快车”，准备发布一次，由于之前的车次缺失，导致有一些客户投诉反馈，正好这次修上去；还有一部分是价格问题，价格添加最后更新时间，如果超过规定时间就再次抓取价格，由于12306的价格也不是一成不变的，遇到特殊的情况还是需要手动处
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>车次缺失问题排查</title>
-    <link href="http://dingran.tk/2017/05/16/%E8%BD%A6%E6%AC%A1%E7%BC%BA%E5%A4%B1%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"/>
-    <id>http://dingran.tk/2017/05/16/车次缺失问题排查/</id>
-    <published>2017-05-16T02:54:04.000Z</published>
-    <updated>2017-05-16T10:35:18.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？</p>
-<p>我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪里没有处理好，造成车次丢失，可是没有办法正确定位问题。</p>
-<p>5.15号团建回来第一天上班，出现了好几单这个问题，有一个Z29的车次映入眼帘，由于只能使用ELK查看日志，不是很方便还有延迟，但是怀着试试的心态，我调用这个接口，赶快查看日志，输入关键字Z29调节时间到最近，搜索，哇塞，出现了，报了一个匹配车次的异常。ok，有异常出现，那么下面就是排查问题了，后面跟着nullpointer，可惜堆栈没有打出来，不过参数打印出来了，根据打印日志找到相关的代码，排查一下，最后定位到是反刷结果的时候出现的问题，在用户成功下单后，会把真的下单结果反刷给dtc，由于算下铺的时候需要用到硬座，但是Z29这种车是没有硬座的，于是出现空指针异常，判断没有判断到位，造成有相关车次的丢失。</p>
-<p>于是修改代码，将线上的反刷缓存放到测试redis里面，在用我们自己的程序跑一下，果然报错了，并且丢失了那个车次，于是根据问题，修改代码，修复了这个问题。</p>
-<p>最近再彻底重构DTC数据中心的代码，有的地方重构出现没有考虑完整的情况，造成此类问题的发生，希望以后引起注意，勿再发生。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;5.10上线一版之后，在5.19号听到客户有反馈有些车次没有和12306进行同步，我很好奇，是数据没有抓下来么？还是12306接口返回结果又有什么变化么？&lt;/p&gt;
-&lt;p&gt;我在本地以及测试环境上查询相关车次均能够正常显示，首先排除了12306返回的结果问题，应该是自己的代码哪
     
     </summary>
     
