@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2017-11-01T05:08:41.000Z</updated>
+  <updated>2017-11-04T04:05:35.000Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>关于DTC采用aop添加日志</title>
+    <link href="http://dingran.tk/2017/11/04/%E5%85%B3%E4%BA%8EDTC%E9%87%87%E7%94%A8aop%E6%B7%BB%E5%8A%A0%E6%97%A5%E5%BF%97/"/>
+    <id>http://dingran.tk/2017/11/04/关于DTC采用aop添加日志/</id>
+    <published>2017-11-04T03:50:56.000Z</published>
+    <updated>2017-11-04T04:05:35.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>今天来加个班，主要是对DTC的访问添加日志的统计。之前做了一次日志统计，由于所有的代码都是镶嵌在原来的代码里面，造成代码耦合度很强，一个方法的代码经常超过了200行，关键是的事之前采用的汇总策略，但是准确性经常查了几个百分点，造成数据不太可信。随后经过考虑分析，决定采用AOP的方式进行统计。</p>
+<p>开始一切都很顺利，自定义个标签，添加类别，根据对应的类别进行对比统计。貌似没有什么问题了，经过简单的测试也没有问题，统计的数据也很准确。便放到sst环境上进行测试，刚发不多久，就看到有入参为空的现象，开始以为是供应商传参有问题，后续发现不对，而且越来越多，我在本地测试没有发现这种问题呀，经过对比我发现了问题的根源：</p>
+<p>这个余位查询没有指定对应的提交方式即既可以用post的方式也可以用get的方式，我之前本地测试使用的便是get方式，get是将参数作为url的一部分，所以没有问题。post的方式是用方法体的一部分作为流的方式进行传递。先说明一点，由于我需要统计分销商，也就说在aop的before层里面，我需要先解析意思post的流，后续进入正式的方法里面，需要在解析一次，那么问题就出现这再次解析里面：httpServletRequest的getRender和getInputStream获取流只能获取一次，这里需要切记。那么找到了问题的根源就想怎么解决，数据肯定是要解析的，所以后续解析不了，只需要将解析后的数据传递下去即可。如果想怎么解决？<br>可以借鉴：<a href="http://www.cnblogs.com/ocean-sky/p/6899613.html" target="_blank" rel="external">http://www.cnblogs.com/ocean-sky/p/6899613.html</a></p>
+<p>ok，到了这一步数据解决了，在本地进行压测统计，发现aop的afterreturn统计不了数据，由于我们采用TSP的分布式调用，所以有可能是aop的after失效了，所以我将对应的逻辑进行重构，再次进行spring托管，进行aop统计，这里彻底解决了问题。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;今天来加个班，主要是对DTC的访问添加日志的统计。之前做了一次日志统计，由于所有的代码都是镶嵌在原来的代码里面，造成代码耦合度很强，一个方法的代码经常超过了200行，关键是的事之前采用的汇总策略，但是准确性经常查了几个百分点，造成数据不太可信。随后经过考虑分析，决定采用AO
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
   
   <entry>
     <title>DTC添加统计日志</title>
@@ -608,30 +634,6 @@
     
       &lt;p&gt;6.18，年中了，自己马上就要在途牛干了将近1年了，回头望来感慨万千。哎，华奥司机是不是走的有点早啊，再呆上3个月，可能比你之前呆的那一年经历的坑还多呢。&lt;/p&gt;
 &lt;p&gt;已经是深夜，今天还是父亲节，今天早上起来得给父亲打个电话，谁让我是个大孝子呢，哎没办法。没事写写博客回忆
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>12306app抓包</title>
-    <link href="http://dingran.tk/2017/06/11/12306app%E6%8A%93%E5%8C%85/"/>
-    <id>http://dingran.tk/2017/06/11/12306app抓包/</id>
-    <published>2017-06-11T05:24:33.000Z</published>
-    <updated>2017-06-11T05:32:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>一直有个想法就是想抓取app上面的访问方式，昨天在网上搜索后发现app可以通过fiddler来抓包，可惜的是fiddler在mac上面不是很友好，今天来到公司，用自己的工作电脑搭建了一个fiddler，网上教程一大把，随便找了一个，按照教程配置好后，将自己的手机连上局域网，打开手机app 就可以抓包了，很简单。</p>
-<p>我主要是抓取12306app的余位查询，经过抓包后，我发现参数基本没有什么变化，但是多了几个，比如checkcode等，返回的信息是加密后的乱码，我的心这个凉呀，没办法了，因为我解密不了，还是要请教其他人了，看看能否解密。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;一直有个想法就是想抓取app上面的访问方式，昨天在网上搜索后发现app可以通过fiddler来抓包，可惜的是fiddler在mac上面不是很友好，今天来到公司，用自己的工作电脑搭建了一个fiddler，网上教程一大把，随便找了一个，按照教程配置好后，将自己的手机连上局域网，
     
     </summary>
     
