@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2017-11-29T05:09:40.215Z</updated>
+  <updated>2017-12-04T07:28:27.951Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>转Spring基于Event支持</title>
+    <link href="http://dingran.tk/2017/12/04/%E8%BD%ACSpring%E5%9F%BA%E4%BA%8EEvent%E6%94%AF%E6%8C%81/"/>
+    <id>http://dingran.tk/2017/12/04/转Spring基于Event支持/</id>
+    <published>2017-12-04T07:24:24.000Z</published>
+    <updated>2017-12-04T07:28:27.951Z</updated>
+    
+    <content type="html"><![CDATA[<p>spring在启动的时候有个事件加载机制，今天在importnew中看到了这篇介绍事件的例子，可以在以后的工作中有所应用。</p>
+<p>文章地址：<a href="http://www.importnew.com/26782.html" target="_blank" rel="external">spring对event支持</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;spring在启动的时候有个事件加载机制，今天在importnew中看到了这篇介绍事件的例子，可以在以后的工作中有所应用。&lt;/p&gt;
+&lt;p&gt;文章地址：&lt;a href=&quot;http://www.importnew.com/26782.html&quot; target=&quot;_blank&quot; r
+    
+    </summary>
+    
+      <category term="spring" scheme="http://dingran.tk/categories/spring/"/>
+    
+    
+      <category term="spring" scheme="http://dingran.tk/tags/spring/"/>
+    
+  </entry>
   
   <entry>
     <title>2017-11月份工作总结</title>
@@ -620,31 +645,6 @@
     </summary>
     
       <category term="日记月累" scheme="http://dingran.tk/categories/%E6%97%A5%E8%AE%B0%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>集成爬虫到DTC系统以及相关问题总结</title>
-    <link href="http://dingran.tk/2017/06/23/%E9%9B%86%E6%88%90%E7%88%AC%E8%99%AB%E5%88%B0DTC%E7%B3%BB%E7%BB%9F%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/"/>
-    <id>http://dingran.tk/2017/06/23/集成爬虫到DTC系统以及相关问题总结/</id>
-    <published>2017-06-23T07:16:58.000Z</published>
-    <updated>2017-06-23T07:29:21.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人员瞬间我知道自己出现的问题在哪了。</p>
-<p>在代码里面，我使用brpop命令来进行监听某个redis队列是否有数据，类似java的blockingqueue，我之前满心欢喜，这个功能真的好用，但是到了线上就完犊子了，原因是我们线上的redis使用的twemproxy这个twitter的redis代理来进行redis的管理。这个twemproxy可以自动剔除坏掉的节点，比较好用，但是它也有它的缺点就是它不支持一些redis的命令，brpop是其中一个，还有订阅发布等都不支持。有点沮丧，没办法，只能自己去实现这功能了。</p>
-<p>昨天6.22号又紧急上线了，我是搭车上线主要是修复一些小问题，顺便把redis这个brpop这个修改了。然后再次发布，到线上后一切正常，然后到了今天早上，我来的时候突然发现dtc系统不提供服务了，经过visualvm链接线上的jvm查看，看见线程活跃说已经达到2800+了，我知道是自己在代码里面创建了一个线程池频繁销毁启动造成的，还好自己做了开关，我将开关关闭，将每台服务器都启动了一遍，多有实例都可以提供服务，没有问题。再看代码再将销毁线程池的地方再次修改，等待下次上线日。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;6.21号，我把带有爬取免费代理ip的爬虫放到线上，结果部署完成后发现redis不停的报一个错–unexpected stream。上网搜了一下，大概都是缓存空间不够或者多个线程一起调用的问题，但是我觉得用起来根不是这些问题。在测试环境都没有发现这种问题。后来请教运维相关人
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
     
     
       <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
