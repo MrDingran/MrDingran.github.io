@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.tk/"/>
-  <updated>2018-01-02T09:35:30.999Z</updated>
+  <updated>2018-01-08T09:43:55.585Z</updated>
   <id>http://dingran.tk/</id>
   
   <author>
@@ -14,6 +14,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Disruptor的使用</title>
+    <link href="http://dingran.tk/2018/01/08/Disruptor%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
+    <id>http://dingran.tk/2018/01/08/Disruptor的使用/</id>
+    <published>2018-01-08T09:36:21.000Z</published>
+    <updated>2018-01-08T09:43:55.585Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近由于京东的不断推广，牛抢票的订单数疯长，对目前的系统造成了很大的压力。经过不断摸索改为分布式方式平衡压力，但是在多线程一下处理订单还是比较耗时的，线程实在是太宝贵了，所以急需一种框架能够大幅提高订单处理能力。</p>
+<p>最近看到并发框架Disruptor，单线程一秒种可以处理600W订单，看到这么牛逼的字眼，总会让我精神一动，它怎么能这么牛逼呢？这里不讲解实现原理，有兴趣可以参考下面资料：<a href="http://ifeve.com/disruptor/" target="_blank" rel="external">http://ifeve.com/disruptor/</a></p>
+<p>Disruptor是生产者消费者模式所以下面给出例子：<br><a href="http://blog.csdn.net/java1993666/article/details/72828010" target="_blank" rel="external">http://blog.csdn.net/java1993666/article/details/72828010</a></p>
+<p>容我在细细研究一下它的实现原理。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近由于京东的不断推广，牛抢票的订单数疯长，对目前的系统造成了很大的压力。经过不断摸索改为分布式方式平衡压力，但是在多线程一下处理订单还是比较耗时的，线程实在是太宝贵了，所以急需一种框架能够大幅提高订单处理能力。&lt;/p&gt;
+&lt;p&gt;最近看到并发框架Disruptor，单线程一秒
+    
+    </summary>
+    
+      <category term="并发" scheme="http://dingran.tk/categories/%E5%B9%B6%E5%8F%91/"/>
+    
+    
+      <category term="并发" scheme="http://dingran.tk/tags/%E5%B9%B6%E5%8F%91/"/>
+    
+  </entry>
   
   <entry>
     <title>Spring+Mybatis读写分离</title>
@@ -619,38 +646,6 @@
     
       &lt;p&gt;这一阵主要的工作重点是忙在DTC的系统改造，上周主要是在DTC的余位查询抓取12306结果，分析构造结果、merge价格数据等单独重写了几个类。原来的人写的代码实在是不能进行扩展，我知道这不符合开闭原则，但是现在系统问题太多，不改实在不行了。&lt;/p&gt;
 &lt;p&gt;我将余位查询改为
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.tk/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.tk/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>总结最近一段时间工作</title>
-    <link href="http://dingran.tk/2017/07/19/%E6%80%BB%E7%BB%93%E6%9C%80%E8%BF%91%E4%B8%80%E6%AE%B5%E6%97%B6%E9%97%B4%E5%B7%A5%E4%BD%9C/"/>
-    <id>http://dingran.tk/2017/07/19/总结最近一段时间工作/</id>
-    <published>2017-07-19T08:17:42.000Z</published>
-    <updated>2017-07-19T08:32:19.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>好几天没有写点东西了，是这一段时间忙的太累了。</p>
-<p>前一段时间连续上了4次线都失败了，结果发现是在一个if后面没有做有效的判断造成死循环了，影响请求的返回，犯了这么低级的错误，也确实难以饶恕，以后编写代码一定要仔细认真确认。</p>
-<p>妈妈来了三周，这周1回去了，心里面有点不舒服，没办法。</p>
-<p>工作上自从京东接入途牛火车票查询以来，事情一天比一天多，而且没事就抄送CEO,COO，这让我有点难以理解，如果你们有事我们也抄送刘强东，是不是也让你菊花一紧。</p>
-<p>有事说事，没事总往上捅是干嘛呢？最近DTC系统整改很大，我把余位接口和价格接口都重新开辟了新的接口，新的类，现在在线上跑没有什么问题，至于改的原因是原来的代码真的是不改不行了，按照软件的开闭原则，这确实是不是好的主意，但是如果维护成本太大，不改简直是浪费脑细胞。还差经停站，经停站我得重新设计一下。</p>
-<p>最近加了几天班，都是集中搞一些数据，之前显示数据刷新中，现在使用线上代理ip+免费代理ip+app反刷集中获取余位，现在效果好了很多了</p>
-<p>后面事情还有很多，比如分布式处理价格、经停站等</p>
-<p>再接再厉！</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;好几天没有写点东西了，是这一段时间忙的太累了。&lt;/p&gt;
-&lt;p&gt;前一段时间连续上了4次线都失败了，结果发现是在一个if后面没有做有效的判断造成死循环了，影响请求的返回，犯了这么低级的错误，也确实难以饶恕，以后编写代码一定要仔细认真确认。&lt;/p&gt;
-&lt;p&gt;妈妈来了三周，这周1回去
     
     </summary>
     
