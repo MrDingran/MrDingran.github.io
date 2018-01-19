@@ -44,7 +44,7 @@
 随着订单的不断增加，比如当前有1W单，需要在一分钟全部重新查一遍，那么怎么保证所有的订单都能查到呢？之前做的是将订单根据时间戳与60作取余的操作，然后根据余数进行散列到某一个时间进行查询，但是从DTC的角度看OCS查询的分布，发现非常不平均，比如在1~10秒之间几乎没有请求，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="牛抢票关于HASH散列分析总结">
-<meta property="og:url" content="http://dingran.tk/2017/08/11/牛抢票关于HASH散列分析总结/index.html">
+<meta property="og:url" content="http://dingran.top/2017/08/11/牛抢票关于HASH散列分析总结/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
 <meta property="og:description" content="最近抢票的订单明显增加了好多，每个抢票都要在规定时间进行查询DTC再去12306查询判断余票，然后根据余位的数量进行分单。
 随着订单的不断增加，比如当前有1W单，需要在一分钟全部重新查一遍，那么怎么保证所有的订单都能查到呢？之前做的是将订单根据时间戳与60作取余的操作，然后根据余数进行散列到某一个时间进行查询，但是从DTC的角度看OCS查询的分布，发现非常不平均，比如在1~10秒之间几乎没有请求，">
@@ -511,7 +511,7 @@
       var disqus_shortname = 'dingran';
       var disqus_identifier = '2017/08/11/牛抢票关于HASH散列分析总结/';
       var disqus_title = '牛抢票关于HASH散列分析总结';
-      var disqus_url = 'http://dingran.tk/2017/08/11/牛抢票关于HASH散列分析总结/';
+      var disqus_url = 'http://dingran.top/2017/08/11/牛抢票关于HASH散列分析总结/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
