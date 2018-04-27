@@ -240,6 +240,99 @@
           
           
             
+              <a class="post-title-link" href="/2018/04/27/RES资源系统去除直接调用DTC缓存更改/" itemprop="url">
+                RES资源系统去除直接调用DTC缓存更改
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2018-04-27T11:03:10+08:00" content="2018-04-27">
+            2018-04-27
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2018/04/27/RES资源系统去除直接调用DTC缓存更改/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/27/RES资源系统去除直接调用DTC缓存更改/" itemprop="commentsCount"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody">
+            
+            DTC数据中心核心爬取数据系统已经由原来DTC+DTG拆分为DTC.LEFT+DTC.GRAB两个系统，一个是用来查询余位的，一个是用来给抢票查询最新余位数据。
+DTC.GRAB已经上线了几个月了，一直运行平稳，迁移拆分几乎没有费多大功夫，是因为抢票查询是独立在原来DTC的代码里，没有DB依赖，只依
+            ...
+          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2018/04/27/RES资源系统去除直接调用DTC缓存更改/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2018/03/11/DR-JOB分布式定时推送分片系统研究/" itemprop="url">
                 DR-JOB分布式定时推送分片系统研究
               </a>
@@ -1066,99 +1159,6 @@
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/11/04/关于DTC采用aop添加日志/" itemprop="url">
-                关于DTC采用aop添加日志
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-11-04T11:50:56+08:00" content="2017-11-04">
-            2017-11-04
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/日积月累/" itemprop="url" rel="index">
-                  <span itemprop="name">日积月累</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2017/11/04/关于DTC采用aop添加日志/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/11/04/关于DTC采用aop添加日志/" itemprop="commentsCount"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-            今天来加个班，主要是对DTC的访问添加日志的统计。之前做了一次日志统计，由于所有的代码都是镶嵌在原来的代码里面，造成代码耦合度很强，一个方法的代码经常超过了200行，关键是的事之前采用的汇总策略，但是准确性经常查了几个百分点，造成数据不太可信。随后经过考虑分析，决定采用AOP的方式进行统计。
-开始一
-            ...
-          </span>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2017/11/04/关于DTC采用aop添加日志/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1197,7 +1197,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">125</span>
+              <span class="site-state-item-count">126</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
