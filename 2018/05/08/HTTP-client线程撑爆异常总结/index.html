@@ -1,0 +1,746 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹" />
+
+<meta name="baidu-site-verification" content="xSJDurVHbh" />
+
+  <meta name="keywords" content="途牛," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="崎岖的路,走出自己的脚步" type="application/atom+xml" />
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="昨天上线了DTC_LEFT余位查询系统，上线后一切运行正常，今天早上来后，查看监控系统发现jvm里面运行的线程数量已经达到5000+，这也太可怕了。
+经过jvm工具jvisualvm查看系统的线程情况发现是有个线程“Connection evictor”不断的增加已经达到了好几千的数量，关键是回收的数量太慢了，而且在代码里面并没有使用这个线程池或者给予这个线程命名。
+度娘了一下，排除系统创建的线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP client线程撑爆异常总结">
+<meta property="og:url" content="http://dingran.top/2018/05/08/HTTP-client线程撑爆异常总结/index.html">
+<meta property="og:site_name" content="崎岖的路,走出自己的脚步">
+<meta property="og:description" content="昨天上线了DTC_LEFT余位查询系统，上线后一切运行正常，今天早上来后，查看监控系统发现jvm里面运行的线程数量已经达到5000+，这也太可怕了。
+经过jvm工具jvisualvm查看系统的线程情况发现是有个线程“Connection evictor”不断的增加已经达到了好几千的数量，关键是回收的数量太慢了，而且在代码里面并没有使用这个线程池或者给予这个线程命名。
+度娘了一下，排除系统创建的线程">
+<meta property="og:updated_time" content="2018-05-08T03:32:20.585Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP client线程撑爆异常总结">
+<meta name="twitter:description" content="昨天上线了DTC_LEFT余位查询系统，上线后一切运行正常，今天早上来后，查看监控系统发现jvm里面运行的线程数量已经达到5000+，这也太可怕了。
+经过jvm工具jvisualvm查看系统的线程情况发现是有个线程“Connection evictor”不断的增加已经达到了好几千的数量，关键是回收的数量太慢了，而且在代码里面并没有使用这个线程池或者给予这个线程命名。
+度娘了一下，排除系统创建的线程">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post'
+  };
+</script>
+
+  <title> HTTP client线程撑爆异常总结 | 崎岖的路,走出自己的脚步 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?234b2ead6e590b1651369e1d3f76a8b2";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">崎岖的路,走出自己的脚步</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook" rel="section">
+            <i class="menu-item-icon icon-next-guestbook"></i> <br />
+            留言板
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            <i class="menu-item-icon icon-next-about"></i> <br />
+            关于
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '87NaLcEoUCh3qeusbiok','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              HTTP client线程撑爆异常总结
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2018-05-08T11:13:29+08:00" content="2018-05-08">
+            2018-05-08
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2018/05/08/HTTP-client线程撑爆异常总结/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/05/08/HTTP-client线程撑爆异常总结/" itemprop="commentsCount"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>昨天上线了DTC_LEFT余位查询系统，上线后一切运行正常，今天早上来后，查看监控系统发现jvm里面运行的线程数量已经达到5000+，这也太可怕了。</p>
+<p>经过jvm工具jvisualvm查看系统的线程情况发现是有个线程“Connection evictor”不断的增加已经达到了好几千的数量，关键是回收的数量太慢了，而且在代码里面并没有使用这个线程池或者给予这个线程命名。</p>
+<p>度娘了一下，排除系统创建的线程池，预排查在使用httpclient的时候导致的，经过jvisualvm的线程查看线程堆栈果然证实了想法，是由于一个类IdleConnectionEvictor导致的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line"> * ====================================================================</div><div class="line"> * Licensed to the Apache Software Foundation (ASF) under one</div><div class="line"> * or more contributor license agreements.  See the NOTICE file</div><div class="line"> * distributed with this work for additional information</div><div class="line"> * regarding copyright ownership.  The ASF licenses this file</div><div class="line"> * to you under the Apache License, Version 2.0 (the</div><div class="line"> * "License"); you may not use this file except in compliance</div><div class="line"> * with the License.  You may obtain a copy of the License at</div><div class="line"> *</div><div class="line"> *   http://www.apache.org/licenses/LICENSE-2.0</div><div class="line"> *</div><div class="line"> * Unless required by applicable law or agreed to in writing,</div><div class="line"> * software distributed under the License is distributed on an</div><div class="line"> * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY</div><div class="line"> * KIND, either express or implied.  See the License for the</div><div class="line"> * specific language governing permissions and limitations</div><div class="line"> * under the License.</div><div class="line"> * ====================================================================</div><div class="line"> *</div><div class="line"> * This software consists of voluntary contributions made by many</div><div class="line"> * individuals on behalf of the Apache Software Foundation.  For more</div><div class="line"> * information on the Apache Software Foundation, please see</div><div class="line"> * &lt;http://www.apache.org/&gt;.</div><div class="line"> *</div><div class="line"> */</div><div class="line"></div><div class="line"><span class="keyword">package</span> org.apache.http.impl.client;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.concurrent.ThreadFactory;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.apache.http.conn.HttpClientConnectionManager;</div><div class="line"><span class="keyword">import</span> org.apache.http.util.Args;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * This class maintains a background thread to enforce an eviction policy for expired / idle</div><div class="line"> * persistent connections kept alive in the connection pool.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@since</span> 4.4</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">IdleConnectionEvictor</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> HttpClientConnectionManager connectionManager;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ThreadFactory threadFactory;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Thread thread;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> sleepTimeMs;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> maxIdleTimeMs;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Exception exception;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">IdleConnectionEvictor</span><span class="params">(</span></span></div><div class="line">            <span class="keyword">final</span> HttpClientConnectionManager connectionManager,</div><div class="line">            <span class="keyword">final</span> ThreadFactory threadFactory,</div><div class="line">            <span class="keyword">final</span> <span class="keyword">long</span> sleepTime, <span class="keyword">final</span> TimeUnit sleepTimeUnit,</div><div class="line">            <span class="keyword">final</span> <span class="keyword">long</span> maxIdleTime, <span class="keyword">final</span> TimeUnit maxIdleTimeUnit) &#123;</div><div class="line">        <span class="keyword">this</span>.connectionManager = Args.notNull(connectionManager, <span class="string">"Connection manager"</span>);</div><div class="line">        <span class="keyword">this</span>.threadFactory = threadFactory != <span class="keyword">null</span> ? threadFactory : <span class="keyword">new</span> DefaultThreadFactory();</div><div class="line">        <span class="keyword">this</span>.sleepTimeMs = sleepTimeUnit != <span class="keyword">null</span> ? sleepTimeUnit.toMillis(sleepTime) : sleepTime;</div><div class="line">        <span class="keyword">this</span>.maxIdleTimeMs = maxIdleTimeUnit != <span class="keyword">null</span> ? maxIdleTimeUnit.toMillis(maxIdleTime) : maxIdleTime;</div><div class="line">        <span class="keyword">this</span>.thread = <span class="keyword">this</span>.threadFactory.newThread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    <span class="keyword">while</span> (!Thread.currentThread().isInterrupted()) &#123;</div><div class="line">                        Thread.sleep(sleepTimeMs);</div><div class="line">                        connectionManager.closeExpiredConnections();</div><div class="line">                        <span class="keyword">if</span> (maxIdleTimeMs &gt; <span class="number">0</span>) &#123;</div><div class="line">                            connectionManager.closeIdleConnections(maxIdleTimeMs, TimeUnit.MILLISECONDS);</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">catch</span> (<span class="keyword">final</span> Exception ex) &#123;</div><div class="line">                    exception = ex;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">IdleConnectionEvictor</span><span class="params">(</span></span></div><div class="line">            <span class="keyword">final</span> HttpClientConnectionManager connectionManager,</div><div class="line">            <span class="keyword">final</span> <span class="keyword">long</span> sleepTime, <span class="keyword">final</span> TimeUnit sleepTimeUnit,</div><div class="line">            <span class="keyword">final</span> <span class="keyword">long</span> maxIdleTime, <span class="keyword">final</span> TimeUnit maxIdleTimeUnit) &#123;</div><div class="line">        <span class="keyword">this</span>(connectionManager, <span class="keyword">null</span>, sleepTime, sleepTimeUnit, maxIdleTime, maxIdleTimeUnit);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">IdleConnectionEvictor</span><span class="params">(</span></span></div><div class="line">            <span class="keyword">final</span> HttpClientConnectionManager connectionManager,</div><div class="line">            <span class="keyword">final</span> <span class="keyword">long</span> maxIdleTime, <span class="keyword">final</span> TimeUnit maxIdleTimeUnit) &#123;</div><div class="line">        <span class="keyword">this</span>(connectionManager, <span class="keyword">null</span>,</div><div class="line">                maxIdleTime &gt; <span class="number">0</span> ? maxIdleTime : <span class="number">5</span>, maxIdleTimeUnit != <span class="keyword">null</span> ? maxIdleTimeUnit : TimeUnit.SECONDS,</div><div class="line">                maxIdleTime, maxIdleTimeUnit);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</div><div class="line">        thread.start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123;</div><div class="line">        thread.interrupt();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isRunning</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> thread.isAlive();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">awaitTermination</span><span class="params">(<span class="keyword">final</span> <span class="keyword">long</span> time, <span class="keyword">final</span> TimeUnit tunit)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        thread.join((tunit != <span class="keyword">null</span> ? tunit : TimeUnit.MILLISECONDS).toMillis(time));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultThreadFactory</span> <span class="keyword">implements</span> <span class="title">ThreadFactory</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Thread <span class="title">newThread</span><span class="params">(<span class="keyword">final</span> Runnable r)</span> </span>&#123;</div><div class="line">            <span class="keyword">final</span> Thread t = <span class="keyword">new</span> Thread(r, <span class="string">"Connection evictor"</span>);</div><div class="line">            t.setDaemon(<span class="keyword">true</span>);</div><div class="line">            <span class="keyword">return</span> t;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;;</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在后面的threadFactory，会有不断创建“Connection evictor的线程”，那么究竟是哪里调用这个线程的呢？经过排查封装httpclient的代码发现，之前在查看文档的时候发现有两个参数可以定时清理无用的httpclient的链接:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">evictIdleConnections(<span class="number">5</span>, TimeUnit.SECONDS).evictExpiredConnections()</div></pre></td></tr></table></figure>
+<p>这两个参数是定时清理无用的httpclient，释放超时的链接，但是evictExpireConnections这个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">    * Makes this instance of HttpClient proactively evict expired connections from the</div><div class="line">    * connection pool using a background thread.</div><div class="line">    * &lt;p&gt;</div><div class="line">    * One MUST explicitly close HttpClient with &#123;<span class="doctag">@link</span> CloseableHttpClient#close()&#125; in order</div><div class="line">    * to stop and release the background thread.</div><div class="line">    * &lt;p&gt;</div><div class="line">    * Please note this method has no effect if the instance of HttpClient is configuted to</div><div class="line">    * use a shared connection manager.</div><div class="line">    * &lt;p&gt;</div><div class="line">    * Please note this method may not be used when the instance of HttpClient is created</div><div class="line">    * inside an EJB container.</div><div class="line">    *</div><div class="line">    * <span class="doctag">@see</span> #setConnectionManagerShared(boolean)</div><div class="line">    * <span class="doctag">@see</span> org.apache.http.conn.HttpClientConnectionManager#closeExpiredConnections()</div><div class="line">    *</div><div class="line">    * <span class="doctag">@since</span> 4.4</div><div class="line">    */</div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> HttpClientBuilder <span class="title">evictExpiredConnections</span><span class="params">()</span> </span>&#123;</div><div class="line">       evictExpiredConnections = <span class="keyword">true</span>;</div><div class="line">       <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">\\省略</div><div class="line"></div><div class="line">  List&lt;Closeable&gt; closeablesCopy = closeables != <span class="keyword">null</span> ? <span class="keyword">new</span> ArrayList&lt;Closeable&gt;(closeables) : <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.connManagerShared) &#123;</div><div class="line">            <span class="keyword">if</span> (closeablesCopy == <span class="keyword">null</span>) &#123;</div><div class="line">                closeablesCopy = <span class="keyword">new</span> ArrayList&lt;Closeable&gt;(<span class="number">1</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">final</span> HttpClientConnectionManager cm = connManagerCopy;</div><div class="line"></div><div class="line">            <span class="keyword">if</span> (evictExpiredConnections || evictIdleConnections) &#123;</div><div class="line">                <span class="keyword">final</span> IdleConnectionEvictor connectionEvictor = <span class="keyword">new</span> IdleConnectionEvictor(cm,</div><div class="line">                        maxIdleTime &gt; <span class="number">0</span> ? maxIdleTime : <span class="number">10</span>, maxIdleTimeUnit != <span class="keyword">null</span> ? maxIdleTimeUnit : TimeUnit.SECONDS);</div><div class="line">                closeablesCopy.add(<span class="keyword">new</span> Closeable() &#123;</div><div class="line"></div><div class="line">                    <span class="meta">@Override</span></div><div class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">                        connectionEvictor.shutdown();</div><div class="line">                    &#125;</div><div class="line"></div><div class="line">                &#125;);</div><div class="line">                connectionEvictor.start();</div><div class="line">            &#125;</div><div class="line">            closeablesCopy.add(<span class="keyword">new</span> Closeable() &#123;</div><div class="line"></div><div class="line">                <span class="meta">@Override</span></div><div class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">                    cm.shutdown();</div><div class="line">                &#125;</div><div class="line"></div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">    \\省略</div></pre></td></tr></table></figure>
+<p>也就是说，没开启个httpclient的链接，都会创建一个后续线程去释放这个链接，代码里面使用sleep，造成线程休眠，如果httpclient的链接请求不断增加就会导致线程不停的增长，最终导致系统的线程都无法创建报错无法创建线程，can not create navive thread.</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/途牛/" rel="tag">#途牛</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/27/RES资源系统去除直接调用DTC缓存更改/" rel="next">RES资源系统去除直接调用DTC缓存更改</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="bdsharebuttonbox">
+	<a href="#" class="bds_more" data-cmd="more"></a>
+	<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+	<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+	<a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div id="disqus_thread">
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+              </div>
+             
+
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/default_avatar.png" alt="D.R" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">D.R</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">书不记，熟读可记；义不精，细思可精；惟有志不立，直是无着力处。——朱熹</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">127</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">69</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="menu-item-icon icon-next-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+                <a href="https://github.com/gavincloud" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/github.png"></img></a>
+            
+                <a href="https://www.zhihu.com/people/gavin-97-57" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/zhihu.png"></img></a>
+            
+                <a href="https://www.facebook.com/ran.ding.509" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/facebook.png"></img></a>
+            
+                <a href="https://twitter.com/MrDingran" target="_blank"><img style="width:28px;height:28px;margin: 0 8px 15px 8px;" src="/images/twitter.png"></img></a>
+            
+          
+        </div>
+
+        <div class="links-of-friendly motion-element">
+          
+        </div>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=406086764&auto=0&height=66"></iframe>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">D.R</span>
+	<span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <div class="powered-by"></div>
+  <div class="powered-by">
+    Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  </div>
+	<a class="theme-link" href="https://github.com/gavincloud">GitHub</a> 强力驱动
+  <!-- busuanzi -->
+  
+
+</div>
+
+<!--
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<!--
+<div class="powered-by"></div>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+-->
+
+<!-- busuanzi -->
+<!--
+
+-->
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+    
+
+    <script type="text/javascript">
+   
+      var disqus_shortname = 'dingran';
+      var disqus_identifier = '2018/05/08/HTTP-client线程撑爆异常总结/';
+      var disqus_title = 'HTTP client线程撑爆异常总结';
+      var disqus_url = 'http://dingran.top/2018/05/08/HTTP-client线程撑爆异常总结/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+</body>
+</html>
