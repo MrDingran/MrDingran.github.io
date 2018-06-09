@@ -28,7 +28,7 @@
 
 <meta name="baidu-site-verification" content="xSJDurVHbh" />
 
-  <meta name="keywords" content="crontab," />
+  <meta name="keywords" content="途牛," />
 
 
 
@@ -40,25 +40,19 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="问题描述:
-crontab中启动的shell脚本不能正常运行，但是使用手动执行没有问题，在$home/.profile中设定了脚本所需要的环境变量。
-解答: cron命令的默认shell是/usr/bin/bsh，如果要在cron启动的脚本中使用ksh，就必须在脚本中的第一行添加“#!/usr/bin/ksh”的声明。
-如果cron进程启动的shell脚本要用登录时的环境变量，就必须在cron启动">
+<meta name="description" content="从上个星期开始，每隔那么几个分钟，手机就会收到一条短信，起初不知道这是什么短信，但是可以确信的是这是途牛运维发过来的短信，经过和运维沟通过后发现，这个是数据库从库延迟增加导致的短信，我赶快打开数据库运维监控页面，发现数据库连接池已经到达上线3000，从库的延迟增加到每秒延迟1000+的数量。
+使用线上sqladmin查询，都是无功而返，几乎都是查询超时。在运维查看页面我打开当前运行sql，发现堵住">
 <meta property="og:type" content="article">
-<meta property="og:title" content="crontab 环境变量的使用方法">
-<meta property="og:url" content="http://dingran.top/2016/05/19/crontab 环境变量的使用方法/index.html">
+<meta property="og:title" content="牛抢票DB异常问题分析">
+<meta property="og:url" content="http://dingran.top/2018/06/09/牛抢票DB异常问题分析/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
-<meta property="og:description" content="问题描述:
-crontab中启动的shell脚本不能正常运行，但是使用手动执行没有问题，在$home/.profile中设定了脚本所需要的环境变量。
-解答: cron命令的默认shell是/usr/bin/bsh，如果要在cron启动的脚本中使用ksh，就必须在脚本中的第一行添加“#!/usr/bin/ksh”的声明。
-如果cron进程启动的shell脚本要用登录时的环境变量，就必须在cron启动">
-<meta property="og:updated_time" content="2016-05-19T15:35:16.000Z">
+<meta property="og:description" content="从上个星期开始，每隔那么几个分钟，手机就会收到一条短信，起初不知道这是什么短信，但是可以确信的是这是途牛运维发过来的短信，经过和运维沟通过后发现，这个是数据库从库延迟增加导致的短信，我赶快打开数据库运维监控页面，发现数据库连接池已经到达上线3000，从库的延迟增加到每秒延迟1000+的数量。
+使用线上sqladmin查询，都是无功而返，几乎都是查询超时。在运维查看页面我打开当前运行sql，发现堵住">
+<meta property="og:updated_time" content="2018-06-09T15:19:20.210Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="crontab 环境变量的使用方法">
-<meta name="twitter:description" content="问题描述:
-crontab中启动的shell脚本不能正常运行，但是使用手动执行没有问题，在$home/.profile中设定了脚本所需要的环境变量。
-解答: cron命令的默认shell是/usr/bin/bsh，如果要在cron启动的脚本中使用ksh，就必须在脚本中的第一行添加“#!/usr/bin/ksh”的声明。
-如果cron进程启动的shell脚本要用登录时的环境变量，就必须在cron启动">
+<meta name="twitter:title" content="牛抢票DB异常问题分析">
+<meta name="twitter:description" content="从上个星期开始，每隔那么几个分钟，手机就会收到一条短信，起初不知道这是什么短信，但是可以确信的是这是途牛运维发过来的短信，经过和运维沟通过后发现，这个是数据库从库延迟增加导致的短信，我赶快打开数据库运维监控页面，发现数据库连接池已经到达上线3000，从库的延迟增加到每秒延迟1000+的数量。
+使用线上sqladmin查询，都是无功而返，几乎都是查询超时。在运维查看页面我打开当前运行sql，发现堵住">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -68,7 +62,7 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
   };
 </script>
 
-  <title> crontab 环境变量的使用方法 | 崎岖的路,走出自己的脚步 </title>
+  <title> 牛抢票DB异常问题分析 | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -224,7 +218,7 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
           
           
             
-              crontab 环境变量的使用方法
+              牛抢票DB异常问题分析
             
           
         </h1>
@@ -233,8 +227,8 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-05-19T22:37:04+08:00" content="2016-05-19">
-            2016-05-19
+          <time itemprop="dateCreated" datetime="2018-06-09T22:57:25+08:00" content="2018-06-09">
+            2018-06-09
           </time>
         </span>
 
@@ -243,8 +237,8 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Linux/" itemprop="url" rel="index">
-                  <span itemprop="name">Linux</span>
+                <a href="/categories/日积月累/" itemprop="url" rel="index">
+                  <span itemprop="name">日积月累</span>
                 </a>
               </span>
 
@@ -259,8 +253,8 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2016/05/19/crontab 环境变量的使用方法/#comments" itemprop="discussionUrl">
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/19/crontab 环境变量的使用方法/" itemprop="commentsCount"></span>
+            <a href="/2018/06/09/牛抢票DB异常问题分析/#comments" itemprop="discussionUrl">
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/09/牛抢票DB异常问题分析/" itemprop="commentsCount"></span>
             </a>
           </span>
           
@@ -274,22 +268,15 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
       
 
       
-        <span itemprop="articleBody"><p><strong>问题描述:</strong></p>
-<p>crontab中启动的shell脚本不能正常运行，但是使用手动执行没有问题，在$home/.profile中设定了脚本所需要的环境变量。</p>
-<p><strong>解答:</strong> cron命令的默认shell是/usr/bin/bsh，如果要在cron启动的脚本中使用ksh，就必须在脚本中的第一行添加“#!/usr/bin/ksh”的声明。</p>
-<p>如果cron进程启动的shell脚本要用登录时的环境变量，就必须在cron启动的shell脚本中添加下面的内容，才能够在启动的脚本中使用<br>$home/.profile文件中的环境变量。<br>.$home/.profile </p>
-<h2 id="这是因为cron进程执行的shell脚本是不会自动加载用户目录下的-profile文件，所以需要脚本自己加载所需要的环境变量。"><a href="#这是因为cron进程执行的shell脚本是不会自动加载用户目录下的-profile文件，所以需要脚本自己加载所需要的环境变量。" class="headerlink" title="这是因为cron进程执行的shell脚本是不会自动加载用户目录下的.profile文件，所以需要脚本自己加载所需要的环境变量。 "></a>这是因为cron进程执行的shell脚本是不会自动加载用户目录下的.profile文件，所以需要脚本自己加载所需要的环境变量。 </h2><p>环境变量文件加载顺序 </p>
-<ul>
-<li>/etc/profile: 此文件为系统的每个用户设置环境信息,当用户第一次登录时,该文件被执行. 并从/etc/profile.d目录的配置文件中搜集shell的设置. </li>
-<li>/etc/bashrc: 为每一个运行bash shell的用户执行此文件.当bash shell被打开时,该文件被读取. </li>
-<li>~/.bash_profile: 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次!默认情况下,他设置一些环境变量,执行用户的.bashrc文件. </li>
-<li>~/.bashrc: 该文件包含专用于你的bash shell的bash信息,当登录时以及每次打开新的shell时,该文件被读取. </li>
-<li>~/.bash_logout: 当每次退出系统(退出bash shell)时,执行该文件. </li>
-<li>另外,/etc/profile中设定的变量(全局)的可以作用于任何用户,而~/.bashrc等中设定的变量(局部)只能继承/etc/profile中的变量,他们是”父子”关系. </li>
-<li>~/.bash_profile 是交互式、login 方式进入 bash 运行的 </li>
-<li>~/.bashrc 是交互式 non-login 方式进入 bash 运行的 </li>
-</ul>
-<p>通常二者设置大致相同，所以通常前者会调用后者</p>
+        <span itemprop="articleBody"><p>从上个星期开始，每隔那么几个分钟，手机就会收到一条短信，起初不知道这是什么短信，但是可以确信的是这是途牛运维发过来的短信，经过和运维沟通过后发现，这个是数据库从库延迟增加导致的短信，我赶快打开数据库运维监控页面，发现数据库连接池已经到达上线3000，从库的延迟增加到每秒延迟1000+的数量。</p>
+<p>使用线上sqladmin查询，都是无功而返，几乎都是查询超时。在运维查看页面我打开当前运行sql，发现堵住了大概有上千的sql，期初怀疑是sql写的有问题，将sql进行explain发现确实有点小问题，有个sql使用了临时表，正好周一那天我修改了一下进行上线。附mysql的explain 的type类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">|  ALL              |  全表扫描</div><div class="line"></div><div class="line">|  index            |  索引全扫描</div><div class="line"></div><div class="line">|  range            |  索引范围扫描，常用语&lt;,&lt;=,&gt;=,between等操作</div><div class="line"></div><div class="line">|  ref                |  使用非唯一索引扫描或唯一索引前缀扫描，返回单条记录，常出现在关联查询中</div><div class="line"></div><div class="line">|  eq_ref           |  类似ref，区别在于使用的是唯一索引，使用主键的关联查询</div><div class="line"></div><div class="line">|  const/system  |  单条记录，系统会把匹配行中的其他列作为常数处理，如主键或唯一索引查询</div><div class="line"></div><div class="line">|  null                |  MySQL不访问任何表或索引，直接返回结果</div></pre></td></tr></table></figure>
+<p>上完线后，发现还是不能够有效的降低从库的延迟压力，sql经过优化已经完全可以不会造成这种问题，但是查看线上的余位界面数据指标丝毫没有下降的意思。这个项目我已经完全做了读写分离，经过和dba沟通后以及dba了解我的业务后，发现是牛抢票的查询速度太快导致的，于是我降低了抢票的查询速度，果然延迟瞬间下降了，所以问题出现在查询并发非常高导致从库读写压力大，cpu计算负荷大等原因造成db反馈数据慢。</p>
+<p>dba给出了4点建议：</p>
+<p>1.业务上增加对缓存层<br>2.读从库的一部分流量转到主库上去<br>3.调整mysql系统参数，需要重启<br>4.增加从库机器</p>
+<p>这4个建议可以说很靠谱，所谓抢票业务就是不断查询余票的相关数量在进行有效的分单操作。在获取订单的时候就会对mysql产生每秒上千次的查询，造成db压力，由于db的从库机器非常少导致压力不能均衡从而导致延迟增高的风险。</p>
+<p>所以经过以上排查分析，我在获取订单数据的时候增加一层缓存，缓存根据抢票频率进行设置超时时间，即缓存的订单的新鲜度，因为抢票订单每时每秒都会增加，所以可能刚下的抢票订单需要过一个缓存新鲜度的时间才能进行有效占位。</p>
+<p>后面还将对抢票的分片进行改造。在淘宝的开源项目定时分布式调度tbschedule上，我进行了改进，符合牛抢票的相关特点，相信后面抢票能力会有很大的提升。</p>
 </span>
       
     </div>
@@ -298,7 +285,7 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
       
         <div class="post-tags">
           
-            <a href="/tags/crontab/" rel="tag">#crontab</a>
+            <a href="/tags/途牛/" rel="tag">#途牛</a>
           
         </div>
       
@@ -307,13 +294,11 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/05/22/深入分析 iBATIS 框架之系统架构与映射原理/" rel="prev">深入分析 iBATIS 框架之系统架构与映射原理</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/05/18/java.util.concurrent用户指南/" rel="next">java.util.concurrent包详解</a>
+              <a href="/2018/06/04/记2018-06-04途牛重大事故/" rel="next">记2018-06-04途牛重大事故</a>
             
           </div>
         </div>
@@ -451,7 +436,7 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#这是因为cron进程执行的shell脚本是不会自动加载用户目录下的-profile文件，所以需要脚本自己加载所需要的环境变量。"><span class="nav-number">1.</span> <span class="nav-text">这是因为cron进程执行的shell脚本是不会自动加载用户目录下的.profile文件，所以需要脚本自己加载所需要的环境变量。 </span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
@@ -526,9 +511,9 @@ crontab中启动的shell脚本不能正常运行，但是使用手动执行没�
     <script type="text/javascript">
    
       var disqus_shortname = 'dingran';
-      var disqus_identifier = '2016/05/19/crontab 环境变量的使用方法/';
-      var disqus_title = 'crontab 环境变量的使用方法';
-      var disqus_url = 'http://dingran.top/2016/05/19/crontab 环境变量的使用方法/';
+      var disqus_identifier = '2018/06/09/牛抢票DB异常问题分析/';
+      var disqus_title = '牛抢票DB异常问题分析';
+      var disqus_url = 'http://dingran.top/2018/06/09/牛抢票DB异常问题分析/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
