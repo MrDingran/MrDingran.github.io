@@ -40,22 +40,22 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="9月4号，上午都是风平浪静的，最近12306一直在搞什么同名支付，这边各个组也都积极应对，否则后面都无法卖票了。
-中午刚吃饭回来，就发现12306接口响应速度非常慢，途牛火车票这边几乎查询不出来任何数据。比较恶心的是12306不返回数据也就算了呗，结果返回了为空的结果，其实这个站站对是有车次的呀，数据中心的基础数据几乎都被12306给打乱了。
-本来我就预想这要做一个容灾的机制：现在所有的数据都是从">
+<meta name="description" content="今天开始准备将牛抢票进行分片重构，在原有的基础上删除无用的代码以及相关测试代码，将我准备分片的项目集成到牛抢票系统里面，一切准备完毕，准备启动调试。
+页面缓缓打开，却发现登录后面的css样式不显示，用chrome打开开发工具进行抓包，也没有发现问题，打开favicon，http状态码显示的200，就是不显示图片，这让我很苦恼哇。
+于是度娘了好久，始终没有找到正确的姿势，在抓取css的包过程中发现c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="记20170905的上线总结">
-<meta property="og:url" content="http://dingran.top/2017/09/05/记20170905的上线总结/index.html">
+<meta property="og:title" content="解决chrome下css样式不显示- Failed to decode downloaded font">
+<meta property="og:url" content="http://dingran.top/2018/06/13/解决chrome下css样式不显示/index.html">
 <meta property="og:site_name" content="崎岖的路,走出自己的脚步">
-<meta property="og:description" content="9月4号，上午都是风平浪静的，最近12306一直在搞什么同名支付，这边各个组也都积极应对，否则后面都无法卖票了。
-中午刚吃饭回来，就发现12306接口响应速度非常慢，途牛火车票这边几乎查询不出来任何数据。比较恶心的是12306不返回数据也就算了呗，结果返回了为空的结果，其实这个站站对是有车次的呀，数据中心的基础数据几乎都被12306给打乱了。
-本来我就预想这要做一个容灾的机制：现在所有的数据都是从">
-<meta property="og:updated_time" content="2017-09-05T07:51:34.000Z">
+<meta property="og:description" content="今天开始准备将牛抢票进行分片重构，在原有的基础上删除无用的代码以及相关测试代码，将我准备分片的项目集成到牛抢票系统里面，一切准备完毕，准备启动调试。
+页面缓缓打开，却发现登录后面的css样式不显示，用chrome打开开发工具进行抓包，也没有发现问题，打开favicon，http状态码显示的200，就是不显示图片，这让我很苦恼哇。
+于是度娘了好久，始终没有找到正确的姿势，在抓取css的包过程中发现c">
+<meta property="og:updated_time" content="2018-06-13T09:56:37.916Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="记20170905的上线总结">
-<meta name="twitter:description" content="9月4号，上午都是风平浪静的，最近12306一直在搞什么同名支付，这边各个组也都积极应对，否则后面都无法卖票了。
-中午刚吃饭回来，就发现12306接口响应速度非常慢，途牛火车票这边几乎查询不出来任何数据。比较恶心的是12306不返回数据也就算了呗，结果返回了为空的结果，其实这个站站对是有车次的呀，数据中心的基础数据几乎都被12306给打乱了。
-本来我就预想这要做一个容灾的机制：现在所有的数据都是从">
+<meta name="twitter:title" content="解决chrome下css样式不显示- Failed to decode downloaded font">
+<meta name="twitter:description" content="今天开始准备将牛抢票进行分片重构，在原有的基础上删除无用的代码以及相关测试代码，将我准备分片的项目集成到牛抢票系统里面，一切准备完毕，准备启动调试。
+页面缓缓打开，却发现登录后面的css样式不显示，用chrome打开开发工具进行抓包，也没有发现问题，打开favicon，http状态码显示的200，就是不显示图片，这让我很苦恼哇。
+于是度娘了好久，始终没有找到正确的姿势，在抓取css的包过程中发现c">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -65,7 +65,7 @@
   };
 </script>
 
-  <title> 记20170905的上线总结 | 崎岖的路,走出自己的脚步 </title>
+  <title> 解决chrome下css样式不显示- Failed to decode downloaded font | 崎岖的路,走出自己的脚步 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -221,7 +221,7 @@
           
           
             
-              记20170905的上线总结
+              解决chrome下css样式不显示- Failed to decode downloaded font
             
           
         </h1>
@@ -230,8 +230,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2017-09-05T15:30:06+08:00" content="2017-09-05">
-            2017-09-05
+          <time itemprop="dateCreated" datetime="2018-06-13T17:45:26+08:00" content="2018-06-13">
+            2018-06-13
           </time>
         </span>
 
@@ -271,12 +271,12 @@
       
 
       
-        <span itemprop="articleBody"><p>9月4号，上午都是风平浪静的，最近12306一直在搞什么同名支付，这边各个组也都积极应对，否则后面都无法卖票了。</p>
-<p>中午刚吃饭回来，就发现12306接口响应速度非常慢，途牛火车票这边几乎查询不出来任何数据。比较恶心的是12306不返回数据也就算了呗，结果返回了为空的结果，其实这个站站对是有车次的呀，数据中心的基础数据几乎都被12306给打乱了。</p>
-<p>本来我就预想这要做一个容灾的机制：现在所有的数据都是从12306爬下来的，如果12306加紧封ip的步骤，我们就会面临很被动的局面，而事实也正是如此，在8.23号以来，12306不断提升封ip的步伐，最初一天只会封我们几百次请求，到现在几乎都把我们逼到死胡同了，而9.4号这天，12306的不知道是上线还是在干什么，首先余位查询接口接连变了两次，而后，余位查询全部都是访问网络繁忙，再往后什么也查不出来了。作为12306的“分销商”，12306的可用性几乎连2个9都达不到，如果是上线或者修改什么在白天是不是也太儿戏了，特别是在10.1这么个买票小高峰的时间段。</p>
-<p>容灾机制其实我已经构思完毕了，只是这个接口返回的数据和我现有的数据有些冲突，所谓冲突的点就是原能够提供的数据，这个新接口不能提供或者根本没有，而我们的接口返回的数据这些参数还必须都要有。我准备在研究一段时间，但是9.4号这一天突然12306的查询接口不可用了，逼着我把这个接口给紧急上线了，因为我们的车次列表根本不显示任何数据，紧急发布一版了后，车次列表可以暂时显示，所有的线上流量全部走新接口，由于是紧急上线，线上的接口还是有很多问题的，有些没有提供的参数需要我进行查找、计算得出来的。并且12306的车次还有暂售、停运、起售和我们自己的预售。这么多状态少了一个都不行，都会影响客人的下单引起客人的投诉。</p>
-<p>9.4号注定不是平凡的一天，由于12306的变动，所有的供应商出票10家有9家全部瘫痪，造成订单几乎卡在占位中，后面分销商不停的催、我们催供应商。到了下午六点以后，12306的接口有所恢复，但是查询的效果还是很低，到了今天算是终于告于一个段落。</p>
-<p>祈祷12306不要搞什么花样，还有这个同名支付不要再引起一波动荡！</p>
+        <span itemprop="articleBody"><p>今天开始准备将牛抢票进行分片重构，在原有的基础上删除无用的代码以及相关测试代码，将我准备分片的项目集成到牛抢票系统里面，一切准备完毕，准备启动调试。</p>
+<p>页面缓缓打开，却发现登录后面的css样式不显示，用chrome打开开发工具进行抓包，也没有发现问题，打开favicon，http状态码显示的200，就是不显示图片，这让我很苦恼哇。</p>
+<p>于是度娘了好久，始终没有找到正确的姿势，在抓取css的包过程中发现console打出了一些黄色的提示信息：Failed to decode downloaded font，带着试试的态度去度娘了一下，果然找到了关键的回答帖子：<a href="https://blog.csdn.net/xinqilela/article/details/79664591" target="_blank" rel="external">https://blog.csdn.net/xinqilela/article/details/79664591</a></p>
+<p>说的很明白哇<br><b>因为经过maven的filter，会破坏font文件的二进制文件格式，导致前台解析出错。</b><br>按照正确的姿势我修改了配置maven的pom配置文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-war-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.1.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">webResources</span>&gt;</span></div><div class="line">                        <span class="tag">&lt;<span class="name">resource</span>&gt;</span></div><div class="line">                            <span class="tag">&lt;<span class="name">directory</span>&gt;</span>src/main/webapp<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></div><div class="line">                            <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>false<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span> //这里很重要</div><div class="line">                        <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;/<span class="name">webResources</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>排查了一下午终于解决了这个问题，所以找对姿势还是很重要的。</p>
 </span>
       
     </div>
@@ -294,13 +294,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/09/13/爬取12306cookie的总结/" rel="prev">爬取12306cookie的总结</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/08/30/spring事务失效原因之一/" rel="next">spring事务失效原因之一</a>
+              <a href="/2018/06/09/牛抢票DB异常问题分析/" rel="next">牛抢票DB异常问题分析</a>
             
           </div>
         </div>
