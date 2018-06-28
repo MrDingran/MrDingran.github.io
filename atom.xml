@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.top/"/>
-  <updated>2018-06-13T09:56:37.916Z</updated>
+  <updated>2018-06-28T06:06:10.991Z</updated>
   <id>http://dingran.top/</id>
   
   <author>
@@ -14,6 +14,61 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>无需第三方软件实现Mac支持ntfs读写的简单操作</title>
+    <link href="http://dingran.top/2018/06/28/%E6%97%A0%E9%9C%80%E7%AC%AC%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6%E5%AE%9E%E7%8E%B0Mac%E6%94%AF%E6%8C%81ntfs%E8%AF%BB%E5%86%99%E7%9A%84%E7%AE%80%E5%8D%95%E6%93%8D%E4%BD%9C/"/>
+    <id>http://dingran.top/2018/06/28/无需第三方软件实现Mac支持ntfs读写的简单操作/</id>
+    <published>2018-06-28T05:58:35.000Z</published>
+    <updated>2018-06-28T06:06:10.991Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>此方法转载自知乎，@知乎用户的回答<br>原文链接：<a href="https://www.zhihu.com/question/19571334/answer/224291746" target="_blank" rel="external">https://www.zhihu.com/question/19571334/answer/224291746</a><br>本文参照链接：<a href="https://blog.csdn.net/u013247765/article/details/77932144/" target="_blank" rel="external">https://blog.csdn.net/u013247765/article/details/77932144/</a></p>
+</blockquote>
+<hr>
+<p>参照此方法在自己的Mac上试验成功，现记录此方法如下(略有改动)：</p>
+<h2 id="本机环境："><a href="#本机环境：" class="headerlink" title="本机环境："></a>本机环境：</h2><ul>
+<li>macOS Sierra version 10.13.5 </li>
+<li>2017 款 MacBook Pro </li>
+<li>2018.6.28</li>
+</ul>
+<p>此方法对10.6以前版本的OS理论上是无效的<br>苹果理论上是支持NTFS的，修改下原生配置文件就可以实现读写ntfs</p>
+<h2 id="流程简介"><a href="#流程简介" class="headerlink" title="流程简介"></a>流程简介</h2><ul>
+<li>挂载上你的NTFS硬盘，查看硬盘名称</li>
+<li>编辑/etc/fstab文件，使其支持NTFS写入</li>
+<li>将/Volumes中的NTFS磁盘快捷方式到Finder</li>
+</ul>
+<h2 id="详细流程"><a href="#详细流程" class="headerlink" title="详细流程"></a>详细流程</h2><ul>
+<li><p>插上硬盘后，查看你的硬盘名称，这里假设名称是AngleDisk，牢记之（你的可不是这个呀！！）</p>
+</li>
+<li><p>打开Applications的Terminal, 你也可以直接spotlight输入terminal打开</p>
+</li>
+<li><p>在终端输入sudo nano /etc/fstab 敲击回车</p>
+</li>
+<li><p>现在你看到了一个编辑界面，输入<b>LABEL=AngleDisk none ntfs rw,auto,nobrowse</b>后，敲击回车，再Ctrl+X，再敲击Y，再敲击回车</p>
+</li>
+</ul>
+<p>此时，退出你的移动硬盘，再重新插入，你会发现磁盘没有显示再桌面或是Finder之前出现的地方，别慌</p>
+<p>打开Finder，Command+Shift+G，输入框中输入/Volumes，回车，你就可以看到你的磁盘啦！是可以读写的哟，Enjoy</p>
+<p>方便起见，你可以直接把磁盘拖到Finder侧边栏中，这样下次使用就不用进入到/Volumes目录打开了</p>
+<p>Enjoy !!</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;此方法转载自知乎，@知乎用户的回答&lt;br&gt;原文链接：&lt;a href=&quot;https://www.zhihu.com/question/19571334/answer/224291746&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="mac" scheme="http://dingran.top/tags/mac/"/>
+    
+      <category term="ntfs" scheme="http://dingran.top/tags/ntfs/"/>
+    
+  </entry>
   
   <entry>
     <title>解决chrome下css样式不显示- Failed to decode downloaded font</title>
@@ -600,34 +655,6 @@
     
       &lt;p&gt;9.18号，看起一切都十分正常，我准备开始研究火车票的架构推进策略。然而客服报了一单订单价格出现异常。起初还没有在意这是什么导致的，查询这个站站对后发现，12306居然没有给这个车次赋值价格，剩余的几个车次都没有价格，我的天啊，发生了生么？&lt;/p&gt;
 &lt;p&gt;查询app端发现价
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>爬取12306cookie的总结</title>
-    <link href="http://dingran.top/2017/09/13/%E7%88%AC%E5%8F%9612306cookie%E7%9A%84%E6%80%BB%E7%BB%93/"/>
-    <id>http://dingran.top/2017/09/13/爬取12306cookie的总结/</id>
-    <published>2017-09-13T03:01:06.000Z</published>
-    <updated>2017-09-13T08:08:20.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>9.4号，所有的供应商全部挂掉了，就剩一家还在苟延残喘，随后一天后，供应商全部恢复，不得不赞叹，供应商的应对策略还是很厉害的。我们的直连趴窝了好几天后，经过艰难的摸索终于可以试营业了。之前一直委以重任的app反刷现在也停下来了，降到现在的1%左右的使用率，之前还有大概70以上呢。</p>
-<p>造成这么多的事故，肯定是12306采用了或者更改了什么机制导致了大家都集体崩溃了。这边DTC的查询量也被封的十分严重，所以找到应对方法十分重要。首先一般查询都是从query接口开始的，但是12306一般都是从log接口开始的，之前也一直没有在意这个接口到底是干什么的，一直认为就是在记录一些日志。最近和在飞飞研究他那块问题的时候，发现有些接口变了，最主要的是12306开始往回写了一些cookie的东西，这引起了我的注意。那么经过推敲，我觉得我这边肯定也是返回了cookie的东西。我将拼接好的链接，放到另一个浏览器采用无痕模式访问，结果直接返回悲剧了，ok，看来是12306发现了我们的非法访问，并且在返回结果返回“非法请求”，有点搞笑。怎么让我们的请求变成合理请求呢？就得从log接口入手了。</p>
-<p>首先将浏览器缓存包括cookie全部清除，调用log接口，发现返回结果还是和之前一样，没没有发生任何变化，但是在response的header里面多了set-cookie，我们这边爬取，直接忽略cookie，可能就直接12306识别出来了。所以现在本地做测试，先访问log接口，抓取cookie，然后在调用query接口的时候，带上这些cookie，重启服务器，再次调用接口，但是发现，还是发现非法请求，咦？啥问题，不是该有的都有了么？肯定是什么东西还是被察觉了，经过询问飞飞（他踩了好久的坑），他现在可以使用了，我问题他怎么使用的cookie，他说用他用的cookiestore，我则使用的字符串拼接，可能是这个原因么？</p>
-<p>我将log接口返回的cookie，封装成cookiestore，再次将cookiestore载入httpclient，发起请求，发现这次不是非法请求了，而是网络繁忙了。ok，又向胜利近了一步，剩下的再次观察浏览器cookie，发现还有很多其他静态cookie，都是用来保存上次访问的信息的，我直接将这些cookie动态生成，封装成cookiestore，一起在访问query接口，一起带给服务器，再次尝试请求query接口，嗯，终于返回结果了，通过这一步步的尝试，终于摸清楚了12306到底搞了什么名堂。</p>
-<p>后续app反刷等也必须采用这种方式进行处理，否则无法获取真正的数据，我们就断了一条路获取数据，虽然我们有很多的路获取数据^_^</p>
-<p>PS:今天下午，之前一直搁置的需求找回12306密码，之前由于种种原因始终没有通过最后的请求，下午闲来没事采用上面的cookiestore的方式，认真的将每个cookie小心导入，最后，binggo，成功了，终于最近觉得做了一件有点意义的事情。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;9.4号，所有的供应商全部挂掉了，就剩一家还在苟延残喘，随后一天后，供应商全部恢复，不得不赞叹，供应商的应对策略还是很厉害的。我们的直连趴窝了好几天后，经过艰难的摸索终于可以试营业了。之前一直委以重任的app反刷现在也停下来了，降到现在的1%左右的使用率，之前还有大概70以
     
     </summary>
     
