@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.top/"/>
-  <updated>2018-06-28T06:06:10.991Z</updated>
+  <updated>2018-06-28T06:10:00.957Z</updated>
   <id>http://dingran.top/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://dingran.top/2018/06/28/%E6%97%A0%E9%9C%80%E7%AC%AC%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6%E5%AE%9E%E7%8E%B0Mac%E6%94%AF%E6%8C%81ntfs%E8%AF%BB%E5%86%99%E7%9A%84%E7%AE%80%E5%8D%95%E6%93%8D%E4%BD%9C/"/>
     <id>http://dingran.top/2018/06/28/无需第三方软件实现Mac支持ntfs读写的简单操作/</id>
     <published>2018-06-28T05:58:35.000Z</published>
-    <updated>2018-06-28T06:06:10.991Z</updated>
+    <updated>2018-06-28T06:10:00.957Z</updated>
     
     <content type="html"><![CDATA[<blockquote>
 <p>此方法转载自知乎，@知乎用户的回答<br>原文链接：<a href="https://www.zhihu.com/question/19571334/answer/224291746" target="_blank" rel="external">https://www.zhihu.com/question/19571334/answer/224291746</a><br>本文参照链接：<a href="https://blog.csdn.net/u013247765/article/details/77932144/" target="_blank" rel="external">https://blog.csdn.net/u013247765/article/details/77932144/</a></p>
@@ -39,15 +39,18 @@
 <li>将/Volumes中的NTFS磁盘快捷方式到Finder</li>
 </ul>
 <h2 id="详细流程"><a href="#详细流程" class="headerlink" title="详细流程"></a>详细流程</h2><ul>
-<li><p>插上硬盘后，查看你的硬盘名称，这里假设名称是AngleDisk，牢记之（你的可不是这个呀！！）</p>
+<li><p>插上硬盘后，查看你的硬盘名称，这里假设名称是<b>AngleDisk</b>，牢记之（你的可不是这个呀！！）</p>
 </li>
 <li><p>打开Applications的Terminal, 你也可以直接spotlight输入terminal打开</p>
 </li>
 <li><p>在终端输入sudo nano /etc/fstab 敲击回车</p>
 </li>
-<li><p>现在你看到了一个编辑界面，输入<b>LABEL=AngleDisk none ntfs rw,auto,nobrowse</b>后，敲击回车，再Ctrl+X，再敲击Y，再敲击回车</p>
+<li><p>现在你看到了一个编辑界面，输入LABEL=<b>AngleDisk</b> none ntfs rw,auto,nobrowse后，敲击回车，再Ctrl+X，再敲击Y，再敲击回车</p>
+</li>
+<li><p>一定将上面名称换成你的ntfs的名称</p>
 </li>
 </ul>
+<hr>
 <p>此时，退出你的移动硬盘，再重新插入，你会发现磁盘没有显示再桌面或是Finder之前出现的地方，别慌</p>
 <p>打开Finder，Command+Shift+G，输入框中输入/Volumes，回车，你就可以看到你的磁盘啦！是可以读写的哟，Enjoy</p>
 <p>方便起见，你可以直接把磁盘拖到Finder侧边栏中，这样下次使用就不用进入到/Volumes目录打开了</p>
