@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.top/"/>
-  <updated>2018-06-28T06:10:00.957Z</updated>
+  <updated>2018-06-30T03:55:00.047Z</updated>
   <id>http://dingran.top/</id>
   
   <author>
@@ -14,6 +14,40 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Mac下利用ssh进行文件传输</title>
+    <link href="http://dingran.top/2018/06/30/Mac%E4%B8%8B%E5%88%A9%E7%94%A8ssh%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93/"/>
+    <id>http://dingran.top/2018/06/30/Mac下利用ssh进行文件传输/</id>
+    <published>2018-06-30T03:49:44.000Z</published>
+    <updated>2018-06-30T03:55:00.047Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="1、从服务器上下载文件"><a href="#1、从服务器上下载文件" class="headerlink" title="1、从服务器上下载文件"></a>1、从服务器上下载文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scp username@servername:/path/filename /var/www/local_dir（本地目录）</div></pre></td></tr></table></figure>
+<p>例如scp root@192.168.0.101:/var/www/test.txt  把192.168.0.101上的/var/www/test.txt 的文件下载到/var/www/local_dir（本地目录）</p>
+<h2 id="2、上传本地文件到服务器"><a href="#2、上传本地文件到服务器" class="headerlink" title="2、上传本地文件到服务器"></a>2、上传本地文件到服务器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scp /path/filename username@servername:/path</div></pre></td></tr></table></figure>
+<p>例如scp /var/www/test.php  root@192.168.0.101:/var/www/  把本机/var/www/目录下的test.php文件上传到192.168.0.101这台服务器上的/var/www/目录中</p>
+<h2 id="3、从服务器下载整个目录"><a href="#3、从服务器下载整个目录" class="headerlink" title="3、从服务器下载整个目录"></a>3、从服务器下载整个目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scp -r username@servername:/var/www/remote_dir/（远程目录） /var/www/local_dir（本地目录）</div></pre></td></tr></table></figure>
+<p>例如:scp -r root@192.168.0.101:/var/www/test  /var/www/  </p>
+<h2 id="4、上传目录到服务器"><a href="#4、上传目录到服务器" class="headerlink" title="4、上传目录到服务器"></a>4、上传目录到服务器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scp  -r local_dir username@servername:remote_dir</div></pre></td></tr></table></figure>
+<p>例如：scp -r test  root@192.168.0.101:/var/www/   把当前目录下的test目录上传到服务器的/var/www/ 目录</p>
+<p>注：目标服务器要开启写入权限。</p>
+<h2 id="补充修改linux的主机名"><a href="#补充修改linux的主机名" class="headerlink" title="补充修改linux的主机名"></a>补充修改linux的主机名</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">vi /etc/sysconfig/network</div><div class="line"></div><div class="line">HOSTNAME=localhost.localdomain  #修改localhost.localdomain为你要的</div><div class="line"></div><div class="line">//需要reboot</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;1、从服务器上下载文件&quot;&gt;&lt;a href=&quot;#1、从服务器上下载文件&quot; class=&quot;headerlink&quot; title=&quot;1、从服务器上下载文件&quot;&gt;&lt;/a&gt;1、从服务器上下载文件&lt;/h2&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;tabl
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="mac" scheme="http://dingran.top/tags/mac/"/>
+    
+      <category term="ssh" scheme="http://dingran.top/tags/ssh/"/>
+    
+  </entry>
   
   <entry>
     <title>无需第三方软件实现Mac支持ntfs读写的简单操作</title>
@@ -631,33 +665,6 @@
     
       &lt;p&gt;10.1眨眼就过去了，回家呆了9天左右，算是一个小长假了，走之前不知道什么情况价格出现了很多脏数据。数据中心本身就是个源头，结果源头的数据乱套了就废了。途牛线、分销线都开始报价格不准，各种大王过来捅呀。。。所以整个假期过的都不安分。&lt;/p&gt;
 &lt;p&gt;坐飞机刚回家的第一天晚上，
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>9.18号12306巨坑来袭</title>
-    <link href="http://dingran.top/2017/09/22/9-18%E5%8F%B712306%E5%B7%A8%E5%9D%91%E6%9D%A5%E8%A2%AD/"/>
-    <id>http://dingran.top/2017/09/22/9-18号12306巨坑来袭/</id>
-    <published>2017-09-22T08:16:41.000Z</published>
-    <updated>2017-09-22T08:26:01.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>9.18号，看起一切都十分正常，我准备开始研究火车票的架构推进策略。然而客服报了一单订单价格出现异常。起初还没有在意这是什么导致的，查询这个站站对后发现，12306居然没有给这个车次赋值价格，剩余的几个车次都没有价格，我的天啊，发生了生么？</p>
-<p>查询app端发现价格也没有，这个很严重的呀，这样会导致我们的火车票的车次列表的信息显示不完整，不光是影响了途牛线，连京东也叫了起来，发了100+个订单过来，说是占位失败。大批量的站站对都是从哈尔滨西发车的都有问题。查看相关站站对，发现有的价格涨了不少，还有一些是价格为空的。这次10.1，12306增加了部分的临时车次，也许12306的相关车次也在进行相关的调整。</p>
-<p>此次影响的范围已经超过了我的预计，必须立马马上进行修复方案。12306的价格已经不能作为唯一的价格来源，为此我研究了多种方案后，进行相关相似性对比，找出了最匹配的方案，立马开始开发编码，用了不到一天的努力，价格开始大规模修复，截止目前，几乎不再有价格的问题。</p>
-<p>祈祷12306稳定一些 好吧啦！！！在这么折磨真要疯了的节奏。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;9.18号，看起一切都十分正常，我准备开始研究火车票的架构推进策略。然而客服报了一单订单价格出现异常。起初还没有在意这是什么导致的，查询这个站站对后发现，12306居然没有给这个车次赋值价格，剩余的几个车次都没有价格，我的天啊，发生了生么？&lt;/p&gt;
-&lt;p&gt;查询app端发现价
     
     </summary>
     
