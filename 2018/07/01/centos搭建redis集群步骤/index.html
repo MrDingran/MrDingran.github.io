@@ -50,7 +50,7 @@
 <meta property="og:description" content="参照龙果学院的讲师搭建redis集群
 
 准备4台centos使用virtualBox启动4台虚拟机（1）使用课程提供的CentOS 6.5镜像即可，CentOS-6.5-i386-minimal.iso。（不一定按照这个）（2）创建虚拟机：打开Virtual Box，点击“新建”按钮，点击“下一步”，输入虚拟机名称为eshop-cache01，选择操作系统为Linux，选择版本为Red Hat，">
-<meta property="og:updated_time" content="2018-07-01T06:16:13.462Z">
+<meta property="og:updated_time" content="2018-07-01T06:17:36.224Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="centos搭建redis集群步骤">
 <meta name="twitter:description" content="参照龙果学院的讲师搭建redis集群
@@ -295,7 +295,7 @@
 <p>使用redis-3.2.8.tar.gz</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">tar -zxvf redis-3.2.8.tar.gz</div><div class="line">cd redis-3.2.8</div><div class="line">make &amp;&amp; make test &amp;&amp; make install</div></pre></td></tr></table></figure>
 <h2 id="redis-启动"><a href="#redis-启动" class="headerlink" title="redis 启动"></a>redis 启动</h2><p>（1）redis utils目录下，有个redis_init_script脚本<br>（2）将redis_init_script脚本拷贝到linux的/etc/init.d目录中，将redis_init_script重命名为redis_6379，6379是我们希望这个redis实例监听的端口号<br>（3）修改redis_6379脚本的第6行的REDISPORT，设置为相同的端口号（默认就是6379）<br>（4）创建两个目录：/etc/redis（存放redis的配置文件），/var/redis/6379（存放redis的持久化文件）<br>（5）修改redis配置文件（默认在根目录下，redis.conf），拷贝到/etc/redis目录中，修改名称为6379.conf<br>（6）修改redis.conf中的部分配置为生产环境</p>
-<p>修改config目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">daemonize	yes							让redis以daemon进程运行</div><div class="line">pidfile		/var/run/redis_6379.pid 	设置redis的pid文件位置</div><div class="line">port		6379						设置redis的监听端口号</div><div class="line">dir 		/var/redis/6379				设置持久化文件的存储位置</div></pre></td></tr></table></figure></p>
+<p>修改config目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">daemonize	yes		让redis以daemon进程运行</div><div class="line">pidfile		/var/run/redis_6379.pid 	设置redis的pid文件位置</div><div class="line">port		6379						设置redis的监听端口号</div><div class="line">dir 		/var/redis/6379				设置持久化文件的存储位置</div></pre></td></tr></table></figure></p>
 <p>（7）启动redis，执行cd /etc/init.d, chmod 777 redis_6379，./redis_6379 start</p>
 <p>（8）确认redis进程是否启动，ps -ef | grep redis</p>
 <p>（9）让redis跟随系统启动自动启动</p>
