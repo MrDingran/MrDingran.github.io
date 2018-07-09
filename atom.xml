@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.top/"/>
-  <updated>2018-07-01T06:17:36.224Z</updated>
+  <updated>2018-07-09T02:45:52.820Z</updated>
   <id>http://dingran.top/</id>
   
   <author>
@@ -14,6 +14,54 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>centos搭建redis cluster集群</title>
+    <link href="http://dingran.top/2018/07/09/centos%E6%90%AD%E5%BB%BAredis-cluster%E9%9B%86%E7%BE%A4/"/>
+    <id>http://dingran.top/2018/07/09/centos搭建redis-cluster集群/</id>
+    <published>2018-07-09T02:15:57.000Z</published>
+    <updated>2018-07-09T02:45:52.820Z</updated>
+    
+    <content type="html"><![CDATA[<p>根据上次的博文，搭建好了redis后，开始进行搭建redis-cluster集群。redis cluster集群，要求至少3个master，去组成一个高可用，健壮的分布式的集群，每个master都建议至少给一个slave，3个master，3个slave。</p>
+<p>首先准备3台centos，每台centos按照上一篇博文搭建好redis，即每台centos上面启动2台redis，一共6个。</p>
+<p>先安装第一台centos：</p>
+<p>创建目录：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mkdir -p /etc/redis-cluster</div><div class="line">mkdir -p /var/log/redis</div><div class="line">mkdir -p /var/redis/7001</div><div class="line">mkdir -p /var/redis/7002</div></pre></td></tr></table></figure></p>
+<p>修改/etc/redis/6379.conf的配置参数如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">port 7001 //原来6379改为7001</div><div class="line">cluster-enabled yes</div><div class="line">cluster-config-file /etc/redis-cluster/node-7001.conf</div><div class="line">cluster-node-timeout 15000</div><div class="line">daemonize	yes							</div><div class="line">pidfile		/var/run/redis_7001.pid 						</div><div class="line">dir 		/var/redis/7001		</div><div class="line">logfile /var/log/redis/7001.log</div><div class="line">bind 192.168.1.X //绑定本机ip		</div><div class="line">appendonly yes</div></pre></td></tr></table></figure>
+<p>如果配置文件有配置slaveof 请注释掉。 </p>
+<p>将6379.conf 重命名为7001.conf</p>
+<p>一定要将原来的6379 改为7001 对应的目录也要进行相应的改变。<br>复制7001.conf 重命名为7002.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp 7001.conf 7002.conf</div></pre></td></tr></table></figure></p>
+<p>然后将7002.conf里面的7001更改为7002,可以直接vi进行字符串替换<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:%s/7001/7002/</div></pre></td></tr></table></figure></p>
+<p>这样配置文件就配置好了，在去配置启动项：</p>
+<p>进入/etc/init.d/目录下，将redis_6379 更名为redis_7001,在复制一份出来redis_7002</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">mv redis_6379 redis_7001</div><div class="line"></div><div class="line">cp redis_7001 redis_7002</div></pre></td></tr></table></figure>
+<p>尝试启动：<br>进入/etc/init.d/<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">./redis_7001 start</div><div class="line"></div><div class="line">./redis_7002 start</div><div class="line"></div><div class="line">ps -ef|grep redis </div><div class="line">查看2个redis是否都启动，没有启动根据提示信息或者日志进行重新配置</div></pre></td></tr></table></figure></p>
+<p>如果上面都配置好了，启动成功，第一台centos的2台redis就部署好了，在第二台centos上面部署7003、7004方法同上，注意bind的ip地址 以及端口号。第三台centos同第二台。</p>
+<h2 id="创建集群"><a href="#创建集群" class="headerlink" title="创建集群"></a>创建集群</h2><p>配置ruby，这里一定要注意ruby的版本号一定要<b>大于2.2.2</b>否则又得重新安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">wget https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.1.tar.gz</div><div class="line">tar -zxvf ruby-2.3.1.tar.gz</div><div class="line">./configure -prefix=/usr/local/ruby</div><div class="line">make &amp;&amp; make install</div><div class="line">cd /usr/local/ruby</div><div class="line">cp bin/ruby /usr/local/bin</div><div class="line">cp bin/gem /usr/local/bin</div><div class="line"></div><div class="line">wget http://rubygems.org/downloads/redis-3.3.0.gem</div><div class="line">gem install -l ./redis-3.3.0.gem</div><div class="line">gem list --check redis gem</div></pre></td></tr></table></figure>
+<p>尝试使用yum install ruby可能下载的版本较低，所以推荐下载好了再进行安装。配置ruby的时候会报各种错误可以看看这个文章：<a href="https://blog.csdn.net/feinifi/article/details/78251486" target="_blank" rel="external">https://blog.csdn.net/feinifi/article/details/78251486</a></p>
+<p>然后拷贝rdis-trib.rb</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">cp /usr/local/redis-3.2.8/src/redis-trib.rb /usr/local/bin</div></pre></td></tr></table></figure>
+<p>将所有机器关联起来：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">redis-trib.rb create  --replicas 1 192.168.1.20:7001 192.168.1.20:7002 192.168.1.21:7003 192.168.1.21:7004 192.168.1.22:7005 192.168.1.22:7006</div></pre></td></tr></table></figure></p>
+<p>测试连接一台机器查看集群情况：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">redis-trib.rb check 192.168.1.20:7001</div></pre></td></tr></table></figure></p>
+<p>可以看到3个Master 和3个slave 配置成功。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;根据上次的博文，搭建好了redis后，开始进行搭建redis-cluster集群。redis cluster集群，要求至少3个master，去组成一个高可用，健壮的分布式的集群，每个master都建议至少给一个slave，3个master，3个slave。&lt;/p&gt;
+&lt;p&gt;首
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="redis" scheme="http://dingran.top/tags/redis/"/>
+    
+      <category term="centos" scheme="http://dingran.top/tags/centos/"/>
+    
+  </entry>
   
   <entry>
     <title>centos搭建redis集群步骤</title>
@@ -680,37 +728,6 @@
       &lt;p&gt;11.1号，新的一个月了，一晃就过了一个月，再晃晃就过年了。&lt;/p&gt;
 &lt;p&gt;10.1回来后主要是价格的修复操作，找到的问题的根源后，经过一个月的数据刷新，现在价格问题几乎不再出现，主要是对系统内部的一些功能的调整。&lt;/p&gt;
 &lt;p&gt;之前需要统计DTC余位查询的调用功能的数据、
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>9.24号价格问题总结</title>
-    <link href="http://dingran.top/2017/10/14/9-24%E5%8F%B7%E4%BB%B7%E6%A0%BC%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/"/>
-    <id>http://dingran.top/2017/10/14/9-24号价格问题总结/</id>
-    <published>2017-10-14T06:41:13.000Z</published>
-    <updated>2017-10-14T06:59:56.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>9.20左右上线了竞品的数据查询分析的一部分代码，这个功能是用来在紧急的情况下，可以采用竞品的数据来保证我们火车票的业务正常流转，在本地进行测试的时候一切都很顺利，后来上线后，我将数据进行按照比例进行分配给竞品查询，一切看起来都是很顺利的。</p>
-<p>后来由于出现了价格的问题，车次查出来的价格都是乱七八糟的，影响了很多业务的进行。随即关闭竞品的数据查询。由于临近10.1，我又提前请了2天假回家，这10.1期间价格问题层出不穷，这时候我还是不知道价格的问题出现在哪里。这段期间内由技术支持来进行手动刷取价格保证业务的正常流转。</p>
-<p>10.1假期过后，价格的问题成了我的首要任务，首先我将价格进行添加origin字段即添加价格的来源，这样我们就可一眼看出这个错误的价格来源自哪里，因为我们的价格来源途径不仅只有一条，所以上线后，我看到了线上的数据随即进行了更新，新抓下来的价格几乎是没有问题的。</p>
-<p>再次查看对比相同车次的不同团期的价格，发现了一个大问题，抓取价格是按照trainno和fromstationno还有tostationno，三个部分组成的。但是数据库里面这三个要素是相同的，但是对应的站站三字码却是不同的，这就是说，价格抓取的不对。经过仔细分析，这三个在12306都是提供的字段，唯一不提供的就是对数据竞品数据查询，瞬间知道了一切来源，原来是自己无意之间闯了这么个大祸，还好及时关闭了。为自己犯下这么低级的错误而羞愧。</p>
-<p>虽说这次问题比较大，但是意义很深刻，为什么说呢？因为12306的trainno是可变的，比如G1对应的trainno可能不知道哪一天就变掉了，而且这个trainno却是查询价格和经停站必备的字段。所以在用竞品查询的时候如果取不对trainno或者fromNo还有toNo取错了的话，那么整个脏数据就会出现。</p>
-<p>根据如上的分析，我找出了对应的策略，将from三字码和to三字码放到缓存里面，如果查出的价格的站站不是我要获取的站站三字码，价格就要重新抓取，虽然这是个十分漫长的数据更新过程，不过却可以最大程度减少问题。</p>
-<p>现在经过几天的价格清洗，可以看到数据正在有序的恢复，下周上线后，数据将彻底完善。为此我还开发了价格自动前推后推功能，可以自动将30天的数据全部更新一遍，但是消耗代理ip的数据实在太大了，所以在十分紧急或者资源够用的情况下可以开启。</p>
-<p>请铭记此次问题的前因后果。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;9.20左右上线了竞品的数据查询分析的一部分代码，这个功能是用来在紧急的情况下，可以采用竞品的数据来保证我们火车票的业务正常流转，在本地进行测试的时候一切都很顺利，后来上线后，我将数据进行按照比例进行分配给竞品查询，一切看起来都是很顺利的。&lt;/p&gt;
-&lt;p&gt;后来由于出现了价格
     
     </summary>
     
