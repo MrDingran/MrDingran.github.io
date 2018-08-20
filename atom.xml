@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.top/"/>
-  <updated>2018-07-09T02:45:52.820Z</updated>
+  <updated>2018-08-20T04:42:09.150Z</updated>
   <id>http://dingran.top/</id>
   
   <author>
@@ -14,6 +14,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>SimpleDateFormat的使用注意点</title>
+    <link href="http://dingran.top/2018/08/20/SimpleDateFormat%E7%9A%84%E4%BD%BF%E7%94%A8%E6%B3%A8%E6%84%8F%E7%82%B9/"/>
+    <id>http://dingran.top/2018/08/20/SimpleDateFormat的使用注意点/</id>
+    <published>2018-08-20T03:50:17.000Z</published>
+    <updated>2018-08-20T04:42:09.150Z</updated>
+    
+    <content type="html"><![CDATA[<p>SimpleDateFormat 这是一个我们太经常使用的类了，自从我开始接触java，它就一直伴随着我的成长，这个类一直用来做将日期类型转为string，或者string转为date类型。你真的了解过它么？</p>
+<p>这两天突然发现代理爬虫爬取pc端的数据效果很差劲，几乎降到了2%左右，这是一个可怕的数字，因为这样几乎导致我整体的业务瘫痪。经过排查日志发现是一家分销商传入的查询参数有问题，特别是在将string转为date类型的时候进行校验的时候居然通过了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">String str=&quot;2018-09-01\\&amp;quot;;cat /etc/passwd;\\&amp;quot;&quot;;</div><div class="line"></div><div class="line">Date date = new SimpleDateFormat(&quot;yyyy-MM-dd&quot;).parse(str);</div></pre></td></tr></table></figure>
+<p>简简单单的语句，str里面有那么长的一串，其实有效的部分就是2018-09-01这个数字，运行代码，毫无征兆的运行通过了，没错就是运行通过了，一般认为在parse的时候就会抛出异常的呀，但是解析出来的数据却是2018-09-01丝毫不差，那后面的那一部分数据是怎么通过的呢？因为这一步骤的校验通过，我直接在后面代码使用了这个string的日期，然后就是一堆的异常。先不说这家分销商是否遭到了恶意爬取，就是对入参校验能通过就说不过去了。</p>
+<p>经过排查源码段日期格式化在底层进行了字符串截取，取了前10位进行格式化成date类型，多么痛苦的领悟，导致后面误以为日期格式化成功。</p>
+<p>后期将对日期进行特殊字符判断，日期在赋值进行修复。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;SimpleDateFormat 这是一个我们太经常使用的类了，自从我开始接触java，它就一直伴随着我的成长，这个类一直用来做将日期类型转为string，或者string转为date类型。你真的了解过它么？&lt;/p&gt;
+&lt;p&gt;这两天突然发现代理爬虫爬取pc端的数据效果很差劲，
+    
+    </summary>
+    
+      <category term="途牛" scheme="http://dingran.top/categories/%E9%80%94%E7%89%9B/"/>
+    
+      <category term="日积月累" scheme="http://dingran.top/categories/%E9%80%94%E7%89%9B/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="java" scheme="http://dingran.top/tags/java/"/>
+    
+  </entry>
   
   <entry>
     <title>centos搭建redis cluster集群</title>
@@ -696,38 +727,6 @@
     <summary type="html">
     
       &lt;p&gt;今天来加个班，主要是对DTC的访问添加日志的统计。之前做了一次日志统计，由于所有的代码都是镶嵌在原来的代码里面，造成代码耦合度很强，一个方法的代码经常超过了200行，关键是的事之前采用的汇总策略，但是准确性经常查了几个百分点，造成数据不太可信。随后经过考虑分析，决定采用AO
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>DTC添加统计日志</title>
-    <link href="http://dingran.top/2017/11/01/DTC%E6%B7%BB%E5%8A%A0%E7%BB%9F%E8%AE%A1%E6%97%A5%E5%BF%97/"/>
-    <id>http://dingran.top/2017/11/01/DTC添加统计日志/</id>
-    <published>2017-11-01T03:46:11.000Z</published>
-    <updated>2017-11-01T05:08:41.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>11.1号，新的一个月了，一晃就过了一个月，再晃晃就过年了。</p>
-<p>10.1回来后主要是价格的修复操作，找到的问题的根源后，经过一个月的数据刷新，现在价格问题几乎不再出现，主要是对系统内部的一些功能的调整。</p>
-<p>之前需要统计DTC余位查询的调用功能的数据、代理ip的使用数据以及各个分销商的调用数据，由于DTC之前没有这个功能，只能通过TSP的平台上直接看接口的总体调用次数，不能以各种维度去统计分析数据。</p>
-<p>之前由于领导紧急要用，便紧急做了一个统计功能。这个统计功能什么都有，各种维度，但是需要在原来的代码里面穿插大量的统计代码。没错，就是这种土方法，由于运营等还要添加各种其他维度，后面还需要继续添加，后果可想而知。本来就很乱的代码，如果在里面再继续添加这种统计代码，后面就不用维护了。</p>
-<p>上述统计的方法虽然方便，却是对原代码有很大的入侵性，造成高度耦合性。后期发现有的数据统计的都差除了3个百分点。还不准确，无法交代。为此我想起了spring的AOP功能。</p>
-<p>spring的aop功能就是在方法前执行一段逻辑，方法执行完后执行一段逻辑，而且采用的是代理模式，只需要配置一段代码便可让原代码在无感知的情况下，完成统计工作。</p>
-<p>配合切面需要谨慎考虑，总体来说需要统计的就那么几个类，但是却需要统计各个维度，比如价格查询、经停站查询、余位查询、抢票查询等，所以应用spring的自定义annotation来设置就在合适不过了，只要在自定义标签上添加对应的type就可以及时分辨出来需要统计的维度，后续需要再添加任何维度，只需要在没枚举中添加这个维度，然后在对应的处理标签中扩展对应的逻辑即可，非常方便。原来穿插在代码的多行代码，只需要在方法的头部添加个标签，标签配置type就搞定了，可侵入性非常低，耦合性也非常低。</p>
-<p>下周上线，后续将对牛抢票开展进一步操作。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;11.1号，新的一个月了，一晃就过了一个月，再晃晃就过年了。&lt;/p&gt;
-&lt;p&gt;10.1回来后主要是价格的修复操作，找到的问题的根源后，经过一个月的数据刷新，现在价格问题几乎不再出现，主要是对系统内部的一些功能的调整。&lt;/p&gt;
-&lt;p&gt;之前需要统计DTC余位查询的调用功能的数据、
     
     </summary>
     
