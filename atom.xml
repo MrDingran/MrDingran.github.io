@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.top/"/>
-  <updated>2018-08-20T04:42:09.150Z</updated>
+  <updated>2018-09-11T02:05:17.834Z</updated>
   <id>http://dingran.top/</id>
   
   <author>
@@ -14,6 +14,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>火车票查询优化之车站数据优化</title>
+    <link href="http://dingran.top/2018/09/11/%E7%81%AB%E8%BD%A6%E7%A5%A8%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96%E4%B9%8B%E8%BD%A6%E7%AB%99%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/"/>
+    <id>http://dingran.top/2018/09/11/火车票查询优化之车站数据优化/</id>
+    <published>2018-09-11T01:47:01.000Z</published>
+    <updated>2018-09-11T02:05:17.834Z</updated>
+    
+    <content type="html"><![CDATA[<p>8月末忙完了人生的一件大事，绕了一大圈终于回到了上海，大事间公司各种问题不断倒也是应付从容不迫。</p>
+<p>刚回到工作的岗位上，就将回家这段期间的各种问题抓紧修复掉，经过一次紧急上线大多数问题都得到了修复，由于最近上线了很多版本，代码改过来改过去，所以需要进行一次代码整理，所以这一周主要是对已上线的冗余代码进行整理。</p>
+<p>最近在抢10.1期间的火车票，火车票订单比平常增加了很多，抢票查询量大幅增加，如此算过来我们的代理ip数量和查询量相比杯水车薪，所以需要进行查询的归拢，缓存等访问的统一。</p>
+<p>搜北京or北京西or北京南到上海的车次列表都是一样的，但是如果用这三个查询到上海将爬取三次，浪费三个代理ip而其实只需要使用一个代理ip就可以查询搞定了。</p>
+<p>由于缓存使用的三字码，所以需要对缓存进行重新统一处理，这样可以重复使用，需要在对车站判断的时候进行额外处理。先做设计，再动手。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;8月末忙完了人生的一件大事，绕了一大圈终于回到了上海，大事间公司各种问题不断倒也是应付从容不迫。&lt;/p&gt;
+&lt;p&gt;刚回到工作的岗位上，就将回家这段期间的各种问题抓紧修复掉，经过一次紧急上线大多数问题都得到了修复，由于最近上线了很多版本，代码改过来改过去，所以需要进行一次代码整
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
   
   <entry>
     <title>SimpleDateFormat的使用注意点</title>
@@ -701,32 +729,6 @@
     
       &lt;p&gt;匆匆的11月份，一转眼都29号了，回顾这个月感觉干了好多事。&lt;/p&gt;
 &lt;p&gt;第一肯定是双11了，虽然是淘宝的举办的节日，但是我还是自觉地去了京东去买的东西。为什么？因为双十一的京东的优惠力度比较大，买了一罐蛋白粉，原价剪了150，再打五折这个可不是什么时候都能遇到的，很顺利
-    
-    </summary>
-    
-      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
-    
-    
-      <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>关于DTC采用aop添加日志</title>
-    <link href="http://dingran.top/2017/11/04/%E5%85%B3%E4%BA%8EDTC%E9%87%87%E7%94%A8aop%E6%B7%BB%E5%8A%A0%E6%97%A5%E5%BF%97/"/>
-    <id>http://dingran.top/2017/11/04/关于DTC采用aop添加日志/</id>
-    <published>2017-11-04T03:50:56.000Z</published>
-    <updated>2017-11-04T04:05:35.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>今天来加个班，主要是对DTC的访问添加日志的统计。之前做了一次日志统计，由于所有的代码都是镶嵌在原来的代码里面，造成代码耦合度很强，一个方法的代码经常超过了200行，关键是的事之前采用的汇总策略，但是准确性经常查了几个百分点，造成数据不太可信。随后经过考虑分析，决定采用AOP的方式进行统计。</p>
-<p>开始一切都很顺利，自定义个标签，添加类别，根据对应的类别进行对比统计。貌似没有什么问题了，经过简单的测试也没有问题，统计的数据也很准确。便放到sst环境上进行测试，刚发不多久，就看到有入参为空的现象，开始以为是供应商传参有问题，后续发现不对，而且越来越多，我在本地测试没有发现这种问题呀，经过对比我发现了问题的根源：</p>
-<p>这个余位查询没有指定对应的提交方式即既可以用post的方式也可以用get的方式，我之前本地测试使用的便是get方式，get是将参数作为url的一部分，所以没有问题。post的方式是用方法体的一部分作为流的方式进行传递。先说明一点，由于我需要统计分销商，也就说在aop的before层里面，我需要先解析意思post的流，后续进入正式的方法里面，需要在解析一次，那么问题就出现这再次解析里面：httpServletRequest的getRender和getInputStream获取流只能获取一次，这里需要切记。那么找到了问题的根源就想怎么解决，数据肯定是要解析的，所以后续解析不了，只需要将解析后的数据传递下去即可。如果想怎么解决？<br>可以借鉴：<a href="http://www.cnblogs.com/ocean-sky/p/6899613.html" target="_blank" rel="external">http://www.cnblogs.com/ocean-sky/p/6899613.html</a></p>
-<p>ok，到了这一步数据解决了，在本地进行压测统计，发现aop的afterreturn统计不了数据，由于我们采用TSP的分布式调用，所以有可能是aop的after失效了，所以我将对应的逻辑进行重构，再次进行spring托管，进行aop统计，这里彻底解决了问题。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;今天来加个班，主要是对DTC的访问添加日志的统计。之前做了一次日志统计，由于所有的代码都是镶嵌在原来的代码里面，造成代码耦合度很强，一个方法的代码经常超过了200行，关键是的事之前采用的汇总策略，但是准确性经常查了几个百分点，造成数据不太可信。随后经过考虑分析，决定采用AO
     
     </summary>
     
