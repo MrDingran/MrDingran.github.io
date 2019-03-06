@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dingran.top/"/>
-  <updated>2018-11-30T10:00:15.852Z</updated>
+  <updated>2019-03-06T08:53:30.252Z</updated>
   <id>http://dingran.top/</id>
   
   <author>
@@ -14,6 +14,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>年后总结</title>
+    <link href="http://dingran.top/2019/03/06/%E5%B9%B4%E5%90%8E%E6%80%BB%E7%BB%93/"/>
+    <id>http://dingran.top/2019/03/06/年后总结/</id>
+    <published>2019-03-06T08:23:53.000Z</published>
+    <updated>2019-03-06T08:53:30.252Z</updated>
+    
+    <content type="html"><![CDATA[<p>差点就淡忘了这个博客，可能是年前准备应对春运力不从心了吧，嗯这是一个很好的借口。</p>
+<p>今天的春运算是给自己涨了很多的“姿势”，订单数量是前几年的十几倍，流量也窜上去了，以前对带宽都是模糊的概念，今天算是对带宽有了较深的理解，后面对系统的并发量以及带宽底层方面资源都会考虑进去。</p>
+<p>总体来说今天应对的还算可以，比前2年强多了，虽然还是存在很多不足，应对这么大的流量也算是一件不小的事情。年前根据以往的经验估算了一下订单量以及代理ip的数量，但运营的新业务介入带来大量的订单涌入，使系统的压力陡增几十倍，之前不怎么关注的流量也找上门来，公司的四分之三的流量已经被抢票占满，已经影响机票等相关业务，没办法只好降低频率，大量的订单产生了几十亿甚至百亿的查询，对于现有的实例数根本就是杯水车薪，向运维寻求思源，答复没有资源了，我大概算了一下，如果能够匹配现有的资源的实例数，相当于现有途牛所有实例数的总和，这是十分巨大的字，如果要实现起来也是十分艰难的，资源预算就是一个十分头疼的问题。</p>
+<p>为了保证系统的稳定，只能先对大批流量进行限流操作，但是系统还是产生了大量的read_time_out，无法准确获取数据返回。这种问题目前解决十分简单，前一段时间看了go语言，天生支持高并发的，此时打算使用go去写一个系统，同时得到了运维的全力支持。随后出票系统上升到了极高的程度，领导指派去对火车票出票系统进行升级改造，这个系统是个十分复杂的系统，代码结构混乱，没头没尾，代码一大片一大片，无法理解，没办法只好申请新系统进行完全改造，这也是在短时间内完成最快的办法。现有出票系统有大量系统问题，新系统就是要解决这些问题，提升出票的成功率。</p>
+<p>这段时间投入新系统的改造过得十分充实，不停地码代码设计代码，感觉这个工作进行的很顺利，工作才开始进行，运营已经把相关的期望指标定好，瞬间感觉压力巨大。</p>
+<p>这两天小乔分享个链接<a href="https://www.zhihu.com/question/43377108/answer/574887910" target="_blank" rel="external">https://www.zhihu.com/question/43377108/answer/574887910</a>/，深受刺激，感觉自己平时实在是太浪费时间了，在奋斗的时候就应该全力奋斗，不应该把懒惰安逸当成了主旋律。</p>
+<p>平时制定好相关的计划，努力达成，充实的度过现有的生活每一天。</p>
+<p>还有老婆爱你。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;差点就淡忘了这个博客，可能是年前准备应对春运力不从心了吧，嗯这是一个很好的借口。&lt;/p&gt;
+&lt;p&gt;今天的春运算是给自己涨了很多的“姿势”，订单数量是前几年的十几倍，流量也窜上去了，以前对带宽都是模糊的概念，今天算是对带宽有了较深的理解，后面对系统的并发量以及带宽底层方面资源都
+    
+    </summary>
+    
+      <category term="日积月累" scheme="http://dingran.top/categories/%E6%97%A5%E7%A7%AF%E6%9C%88%E7%B4%AF/"/>
+    
+    
+      <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
+    
+  </entry>
   
   <entry>
     <title>2018年11月工作总结</title>
@@ -706,31 +737,6 @@
     
     
       <category term="途牛" scheme="http://dingran.top/tags/%E9%80%94%E7%89%9B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>转Spring基于Event支持</title>
-    <link href="http://dingran.top/2017/12/04/%E8%BD%ACSpring%E5%9F%BA%E4%BA%8EEvent%E6%94%AF%E6%8C%81/"/>
-    <id>http://dingran.top/2017/12/04/转Spring基于Event支持/</id>
-    <published>2017-12-04T07:24:24.000Z</published>
-    <updated>2017-12-04T07:28:27.951Z</updated>
-    
-    <content type="html"><![CDATA[<p>spring在启动的时候有个事件加载机制，今天在importnew中看到了这篇介绍事件的例子，可以在以后的工作中有所应用。</p>
-<p>文章地址：<a href="http://www.importnew.com/26782.html" target="_blank" rel="external">spring对event支持</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;spring在启动的时候有个事件加载机制，今天在importnew中看到了这篇介绍事件的例子，可以在以后的工作中有所应用。&lt;/p&gt;
-&lt;p&gt;文章地址：&lt;a href=&quot;http://www.importnew.com/26782.html&quot; target=&quot;_blank&quot; r
-    
-    </summary>
-    
-      <category term="spring" scheme="http://dingran.top/categories/spring/"/>
-    
-    
-      <category term="spring" scheme="http://dingran.top/tags/spring/"/>
     
   </entry>
   
